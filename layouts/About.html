@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive 3DGS</title>
+  <style type="text/css">
+  html, body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient(white, lightgrey);
+    overflow: hidden; 
+  }
+  .container {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	height: 1000px;
+	background-color:linear-gradient(white, lightgrey);
+  }
+ 
+
+  #bar{
+    position:absolute;
+    top:135px;
+    display: block;
+    margin-left:59%;
+    margin-right:100px;
+    font-family:'Palatino Linotype';
+    color:#969696;
+    font-size:1.2em;
+  }
+
+ 
+
+
+  #intro{
+    position:absolute;
+  width: 50%;
+    top:22%;
+    margin-left:25.6%;
+    margin-right:400px;
+    font-family:'Palatino Linotype';
+    color:#2e2e2e;
+    font-size:1em;
+    font-weight:normal;
+    text-align: justify;
+  }
+
+  #Team{
+    position:absolute;
+    top:45%;
+    margin-left:12%;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#636363;
+    font-size:1em;
+    font-weight:normal;
+  }
+
+  #member{
+    position:absolute;
+    top:49%;
+    margin-left:25.6%;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#272727;
+    font-size:1em;
+    font-weight:bold;
+  }
+
+  #Funding{
+    position:absolute;
+    top:58%;
+    margin-left:12%;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#636363;
+    font-size:1em;
+    font-weight:normal;
+  }
+
+  #nsf{
+    position:absolute;
+    top:62%;
+    margin-left:12%;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#272727;
+    font-size:1em;
+    font-weight:bold;
+  }
+
+  #li { 
+  display: table-cell; 
+  padding: 25px 0;
+  position:absolute;
+  top:135px;
+  margin-left:65%;
+  margin-right:200px;
+  font-family:'Palatino Linotype';
+  color:#969696;
+  font-size:1.2em;
+  text-align: right;
+
+  }
+
+ 
+
+  </style>
+  <style>
+    a { text-decoration: none; }
+    a { color: inherit; } 
+  </style>
+</head>
+<body onload="draw();">
+
+  <div id="bar"><a href="../layouts/Exmaples.html" ><span >examples</span></a>
+    <a><span style="font-weight:bold; color:#2e2e2e">&nbsp &nbsp about</span></a>
+    <a href="../layouts/Contact.html" ><span >&nbsp &nbsp contact</span></a>
+  </div>
+  
+  <div class="container"><a  style=" position:absolute;
+    top:22%;
+    width: 50%;
+    margin-left:10px;
+    font-family:'Palatino Linotype';
+    color:#2e2e2e;
+    font-size:1em;
+    font-weight:normal;
+    text-align: justify;">i3DGS is an interactive platform for the methods of 3D/Polyhedral Graphic Statics. This platform is designed to educate the principles of equilibirum using reciporcal polyhedral diagrams by providing a variety of different examples. The objective of this platform is to encourage students, researchers and parctitioners to use the geometry-based methods of equilibirum in design and engineering problems. The methods of 3D/Polyhedral Graphic statics is developed based on the “principle of the equilibirum of polyhedral frames.”</a></div>
+  
+  <div class="container"><a  style=" position:absolute;
+    top:45%;
+    margin-left:10px;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#636363;
+    font-size:1em;
+    font-weight:normal;">Team</a></div>
+  <div id="member"><a href="https://psl.design.upenn.edu/hua-chai/" ><span >Hua Chai,</span></a>
+    <a><span style="color:#636363"> &nbsp Prof. Dr.</span></a>
+    <a href="https://psl.design.upenn.edu/masoud-akbarzadeh/" ><span style="font-weight:bold" >Masoud Akbarzadeh</span></a>  
+  </div>
+
+  <div class="container"><a  style=" position:absolute;
+    top:58%;
+    margin-left:10px;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#636363;
+    font-size:1em;
+    font-weight:normal;">Funding</a></div>
+
+  <div class="container"><a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1944691&HistoricalAwards=false" style=" position:absolute;
+    top:62%;
+    margin-left:10px;
+    margin-right:360px;
+    font-family:'Palatino Linotype';
+    color:#272727;
+    font-size:1em;
+    font-weight:bold;"><span >National Science Foundation CAREER Award (NSF CAREER-1944691)</span></a></div>
+
+
+  <div class="container"> <a ><img src="../images/logo2-01.png"  style="width: 325px;
+      position:absolute;
+    top:110px;
+    margin-left:10px;
+    height: 52px;
+    "></a></div>
+
+
+<div class="container"><a href="https://psl.design.upenn.edu/"><img src="../images/psl logo2-01.png"  style="width: 145px;
+  position:absolute;
+  top:85%;
+  margin-left:10px;
+  height: 50px;
+  "></a></div>
+
+<div class="container"><a href="https://www.design.upenn.edu/"><img src="../images/design school logo copy.png"  style="width: 145px;
+  position:absolute;
+  top:85.5%;
+  margin-left:170px;
+  height: 50px;
+  
+  "></a></div>
+
+  <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1944691&HistoricalAwards=false"><img src="../images/nsf logo 2.png"  style="width: 60px;
+  position:absolute;
+  top:85%;
+  margin-left:80%;
+  height: 60px;
+  opacity: 50%;
+  margin-right:100px;
+  "></a>
+
+
+</body>
+
+<style>
+
+
+    </style>
+
+
+    <script>
+</script>
+</html>
