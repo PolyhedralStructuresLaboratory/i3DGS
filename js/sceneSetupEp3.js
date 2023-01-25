@@ -2,7 +2,7 @@ import '../style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from "../node_modules/three/build/three.module.js";
 import * as Geo from '../js/functions.js';
-import { createMultiMaterialObject } from 'three/examples/jsm/utils/SceneUtils';
+import { createMultiMaterialObject } from '../node_modules/three/examples/jsm/utils/SceneUtils';
 
 
 import {Pane} from '../node_modules/tweakpane';
