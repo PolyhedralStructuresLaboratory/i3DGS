@@ -10,7 +10,7 @@ import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitCo
 import { TransformControls } from '../node_modules/three/examples/jsm/controls/TransformControls';
 
 import $ from '../node_modules/jquery';
-import { face_center } from 'js/functions';
+import { face_center } from '/js/functions';
 
 
 //claim variables
