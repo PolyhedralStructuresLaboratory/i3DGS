@@ -1,5 +1,6 @@
 {
   "name": "webtool2023",
+  "homepage": "https://polyhedralstructureslaboratory.github.io/i3dgs"
   "private": true,
   "version": "0.0.0",
   "type": "module",
