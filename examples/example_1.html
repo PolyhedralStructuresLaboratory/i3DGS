@@ -158,7 +158,7 @@
 
 
 <script>
-  //claim variables
+//claim variables
 var renderer;
 var camera;
 var scene, scene2;
@@ -172,17 +172,11 @@ var rayCaster = new THREE.Raycaster();
 
 var selectObj=null;
 
-
-
-
 var minkscale= new function () {
   this.l = 0.02
 }
 
-
-
-
-//*********************** testing new UI (tweakpane) *********************
+//************************************** testing new UI (tweakpane) ************************************
 
 /************************* MOVABLE LEFT DIV *************************/
 
@@ -280,6 +274,9 @@ const cellVisibilityCheckbox = tab.pages[0].addInput(cellVisibilityCheckboxParam
     if (obj.type === "Mesh") {
       obj.material.visible =ev.value;
     }
+    if (obj.type === "Sprite") {
+      obj.material.visible =ev.value;
+    }
   });
 });
 
@@ -293,6 +290,9 @@ const minkVisibilityCheckbox = tab.pages[1].addInput(minkVisibilityCheckboxParam
    if (obj.type === "Mesh") {
      obj.material.visible =ev.value;
    }
+   if (obj.type === "LineSegments") {
+    obj.material.visible =ev.value;
+  }
    });
   force_group_mink.traverse(function(obj) {
     if (obj.type === "Mesh") {
@@ -321,6 +321,9 @@ const minkVisibilityCheckbox = tab.pages[1].addInput(minkVisibilityCheckboxParam
     if (obj.type === "Sprite") {
       obj.material.visible = !ev.value;
     }
+    if (obj.type === "Line") {
+      obj.material.visible = !ev.value;
+    }
   });
 });
 
@@ -336,6 +339,9 @@ const minkSlider = tab.pages[1].addInput(minkParams, 'length', {
   minkscale.l = ev.value
   form_group_mink.traverse(function(obj) {
     if (obj.type === "Mesh") {
+      obj.material.visible =ev.value;
+    }
+    if (obj.type === "LineSegments") {
       obj.material.visible =ev.value;
     }
     });
@@ -366,6 +372,9 @@ const minkSlider = tab.pages[1].addInput(minkParams, 'length', {
     if (obj.type === "Sprite") {
       obj.material.visible = !ev.value;
     }
+    if (obj.type === "Line") {
+      obj.material.visible = !ev.value;
+    }
   });
 });
 minkSlider.hidden = true; 
@@ -385,31 +394,443 @@ const stepVisibilityCheckboxParams = {
     'steps': false, //at first, box is unchecked so value is "false"
 };
 
+const stepSliderParams = {
+  size: 1, //starts as double the size of the box's params
+};
 //make the checkbox
 const stepVisibilityCheckbox = rightPane.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
-     force_group_c.traverse(function(obj) {
+  form_group_e.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = !ev.value;
+    }
+    });
+  force_group_e.traverse(function(obj) {
       if (obj.type === "Mesh") {
-        obj.material.visible =ev.value;
+        obj.material.visible = !ev.value;
       }
-      });
+  });
+  force_group_f.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = !ev.value;
+    }
+  });
+  force_general.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = !ev.value;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = !ev.value;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = !ev.value;
+    }
+    
+  });
+
 });
+if (stepVisibilityCheckbox.value) {
+  console.log('Checkbox is checked');
+} else {
+  console.log('Checkbox is not checked');
+}
 
-
-const stepSliderParams = {
-    size: 1, //starts as double the size of the box's params
-};
 //make the plane size slider
 const stepSlider = rightPane.addInput(stepSliderParams, 'size', {
     min: 1, //min = double the size of the box's params
-    max: 5, //max = quadruple the size of the box's params
+    max: 6, //max = quadruple the size of the box's params
+    step: 1
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
     forceCellScale = ev.value;
+    if(ev.value == 1){
     Redraw();
-    force_group_c.traverse(function(obj) {
+    form_group_e.traverse(function(obj) {
       if (obj.type === "Mesh") {
-        obj.material.visible =ev.value;
+        obj.material.visible = !ev.value;
       }
       });
+    force_group_e.traverse(function(obj) {
+        if (obj.type === "Mesh") {
+          obj.material.visible = !ev.value;
+        }
+    });
+    form_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    form_group_step.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_general.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Line") {
+        obj.material.visible = !ev.value;
+      }
+    });
+  
+  } else if(ev.value == 2){
+    forceCellScale = ev.value;
+    Redraw();
+    form_group_e.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    form_group_step.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    form_group_c.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+    });
+    
+    force_group_e.traverse(function(obj) {
+        if (obj.type === "Mesh") {
+          obj.material.visible = !ev.value;
+        }
+    });
+    form_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_general.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Line") {
+        obj.material.visible = !ev.value;
+      }
+    });
+  } else if(ev.value == 3){
+    forceCellScale = ev.value;
+    Redraw();
+    form_group_e.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    form_group_step.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    form_group_step_3.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_3.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_e.traverse(function(obj) {
+        if (obj.type === "Mesh") {
+          obj.material.visible = !ev.value;
+        }
+    });
+    form_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_general.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Line") {
+        obj.material.visible = !ev.value;
+      }
+    });
+  }else if(ev.value == 4){
+    forceCellScale = ev.value;
+    Redraw();
+    form_group_e.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    form_group_step.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    form_group_step_4.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    form_group_step_3.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_4.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_3.traverse(function(obj) {
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_e.traverse(function(obj) {
+        if (obj.type === "Mesh") {
+          obj.material.visible = !ev.value;
+        }
+    });
+    form_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_general.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Line") {
+        obj.material.visible = !ev.value;
+      }
+    });
+  }else if(ev.value == 5){
+    forceCellScale = ev.value;
+    Redraw();
+    form_group_e.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    form_group_step.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    // form_group_step_4.traverse(function(obj) {
+    //   if (obj.type === "Mesh") {
+    //     obj.material.visible = true;
+    //   }
+    //   if (obj.type === "Sprite") {
+    //     obj.material.visible = true;
+    //   }
+    //   if (obj.type === "LineSegments") {
+    //     obj.material.visible = true;
+    //   }
+    // });
+    form_group_step_5.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_5.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });////
+    force_group_step_3.traverse(function(obj) {
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_4.traverse(function(obj) {
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_e.traverse(function(obj) {
+        if (obj.type === "Mesh") {
+          obj.material.visible = !ev.value;
+        }
+    });
+    form_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_general.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Line") {
+        obj.material.visible = !ev.value;
+      }
+    });
+  }else if(ev.value == 6){
+    forceCellScale = ev.value;
+    Redraw();
+    form_group_e.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    form_group_step.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_5.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    form_group_step_6.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_6.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+      if (obj.type === "LineSegments") {
+        obj.material.visible = true;
+      }
+    });////
+    force_group_step_3.traverse(function(obj) {
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_step_4.traverse(function(obj) {
+      if (obj.type === "Sprite") {
+        obj.material.visible = true;
+      }
+    });
+    force_group_e.traverse(function(obj) {
+        if (obj.type === "Mesh") {
+          obj.material.visible = !ev.value;
+        }
+    });
+    form_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_group_f.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+    });
+    force_general.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Sprite") {
+        obj.material.visible = !ev.value;
+      }
+      if (obj.type === "Line") {
+        obj.material.visible = !ev.value;
+      }
+    });
+  }
 });
 stepSlider.hidden = true; 
 
@@ -452,6 +873,12 @@ var form_general_global
 
 
 var form_group_mink
+var form_group_step
+var form_group_step_3
+var form_group_step_4
+var form_group_step_5
+var form_group_step_6
+var form_group_step_7
 
 // *********************** force diagram inital data ***********************
 
@@ -468,7 +895,13 @@ var force_general_trial
 var force_group_mink
 var force_general_global
 
-var force_text
+var force_group_step
+var force_group_step_3
+var force_group_step_4
+var force_group_step_5
+var force_group_step_6
+var force_group_step_7
+
 
 
 // *********************** redraw the form and force diagram when parametrer is changing ****************
@@ -484,6 +917,12 @@ function Redraw(){
   scene.remove(form_general_trial);
   scene.remove(form_general_global);
   scene.remove(form_group_mink);
+  scene.remove(form_group_step);
+  scene.remove(form_group_step_3);
+  scene.remove(form_group_step_4);
+  scene.remove(form_group_step_5);
+  scene.remove(form_group_step_6);
+  scene.remove(form_group_step_7);
 
   form_group_v = new THREE.Group();
   form_group_f = new THREE.Group();
@@ -495,6 +934,12 @@ function Redraw(){
 
   form_group_e_trial = new THREE.Group();
   form_general_global = new THREE.Group();
+  form_group_step = new THREE.Group();
+  form_group_step_3 = new THREE.Group();
+  form_group_step_4 = new THREE.Group();
+  form_group_step_5 = new THREE.Group();
+  form_group_step_6 = new THREE.Group();
+  form_group_step_7 = new THREE.Group();
 
   //force groups
   scene2.remove(force_group_v);
@@ -508,20 +953,30 @@ function Redraw(){
   scene2.remove(force_group_mink);
   scene2.remove(force_general_global);
   
-  scene2.remove(force_text);
+  scene2.remove(force_group_step);
+  scene2.remove(force_group_step_3);
+  scene2.remove(force_group_step_4);
+  scene2.remove(force_group_step_5);
+  scene2.remove(force_group_step_6);
+  scene2.remove(force_group_step_7);
 
   force_group_v = new THREE.Group();
   force_group_f = new THREE.Group();
   force_group_e = new THREE.Group();
   force_group_c = new THREE.Group();
   force_general = new THREE.Group();
-  force_text = new THREE.Group();
 
   force_group_f_trial = new THREE.Group();
   force_group_e_trial = new THREE.Group();
   force_general_trial = new THREE.Group();
   force_group_mink = new THREE.Group();
   force_general_global = new THREE.Group();
+  force_group_step = new THREE.Group();
+  force_group_step_3 = new THREE.Group();
+  force_group_step_4 = new THREE.Group();
+  force_group_step_5 = new THREE.Group();
+  force_group_step_6 = new THREE.Group();
+  force_group_step_7 = new THREE.Group();
 
 
   // *********************** form vertices **************************
@@ -603,6 +1058,17 @@ function Redraw(){
   const formCell4 = addCell3Face(formTpPt[0], formBtPt1[1], formBtPt2[1], formBtPt3[1],0.8)
   form_group_c.add(formCell4);
 
+  var formCell_textA = createSpriteText('A',"", face_center(formTpPt[1],formBtPt1[1], formBtPt3[1]))
+  form_group_c.add( formCell_textA );
+
+  var formCell_textB = createSpriteText('B',"", face_center(formTpPt[1],formBtPt1[1], formBtPt2[1]))
+  form_group_c.add( formCell_textB );
+
+  var formCell_textC = createSpriteText('C',"", face_center(formTpPt[1],formBtPt2[1], formBtPt3[1]))
+  form_group_c.add( formCell_textC );
+
+  var formCell_textD = createSpriteText('D',"", face_center(formBtPt1[1],formBtPt2[1], formBtPt3[1]))
+  form_group_c.add( formCell_textD );
 
 
   var normal_apply =new THREE.MeshPhongMaterial( {color: 0x009600} );
@@ -655,7 +1121,7 @@ function Redraw(){
   var edgescale = 2; // size of the force diagram
 
   //PtA and PtB
-  var forcePtA = new THREE.Vector3(0.5, 0, 0)
+  var forcePtA = new THREE.Vector3(1, 0.2, 0)
 
   var forcePtBtemp = CalNormalVectorUpdated(formBtPt1[1], formTpPt[1], formTpPt[0], edgescale );
   var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
@@ -737,6 +1203,15 @@ function Redraw(){
     dirBD.subVectors(forcePtD2, forcePtB).normalize();
     var forcePtD = LinesSectPt(dirAD, forcePtA, dirBD, forcePtB);
   }
+  var applyForceArrowMaterial=new THREE.MeshPhongMaterial( {
+    color:  0x009600//green
+  } );
+
+  var applyForceArrowMaterialOut=new THREE.MeshPhongMaterial( {
+    color:  "white",
+    transparent: false, 
+    side: THREE.BackSide
+  } );
 
   var forcePtA_text = createSpriteText('A',"", new THREE.Vector3(forcePtA.x, forcePtA.y, forcePtA.z+0.05))
   force_general.add(forcePtA_text)
@@ -747,15 +1222,53 @@ function Redraw(){
   if(forcePtD.z < 0){
     var forcePtD_text = createSpriteText('D',"", new THREE.Vector3(forcePtD.x, forcePtD.y, forcePtD.z-0.15))
     force_general.add(forcePtD_text)
+    const applyArrow = createCylinderArrowMesh(
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), applyForceArrowMaterial, 0.015,0.04,0.55);
+    force_general.add(applyArrow);
+    const applyArrowOut = createCylinderArrowMesh(new THREE.Vector3(
+      face_center(forcePtA, forcePtB, forcePtC).x, 
+      face_center(forcePtA, forcePtB, forcePtC).y, 
+      face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), applyForceArrowMaterialOut, 0.02,0.045,0.545);
+    force_general.add(applyArrowOut);
   } else{
     var forcePtD_text = createSpriteText('D',"", new THREE.Vector3(forcePtD.x, forcePtD.y, forcePtD.z+0.1))
     force_general.add(forcePtD_text)
+    const applyArrow = createCylinderArrowMesh(
+      face_center(forcePtA, forcePtB, forcePtC),
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z - 0.4), applyForceArrowMaterial, 0.015,0.04,0.55);
+    force_general.add(applyArrow);
+    const applyArrowOut = createCylinderArrowMesh(
+      face_center(forcePtA, forcePtB, forcePtC),
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z - 0.4), applyForceArrowMaterialOut, 0.02,0.045,0.545);
+    force_general.add(applyArrowOut);
   }
+
+  var ABDarrow = createCircleFaceArrow(face_center(forcePtA, forcePtB, forcePtD), 0.15, cross(subVecUpdated(forcePtB, forcePtA),subVecUpdated(forcePtA, forcePtD)))
+  force_general.add(ABDarrow);
+
+  var ACDarrow = createCircleFaceArrow(face_center(forcePtA, forcePtC, forcePtD), 0.15, cross(subVecUpdated(forcePtA, forcePtC),subVecUpdated(forcePtC, forcePtD)))
+  force_general.add(ACDarrow);
+
+  var BCDarrow = createCircleFaceArrow(face_center(forcePtB, forcePtC, forcePtD), 0.15, cross(subVecUpdated(forcePtC, forcePtB),subVecUpdated(forcePtB, forcePtD)))
+  force_general.add(BCDarrow);
+
   // face ABC
   var forceFaceABC = ForceFace3pt(forcePtA,forcePtB,forcePtC,0x014F06)
   force_group_f.add(forceFaceABC)
   var forceFaceABC2 = ForceFace3pt(forcePtA,forcePtB,forcePtC,0x014F06)
   force_general_global.add(forceFaceABC2)
+
+  var ABCarrow = createCircleFaceArrow(face_center(forcePtA, forcePtB, forcePtC), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtB, forcePtC)))
+  force_general.add(ABCarrow);
   
   // *********************** caculating the areas of triangles (from the four points) *********************** 
  
@@ -843,16 +1356,6 @@ function Redraw(){
   const endPtVerticePtD = addEdgeSphere(edgeSize, forcePtD, edgeColor)
   
 
-
-
-
-  scene2.add(force_group_v);
-  scene2.add(force_group_f);
-  scene2.add(force_group_e);
-  scene2.add(force_group_c);
-  scene2.add(force_general);
-  scene2.add(force_text);
-
   // *********************** form edges **************************
   var formedgeColor1, formedgeColor2, formedgeColor3
 
@@ -897,6 +1400,9 @@ function Redraw(){
   //0.25 - 0.5 - 0x376D9B
   //0 - 0.25 - 0x5B84AE
 
+
+
+  // ************************  old arrow direction function (no use)  ************************ 
   function drawForceNormalsGlobal (forcePtA,forcePtB,forcePtC,normal_apply,normal_apply_outline,number){
     var normal_apply =new THREE.MeshPhongMaterial( {color: 0x009600} );
     var normal_apply_outline = new THREE.MeshBasicMaterial( { color: "white", transparent: false, side: THREE.BackSide } );
@@ -995,7 +1501,6 @@ function Redraw(){
     var TXfaceNormal1 = createSpriteTextApply('n', number, new THREE.Vector3(endPtArrowABDb2.x,endPtArrowABDb2.y,endPtArrowABDb2.z+0.1));
     force_general.add(TXfaceNormal1);
   }
-
   function drawForceNormals5 (forcePtA,forcePtB,forcePtC,edgePt1, edgePt2, normal_apply,normal_apply_outline,number){
     var forceFaceABDcenter = face_center(forcePtA,forcePtB,forcePtC)
     const endforceFaceABDa = subVecUpdated(edgePt1,edgePt2);
@@ -1022,6 +1527,48 @@ function Redraw(){
     var TXfaceNormal1 = createSpriteTextApply('n', number, new THREE.Vector3(endPtArrowABDb2.x,endPtArrowABDb2.y,endPtArrowABDb2.z+0.1));
     force_general.add(TXfaceNormal1);
   }
+// ************************  old arrow direction function (no use)  ************************ 
+
+
+
+
+
+
+
+  // ************************  rewrite the normal arrow direction   ************************  
+  function ForceFaceNormalsArrow (midPt, pt1, pt2, length, normal_apply, normal_apply_outline, number, dir){
+    if (dir == true){
+      var arrow_group = new THREE.Group()
+      var step3faceNormal1 = facenormal(midPt, pt1, pt2, length);
+      var facecenter = face_center(midPt, pt1, pt2);
+      var ABarrow1Vect = new THREE.Vector3(step3faceNormal1.x+facecenter.x, step3faceNormal1.y+facecenter.y, step3faceNormal1.z+facecenter.z);
+      var formABarrow1 = createCylinderArrowMesh(facecenter,ABarrow1Vect,normal_apply,0.02,0.05,0.6);
+      arrow_group.add(formABarrow1)
+      var ABDarrow12 = createCylinderArrowMesh( facecenter,ABarrow1Vect,normal_apply_outline,0.03,0.063,0.59);
+      arrow_group.add(ABDarrow12);
+      var TXfaceNormal1 = createSpriteTextApply('n', number, new THREE.Vector3(ABarrow1Vect.x,ABarrow1Vect.y,ABarrow1Vect.z+0.1));
+      arrow_group.add(TXfaceNormal1);
+    } 
+    if (dir == false){
+      var arrow_group = new THREE.Group()
+      var step3faceNormal1 = facenormal(midPt, pt1, pt2, -length);
+      var facecenter = face_center(midPt, pt1, pt2);
+      var ABarrow1Vect = new THREE.Vector3(step3faceNormal1.x+facecenter.x, step3faceNormal1.y+facecenter.y, step3faceNormal1.z+facecenter.z);
+      var formABarrow1 = createCylinderArrowMesh(ABarrow1Vect,facecenter,normal_apply,0.02,0.05,0.6);
+      arrow_group.add(formABarrow1)
+      var ABDarrow12 = createCylinderArrowMesh(ABarrow1Vect,facecenter,normal_apply_outline,0.03,0.063,0.59);
+      arrow_group.add(ABDarrow12);
+      var TXfaceNormal1 = createSpriteTextApply('n', number, new THREE.Vector3(ABarrow1Vect.x,ABarrow1Vect.y,ABarrow1Vect.z+0.1));
+      arrow_group.add(TXfaceNormal1);
+    }
+    return arrow_group
+  }
+
+
+
+  // define the arrow the direction 
+
+  // condition 1
   if (result1 < 0){
     if (resultapply>0){
       if (areaABD/areaMax >= 0.75){
@@ -1045,8 +1592,7 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-     var forceFaceNormalABD = drawForceNormals (forcePtA,forcePtB,forcePtD,formBtPt1[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"1");
-
+      force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtD, forcePtA, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"1", true))
     } else{
       if (areaACD/areaMax >= 0.75){
         formedgeColor1 = 0x80002F
@@ -1068,7 +1614,7 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-     var forceFaceNormalACD = drawForceNormals3 (forcePtA,forcePtC,forcePtD,formBtPt1[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"1");
+     force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtD, forcePtC, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"1", true))
     }
   } else{
     if (resultapply>0){
@@ -1092,8 +1638,7 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-      var forceFaceNormalABD = drawForceNormals2 (forcePtA,forcePtB,forcePtD,formBtPt1[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"1");
-
+      force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtD, forcePtA, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"1", false))
     } else{
       if (areaACD/areaMax >= 0.75){
         formedgeColor1 = 0x0F3150
@@ -1115,15 +1660,34 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-      var forceFaceNormalACD = drawForceNormals4 (forcePtA,forcePtC,forcePtD,formBtPt1[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"1");
-
+      force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtD, forcePtC, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"1", false))
     }
   }
   var formEdge1Material=new THREE.MeshPhongMaterial( { 
     color:  formedgeColor1
   } );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   if (result2 < 0){
-    
+    if (resultapply>0){
       if (areaBCD/areaMax >= 0.75){
         formedgeColor2 = 0x80002F
       }
@@ -1144,10 +1708,32 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-      var forceFaceNormalBCD = drawForceNormals (forcePtB,forcePtC,forcePtD,formBtPt2[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"2");
-    
+      force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtC, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"2", true))
+    } else {
+      if (areaBCD/areaMax >= 0.75){
+        formedgeColor2 = 0x80002F
+      }
+      if (0.5 <= areaBCD/areaMax & areaBCD/areaMax < 0.75){
+        formedgeColor2 = 0x940041
+      }
+      if (0.25 <= areaBCD/areaMax & areaBCD/areaMax  < 0.5){
+        formedgeColor2 = 0xCC0549
+      }
+      if (0 <= areaBCD/areaMax & areaBCD/areaMax < 0.25){
+        formedgeColor2 = 0xD72F62
+      }
+      var forceFaceBCD = ForceFace3pt(forcePtB, forcePtC, forcePtD, formedgeColor2);
+      var forceNormalMaterial=new THREE.MeshPhongMaterial( { 
+        color:  formedgeColor2
+      } );
+      var forceNormalMaterialOutline=new THREE.MeshPhongMaterial( { 
+        color: "white", transparent: false, side: THREE.BackSide 
+        
+      } );
+      force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtC, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"2", true))
+    }
   } else{
-   
+    if (resultapply>0){
       if (areaBCD/areaMax >= 0.75){
         formedgeColor2 = 0x0F3150
       }
@@ -1168,11 +1754,58 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-      var forceFaceNormalBCD = drawForceNormals2(forcePtB,forcePtC,forcePtD,formBtPt2[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"2");
+     //var forceFaceNormalBCD = drawForceNormals2(forcePtB,forcePtC,forcePtD,formBtPt2[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"2");
+      if (forcePtD.z<0){
+        force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtC, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"2", false))
+      } else{
+        force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtC, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"2", true))
+      }
+
+    } else{
+      if (areaBCD/areaMax >= 0.75){
+        formedgeColor2 = 0x0F3150
+      }
+      if (0.5 <= areaBCD/areaMax & areaBCD/areaMax < 0.75){
+        formedgeColor2 = 0x05416D
+      }
+      if (0.25 <= areaBCD/areaMax & areaBCD/areaMax  < 0.5){
+        formedgeColor2 = 0x376D9B
+      }
+      if (0 <= areaBCD/areaMax & areaBCD/areaMax < 0.25){
+        formedgeColor2 = 0x5B84AE
+      }
+      var forceFaceBCD = ForceFace3pt(forcePtB, forcePtC, forcePtD, formedgeColor2);
+      var forceNormalMaterial=new THREE.MeshPhongMaterial( { 
+        color:  formedgeColor2
+      } );
+      var forceNormalMaterialOutline=new THREE.MeshPhongMaterial( { 
+        color: "white", transparent: false, side: THREE.BackSide 
+        
+      } );
+      if (forcePtD.z<0){
+        force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtC, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"2", false))
+      } else {
+        force_general.add(ForceFaceNormalsArrow(forcePtB,forcePtC, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"2", true))
+      }
+    }
   }
   var formEdge2Material=new THREE.MeshPhongMaterial( { 
     color:  formedgeColor2
   } );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   if (result3 < 0){
     if (resultapply>0){
@@ -1196,7 +1829,7 @@ function Redraw(){
       color: "white", transparent: false, side: THREE.BackSide 
       
     } );
-    var forceFaceNormalACD = drawForceNormals(forcePtA,forcePtC,forcePtD,formBtPt3[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"3");
+    force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtD, forcePtC, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", true))
   } else{
     if (areaABD/areaMax >= 0.75){
       formedgeColor3 = 0x80002F
@@ -1218,7 +1851,12 @@ function Redraw(){
       color: "white", transparent: false, side: THREE.BackSide 
       
     } );
-    var forceFaceNormalABD = drawForceNormals6 (forcePtD,forcePtB,forcePtA,formBtPt3[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"3");
+    //force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtB, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", false))
+    if (forcePtD.z<0){
+      force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtB, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", false))
+    } else {
+      force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtB, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", true))
+    }
   }
 
   } else{
@@ -1243,8 +1881,11 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-      var forceFaceNormalACD = drawForceNormals2 (forcePtA,forcePtC,forcePtD,formBtPt3[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"3");
-      
+      if (forcePtD.z<0){
+        force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtD, forcePtC, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", false))
+      } else {
+        force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtD, forcePtC, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", true))
+      }
 
     }else {
       if (areaABD/areaMax >= 0.75){
@@ -1267,9 +1908,11 @@ function Redraw(){
         color: "white", transparent: false, side: THREE.BackSide 
         
       } );
-      var forceFaceNormalABD = drawForceNormals5 (forcePtA,forcePtB,forcePtD,formBtPt3[1], formBtPt1[0],forceNormalMaterial,forceNormalMaterialOutline,"3");
-
-
+      if (forcePtD.z<0){
+        force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtB, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", false))
+      } else {
+        force_general.add(ForceFaceNormalsArrow(forcePtA,forcePtB, forcePtD, 0.4, forceNormalMaterial,forceNormalMaterialOutline,"3", true))
+      }
     }
 
   }
@@ -1277,9 +1920,35 @@ function Redraw(){
     color:  formedgeColor3
   } );
 
+
+
+
+
+
   force_group_f.add(forceFaceACD)
   force_group_f.add(forceFaceBCD)
   force_group_f.add(forceFaceABD)
+
+
+
+
+
+
+
+  if(forcePtD.z<0){
+    var TXapplyNormal=createSpriteTextApply('f', "1",  
+    new THREE.Vector3(
+      face_center(forcePtA, forcePtB, forcePtC).x,
+      face_center(forcePtA, forcePtB, forcePtC).y,
+      face_center(forcePtA, forcePtB, forcePtC).z+0.4));
+  } else {
+      var TXapplyNormal=createSpriteTextApply('f', "1",  
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x,
+        face_center(forcePtA, forcePtB, forcePtC).y,
+        face_center(forcePtA, forcePtB, forcePtC).z-0.5));
+  }
+  force_general.add(TXapplyNormal);
 
   var forceFaceABDglob = ForceFace3pt(forcePtA,forcePtB,forcePtD,0x014F06)
   force_general_global.add(forceFaceABDglob)
@@ -1322,6 +1991,15 @@ function Redraw(){
   form_group_e.add(formEdge3)
  
 
+
+
+  
+
+
+
+
+  
+
   // ********************************** Minkowski Sum Generation ************************************
 
   //Minkowski Test
@@ -1337,6 +2015,13 @@ function Redraw(){
     (forcePtA.y + forcePtB.y +forcePtC.y +forcePtD.y)/4,
     (forcePtA.z + forcePtB.z +forcePtC.z +forcePtD.z)/4
   )
+  
+  var formMSline1 = createdashline (formBtPt1[1], formTpPt[0], "grey")
+  form_group_mink.add(formMSline1)
+  var formMSline2 = createdashline (formBtPt2[1], formTpPt[0], "grey")
+  form_group_mink.add(formMSline2)
+  var formMSline3 = createdashline (formBtPt3[1], formTpPt[0], "grey")
+  form_group_mink.add(formMSline3)
 
   // 1 - force cell ABCO1
   var formMSedgetempA = subVecUpdated(forcePtA, forceCenterPt)
@@ -1979,6 +2664,774 @@ force_group_mink.add( forceMinkFaceABC )
 
 
 
+// ****************************************************** Steps Generation ********************************************************
+
+
+  // add plan color egdes
+  var stepformEdgeMaterial=new THREE.MeshPhongMaterial( { 
+    color:  "grey"
+  } );
+  var stepedgeSize = 0.02
+
+  // edge 1
+  //create end sphere for bottom vertice 1
+  const stependPtVertice1SpV = addVectorAlongDir(formBtPt1[1], formTpPt[0], -0.14);
+  const stependPtVertice1Sp = addEdgeSphere(stepedgeSize, stependPtVertice1SpV, "grey")
+  //create edge bottom vertice 1
+  const stependPtVertice1 = addVectorAlongDir(formTpPt[0],formBtPt1[1],  -0.1);
+  const stepformEdge1 = createCylinderMesh(stependPtVertice1SpV,stependPtVertice1,stepformEdgeMaterial,stepedgeSize,stepedgeSize);
+
+  form_group_step.add(stependPtVertice1Sp)
+  form_group_step.add(stepformEdge1)
+
+  // edge 2
+  //create end sphere for bottom vertice 2
+  const stependPtVertice2SpV = addVectorAlongDir(formBtPt2[1], formTpPt[0], -0.14);
+  const stependPtVertice2Sp = addEdgeSphere(stepedgeSize, stependPtVertice2SpV, "grey")
+  //create edge bottom vertice 2
+  const stependPtVertice2 = addVectorAlongDir(formTpPt[0],formBtPt2[1],  -0.1);
+  const stepformEdge2 = createCylinderMesh(stependPtVertice2SpV,stependPtVertice2,stepformEdgeMaterial,stepedgeSize,stepedgeSize);
+
+  form_group_step.add(stependPtVertice2Sp)
+  form_group_step.add(stepformEdge2)
+
+  // edge 3
+  //create end sphere for bottom vertice 3
+  const stependPtVertice3SpV = addVectorAlongDir(formBtPt3[1], formTpPt[0], -0.14);
+  const stependPtVertice3Sp = addEdgeSphere(stepedgeSize, stependPtVertice3SpV, "grey")
+  //create edge bottom vertice 3
+  const stependPtVertice3 = addVectorAlongDir(formTpPt[0],formBtPt3[1],  -0.1);
+  const stepformEdge3 = createCylinderMesh(stependPtVertice3SpV,stependPtVertice3,stepformEdgeMaterial,stepedgeSize,stepedgeSize);
+
+  form_group_step.add(stependPtVertice3Sp)
+  form_group_step.add(stepformEdge3)
+
+
+// **************************************** step - 1 ********************************************
+  // form - show the faces 
+  // force - nothing is showing 
+
+// **************************************** step - 2 ********************************************
+  // form - faces are showing with cells
+  // force - nothing is showing 
+
+// **************************************** step - 3 ********************************************
+  // form - a. right hand rule circle arrow
+  //        b. text A, B, C
+  //        c. green faces (small)
+
+  // force - a. sphere at A, B
+  //         b. Text A, B
+  //         c. arrow inbetween A and B 
+  //         d. dash line
+
+  // ****************************     step - 3    ****************************
+
+  // **************************** step - 3a force ****************************
+  var StepForceVerticeA = addVerticeStep(0.03, "", forcePtA)
+  force_group_step_3.add(StepForceVerticeA)
+
+  var StepForceVerticeB = addVerticeStep(0.03, "", forcePtB)
+  force_group_step_3.add(StepForceVerticeB)
+
+  //add the arrow
+  var normal_apply_step_3 =new THREE.MeshPhongMaterial( {color: 0x009600} );
+  var force_normal_apply_step_3 =new THREE.MeshPhongMaterial( {color: 0x009600} );
+
+  const forceABvec = subVecUpdated(forcePtB,forcePtA);
+  var endforceABvec = drawArrowfromVec(forcePtA, forceABvec, 0.4)
+  const endPtArrowAB1 = addVectorAlongDir(forcePtA,endforceABvec,  0.01);
+  const endPtArrowAB2 = addVectorAlongDir(forcePtA,endforceABvec,  0.45);
+  var ABarrow1 = createCylinderArrowMesh( endPtArrowAB1, endPtArrowAB2,force_normal_apply_step_3,0.02,0.045,0.56);
+  force_group_step_3.add(ABarrow1);
+
+  var forceABline1 = createdashline (forcePtB,forcePtA, "grey")
+  force_group_step_3.add(forceABline1)
+
+  var StepForceTextA = createSpriteText('A',"", new THREE.Vector3(forcePtA.x, forcePtA.y, forcePtA.z+0.05))
+  force_group_step_3.add(StepForceTextA)
+  var StepForceTextB = createSpriteText('B',"", new THREE.Vector3(forcePtB.x, forcePtB.y, forcePtB.z+0.05))
+  force_group_step_3.add(StepForceTextB)
+
+  // **************************** step - 3b form ****************************
+  // draw the circle
+  const StepCirclegeometry = new THREE.CircleGeometry( 0.6, 60 );
+  const StepCirclematerial = new THREE.MeshBasicMaterial( { 
+    color: "grey", 
+    transparent: true, 
+    opacity: 0.3, 
+    side: THREE.DoubleSide, 
+    depthWrite: false} );
+  const StepCircle = new THREE.Mesh( StepCirclegeometry, StepCirclematerial );
+  var StepCircleCenter = new THREE.Vector3(formTpPt[0].x, formTpPt[0].y, formTpPt[0].z+0.3)
+  StepCircle.position.copy(StepCircleCenter)
+  form_group_step_3.add( StepCircle );
+
+  // draw divider point 1
+  // Find the vectors that represent the sides parallel to the base of the trapezoid.
+  // Let's call the fourth point D(x, y, 0.3).
+  
+  // AB = (0,0,0.3) - (0,0,0) = (0,0,0.3)
+  // AC = (1,-1,-1) - (0,0,0) = (1,-1,-1)
+  
+  // Find the vector CD by subtracting vector AB from vector AC:
+  // CD = AC - AB = (1,-1,-1) - (0,0,0.3) = (1,-1,-1.3)
+  
+  // Add the vector CD to point B to find point D:
+  // D(x, y, 0.3) = B + CD = (0,0,0.3) + (1,-1,-1.3) = (1, -1, -1)
+  
+  // Therefore, x = 1 and y = -1.
+
+
+  // draw the faces from the divider points
+
+  form_group_step_3.add( drawDivider(formTpPt[1], formTpPt[0], formBtPt1[1], StepCircleCenter, 0.6 ) );
+  //form_group_step_3.add( drawDivider(formTpPt[1], formTpPt[0], formBtPt2[1], StepCircleCenter, 0.6 ) );
+  //form_group_step_3.add( drawDivider(formTpPt[1], formTpPt[0], formBtPt3[1], StepCircleCenter, 0.6 ) );
+
+  var StepDividerPt1 = findDividerPt(formTpPt[1], formTpPt[0], formBtPt1[1], StepCircleCenter, 0.6 )
+  form_group_step_3.add(FormFace3ptGN(formTpPt[1], StepCircleCenter, StepDividerPt1))
+
+  var StepDividerPt2 = findDividerPt(formTpPt[1], formTpPt[0], formBtPt2[1], StepCircleCenter, 0.6 )
+  //form_group_step_3.add(FormFace3ptGN(formTpPt[1], StepCircleCenter, StepDividerPt2))
+
+  var StepDividerPt3 = findDividerPt(formTpPt[1], formTpPt[0], formBtPt3[1], StepCircleCenter, 0.6 )
+  //form_group_step_3.add(FormFace3ptGN(formTpPt[1], StepCircleCenter, StepDividerPt3))
+  
+  var StepApplyCircle = createCircleFaceArrowStep(
+  formTpPt[1], 0.2, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtB, forcePtC)),0x009600)
+  form_group_step_3.add(StepApplyCircle);
+
+  //draw arrows
+
+  var step3faceNormal1 = facenormal(formTpPt[1],StepDividerPt1,StepCircleCenter, 0.2)
+  var ABarrow1Vect = new THREE.Vector3(step3faceNormal1.x+StepDividerPt1.x, step3faceNormal1.y+StepDividerPt1.y, step3faceNormal1.z+StepDividerPt1.z);
+  var formABarrow1 = createCylinderArrowMesh(StepDividerPt1,ABarrow1Vect,normal_apply_step_3,0.01,0.02,0.6);
+
+  form_group_step_3.add(formABarrow1);
+
+  // add text at divided space
+  const formTextAvec = subVecUpdated(face_center(forcePtA,forcePtB,forcePtC),forcePtA);
+  var endformTextAvec = drawArrowfromVec(StepCircleCenter, formTextAvec, 0.01)
+  const formTextendPtA = addVectorAlongDir(StepCircleCenter,endformTextAvec,  -0.5);
+  var StepFormTextA = createSpriteText('A',"", new THREE.Vector3(formTextendPtA.x, formTextendPtA.y, formTextendPtA.z+0.05))
+  form_group_step_3.add(StepFormTextA)
+
+  const formTextBvec = subVecUpdated(face_center(forcePtA,forcePtB,forcePtC),forcePtB);
+  var endformTextBvec = drawArrowfromVec(StepCircleCenter, formTextBvec, 0.01)
+  const formTextendPtB = addVectorAlongDir(StepCircleCenter,endformTextBvec,  -0.5);
+  var StepFormTextB = createSpriteText('B',"", new THREE.Vector3(formTextendPtB.x, formTextendPtB.y, formTextendPtB.z+0.05))
+  form_group_step_3.add(StepFormTextB)
+
+
+
+
+  // ****************************     step - 4    ****************************
+
+  // **************************** step - 4a force ****************************
+
+  var StepForceVerticeC = addVerticeStep(0.03, "", forcePtC)
+  force_group_step_4.add(StepForceVerticeC)
+
+  var normal_apply_step_4 =new THREE.MeshPhongMaterial( {color: 0x009600} );
+  var ABarrow1 = createCylinderArrowMesh( forcePtA,forcePtB,normal_apply_step_4,0.02,0.045,0.86);
+  force_group_step_4.add(ABarrow1);
+
+  // var forceACline1 = createdashline (forcePtC,forcePtA, "grey")
+  // force_group_step_4.add(forceACline1)
+
+  // var forceBCline1 = createdashline (forcePtC,forcePtB, "grey")
+  // force_group_step_4.add(forceBCline1)
+
+  var StepForceTextC = createSpriteText('C',"", new THREE.Vector3(forcePtC.x, forcePtC.y, forcePtC.z+0.05))
+  force_group_step_4.add(StepForceTextC)
+  force_group_step_4.add(FormFace3ptGN(forcePtA,forcePtB,forcePtC))
+
+  const forceBCvec = subVecUpdated(forcePtC,forcePtB);
+  var endforceBCvec = drawArrowfromVec(forcePtB, forceBCvec, 0.4)
+  const endPtArrowBC1 = addVectorAlongDir(forcePtB,endforceBCvec,  0.01);
+  const endPtArrowBC2 = addVectorAlongDir(forcePtB,endforceBCvec,  0.45);
+  var BCarrow1 = createCylinderArrowMesh( endPtArrowBC1, endPtArrowBC2,normal_apply_step_4,0.02,0.045,0.56);
+  force_group_step_4.add(BCarrow1);
+
+  const forceCAvec = subVecUpdated(forcePtA,forcePtC);
+  var endforceCAvec = drawArrowfromVec(forcePtC, forceCAvec, 0.4)
+  const endPtArrowCA1 = addVectorAlongDir(forcePtC,endforceCAvec,  0.01);
+  const endPtArrowCA2 = addVectorAlongDir(forcePtC,endforceCAvec,  0.45);
+  var CAarrow1 = createCylinderArrowMesh( endPtArrowCA1, endPtArrowCA2,normal_apply_step_4,0.02,0.045,0.56);
+  force_group_step_4.add(CAarrow1);
+
+  var StepapplyForceArrowMaterial=new THREE.MeshPhongMaterial( {
+    color:  0x009600//green
+  } );
+
+  var StepapplyForceArrowMaterialOut=new THREE.MeshPhongMaterial( {
+    color:  "white",
+    transparent: false, 
+    side: THREE.BackSide
+  } );
+
+  if(forcePtD.z < 0){
+    const StepapplyArrow = createCylinderArrowMesh(
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), StepapplyForceArrowMaterial, 0.015,0.04,0.55);
+    force_group_step_4.add(StepapplyArrow);
+    const StepapplyArrowOut = createCylinderArrowMesh(new THREE.Vector3(
+      face_center(forcePtA, forcePtB, forcePtC).x, 
+      face_center(forcePtA, forcePtB, forcePtC).y, 
+      face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), StepapplyForceArrowMaterialOut, 0.02,0.045,0.545);
+    force_group_step_4.add(StepapplyArrowOut);
+  } else{
+    const StepapplyArrow = createCylinderArrowMesh(
+      face_center(forcePtA, forcePtB, forcePtC),
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z - 0.4), StepapplyForceArrowMaterial, 0.015,0.04,0.55);
+    force_group_step_4.add(StepapplyArrow);
+    const StepapplyArrowOut = createCylinderArrowMesh(
+      face_center(forcePtA, forcePtB, forcePtC),
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z - 0.4), StepapplyForceArrowMaterialOut, 0.02,0.045,0.545);
+    force_group_step_4.add(StepapplyArrowOut);
+  }
+
+  // face ABC
+
+  var stepABCarrow = createCircleFaceArrowStep(face_center(forcePtA, forcePtB, forcePtC), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtB, forcePtC)),"white")
+  force_group_step_4.add(stepABCarrow);
+
+
+  // **************************** step - 4b form ****************************
+
+  form_group_step_4.add( drawDivider(formTpPt[1], formTpPt[0], formBtPt2[1], StepCircleCenter, 0.6 ) );
+  form_group_step_4.add( drawDivider(formTpPt[1], formTpPt[0], formBtPt3[1], StepCircleCenter, 0.6 ) );
+
+
+  form_group_step_4.add(FormFace3ptGN(formTpPt[1], StepCircleCenter, StepDividerPt2))
+
+  form_group_step_4.add(FormFace3ptGN(formTpPt[1], StepCircleCenter, StepDividerPt3))
+  
+
+  // add arrow BC
+  var step3faceNormal2 = facenormal(formTpPt[1],StepDividerPt2,StepCircleCenter, 0.2)
+  var BCarrow1Vect = new THREE.Vector3(step3faceNormal2.x+StepDividerPt2.x, step3faceNormal2.y+StepDividerPt2.y, step3faceNormal2.z+StepDividerPt2.z);
+  var formBCarrow1 = createCylinderArrowMesh(StepDividerPt2,BCarrow1Vect,normal_apply_step_4,0.01,0.02,0.6);
+
+  form_group_step_4.add(formBCarrow1);
+
+  // add arrow CA
+  var step3faceNormal3 = facenormal(formTpPt[1],StepDividerPt3,StepCircleCenter, 0.2)
+  var CAarrow1Vect = new THREE.Vector3(step3faceNormal3.x+StepDividerPt3.x, step3faceNormal3.y+StepDividerPt3.y, step3faceNormal3.z+StepDividerPt3.z);
+  var formCAarrow1 = createCylinderArrowMesh(StepDividerPt3,CAarrow1Vect,normal_apply_step_4,0.01,0.02,0.6);
+
+  form_group_step_4.add(formCAarrow1);
+
+  // add the Text "c"
+  const formTextCvec = subVecUpdated(face_center(forcePtA,forcePtB,forcePtC),forcePtC);
+  var endformTextCvec = drawArrowfromVec(StepCircleCenter, formTextCvec, 0.01)
+  const formTextendPtC = addVectorAlongDir(StepCircleCenter,endformTextCvec,  -0.5);
+  var StepFormTextC = createSpriteText('C',"", new THREE.Vector3(formTextendPtC.x, formTextendPtC.y, formTextendPtC.z+0.05))
+  form_group_step_4.add(StepFormTextC)
+
+
+
+  // ****************************     step - 5    ****************************
+
+  // **************************** step - 5a force ****************************
+
+  // draw offseted triangle ABC
+  var forcePtAOffset = addOffsetPt3V(forcePtA, forcePtB, forcePtC, 0.8);
+  var forcePtBOffset = addOffsetPt3V(forcePtB, forcePtA, forcePtC, 0.8);
+  var forcePtCOffset = addOffsetPt3V(forcePtC, forcePtA, forcePtB, 0.8);
+  var normal_apply_step_5 =new THREE.MeshPhongMaterial( {color: 0x009600} );
+  var step5ABarrow1 = createCylinderArrowMesh( forcePtAOffset,forcePtBOffset,normal_apply_step_5,0.01,0.025,0.86);
+  force_group_step_5.add(step5ABarrow1);
+  var step5BCarrow1 = createCylinderArrowMesh( forcePtBOffset,forcePtCOffset,normal_apply_step_5,0.01,0.025,0.86);
+  force_group_step_5.add(step5BCarrow1);
+  var step5CAarrow1 = createCylinderArrowMesh( forcePtCOffset,forcePtAOffset,normal_apply_step_5,0.01,0.025,0.86);
+  force_group_step_5.add(step5CAarrow1);
+
+  force_group_step_5.add(FormFace3ptGN(forcePtAOffset,forcePtBOffset,forcePtCOffset))
+  var step5ABCarrow = createCircleFaceArrowStep(face_center(forcePtA, forcePtB, forcePtC), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtB, forcePtC)),"white")
+  force_group_step_5.add(step5ABCarrow);
+
+  var Step5applyForceArrowMaterial=new THREE.MeshPhongMaterial( {
+    color:  0x009600//green
+  } );
+
+  var Step5applyForceArrowMaterialOut=new THREE.MeshPhongMaterial( {
+    color:  "white",
+    transparent: false, 
+    side: THREE.BackSide
+  } );
+
+  if(forcePtD.z < 0){
+    const StepapplyArrow = createCylinderArrowMesh(
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), Step5applyForceArrowMaterial, 0.015,0.04,0.55);
+    force_group_step_5.add(StepapplyArrow);
+    const StepapplyArrowOut = createCylinderArrowMesh(new THREE.Vector3(
+      face_center(forcePtA, forcePtB, forcePtC).x, 
+      face_center(forcePtA, forcePtB, forcePtC).y, 
+      face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), Step5applyForceArrowMaterialOut, 0.02,0.045,0.545);
+    force_group_step_5.add(StepapplyArrowOut);
+  } else{
+    const StepapplyArrow = createCylinderArrowMesh(
+      face_center(forcePtA, forcePtB, forcePtC),
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z - 0.4), Step5applyForceArrowMaterial, 0.015,0.04,0.55);
+    force_group_step_5.add(StepapplyArrow);
+    const StepapplyArrowOut = createCylinderArrowMesh(
+      face_center(forcePtA, forcePtB, forcePtC),
+      new THREE.Vector3(
+        face_center(forcePtA, forcePtB, forcePtC).x, 
+        face_center(forcePtA, forcePtB, forcePtC).y, 
+        face_center(forcePtA, forcePtB, forcePtC).z - 0.4), Step5applyForceArrowMaterialOut, 0.02,0.045,0.545);
+    force_group_step_5.add(StepapplyArrowOut);
+  }
+
+
+
+
+  // draw offseted triangle ABD
+
+
+  var forcePtAOffset2 = addOffsetPt3V(forcePtA, forcePtB, forcePtD, 0.8);
+  var forcePtAOffset3 = addOffsetPt3V(forcePtA, forcePtC, forcePtD, 0.8);
+
+  var forcePtBOffset2 = addOffsetPt3V(forcePtB, forcePtA, forcePtD, 0.8);
+  var forcePtCOffset2 = addOffsetPt3V(forcePtC, forcePtA, forcePtD, 0.8);
+  var forcePtDOffset = addOffsetPt3V(forcePtD, forcePtA, forcePtB, 0.8);
+  var forcePtDOffset2 = addOffsetPt3V(forcePtD, forcePtA, forcePtC, 0.8);
+
+  // var normal_side_step_5 =new THREE.MeshPhongMaterial( {color: "black"} );
+  // var step5ABarrow2 = createCylinderArrowMesh( forcePtBOffset2,forcePtAOffset2,normal_side_step_5,0.01,0.025,0.86);
+  // force_group_step_5.add(step5ABarrow2);
+  // var step5BDarrow1 = createCylinderArrowMesh( forcePtAOffset2,forcePtDOffset,normal_side_step_5,0.01,0.025,0.86);
+  // force_group_step_5.add(step5BDarrow1);
+  // var step5DAarrow1 = createCylinderArrowMesh( forcePtDOffset,forcePtBOffset2,normal_side_step_5,0.01,0.025,0.86);
+  // force_group_step_5.add(step5DAarrow1);
+
+  // var step5ABDarrow = createCircleFaceArrowStep(face_center(forcePtAOffset2, forcePtBOffset2, forcePtDOffset), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtD, forcePtA)),"white")
+  // force_group_step_5.add(step5ABDarrow);
+  // if(forcePtD.z<0){
+  //   var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset.x, forcePtDOffset.y, forcePtDOffset.z-0.2))
+  // } else{
+  //   var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset.x, forcePtDOffset.y, forcePtDOffset.z+0.05))
+  // }
+  // force_group_step_5.add(StepFormTextD)
+
+
+if (result1 < 0){
+    if (resultapply>0){
+
+      var normal_side_step_5 =new THREE.MeshPhongMaterial( {color: "black"} );
+      var step5ABarrow2 = createCylinderArrowMesh( forcePtBOffset2,forcePtAOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5ABarrow2);
+      var step5BDarrow1 = createCylinderArrowMesh( forcePtAOffset2,forcePtDOffset,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5BDarrow1);
+      var step5DAarrow1 = createCylinderArrowMesh( forcePtDOffset,forcePtBOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5DAarrow1);
+    
+      var step5ABDarrow = createCircleFaceArrowStep(face_center(forcePtAOffset2, forcePtBOffset2, forcePtDOffset), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtD, forcePtA)),"white")
+      force_group_step_5.add(step5ABDarrow);
+      if(forcePtD.z<0){
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset.x, forcePtDOffset.y, forcePtDOffset.z-0.2))
+      } else{
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset.x, forcePtDOffset.y, forcePtDOffset.z+0.05))
+      }
+      force_group_step_5.add(StepFormTextD)
+    } else{
+      var normal_side_step_5 =new THREE.MeshPhongMaterial( {color: "black"} );
+      var step5ABarrow2 = createCylinderArrowMesh( forcePtAOffset3,forcePtCOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5ABarrow2);
+      var step5BDarrow1 = createCylinderArrowMesh( forcePtCOffset2,forcePtDOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5BDarrow1);
+      var step5DAarrow1 = createCylinderArrowMesh( forcePtDOffset2,forcePtAOffset3,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5DAarrow1);
+    
+      var step5ABDarrow = createCircleFaceArrowStep(face_center(forcePtAOffset3, forcePtCOffset2, forcePtDOffset2), 0.15, cross(subVecUpdated(forcePtC, forcePtA),subVecUpdated(forcePtD, forcePtC)),"white")
+      force_group_step_5.add(step5ABDarrow);
+      if(forcePtD.z<0){
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset2.x, forcePtDOffset2.y, forcePtDOffset2.z-0.2))
+      } else{
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset2.x, forcePtDOffset2.y, forcePtDOffset2.z+0.05))
+      }
+      force_group_step_5.add(StepFormTextD)
+    }
+  } else{
+    if (resultapply>0){
+      var normal_side_step_5 =new THREE.MeshPhongMaterial( {color: "black"} );
+      var step5ABarrow2 = createCylinderArrowMesh( forcePtBOffset2,forcePtAOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5ABarrow2);
+      var step5BDarrow1 = createCylinderArrowMesh( forcePtAOffset2,forcePtDOffset,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5BDarrow1);
+      var step5DAarrow1 = createCylinderArrowMesh( forcePtDOffset,forcePtBOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5DAarrow1);
+    
+      var step5ABDarrow = createCircleFaceArrowStep(face_center(forcePtAOffset2, forcePtBOffset2, forcePtDOffset), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtD, forcePtA)),"white")
+      force_group_step_5.add(step5ABDarrow);
+      if(forcePtD.z<0){
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset.x, forcePtDOffset.y, forcePtDOffset.z-0.2))
+      } else{
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset.x, forcePtDOffset.y, forcePtDOffset.z+0.05))
+      }
+      force_group_step_5.add(StepFormTextD)
+    } else{
+      var normal_side_step_5 =new THREE.MeshPhongMaterial( {color: "black"} );
+      var step5ABarrow2 = createCylinderArrowMesh( forcePtAOffset3,forcePtCOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5ABarrow2);
+      var step5BDarrow1 = createCylinderArrowMesh( forcePtCOffset2,forcePtDOffset2,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5BDarrow1);
+      var step5DAarrow1 = createCylinderArrowMesh( forcePtDOffset2,forcePtAOffset3,normal_side_step_5,0.01,0.025,0.86);
+      force_group_step_5.add(step5DAarrow1);
+    
+      var step5ABDarrow = createCircleFaceArrowStep(face_center(forcePtAOffset3, forcePtCOffset2, forcePtDOffset2), 0.15, cross(subVecUpdated(forcePtC, forcePtA),subVecUpdated(forcePtD, forcePtC)),"white")
+      force_group_step_5.add(step5ABDarrow);
+      if(forcePtD.z<0){
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset2.x, forcePtDOffset2.y, forcePtDOffset2.z-0.2))
+      } else{
+        var StepFormTextD = createSpriteText('D',"", new THREE.Vector3(forcePtDOffset2.x, forcePtDOffset2.y, forcePtDOffset2.z+0.05))
+      }
+      force_group_step_5.add(StepFormTextD)
+    }
+  }
+
+
+
+
+
+
+
+  // **************************** step - 5b form ****************************
+
+  var stepCircle2Center = new THREE.Vector3()
+  var step5circleSp = new THREE.Sphere(new THREE.Vector3(formBtPt1[1].x,formBtPt1[1].y,formBtPt1[1].z),0.8);
+  step5circleSp.clampPoint(formBtPt1[0],stepCircle2Center);
+
+  const StepCirclegeometry2 = new THREE.CircleGeometry( 0.6, 60 );
+  const StepCirclematerial2 = new THREE.MeshBasicMaterial( { 
+    color: "grey", 
+    transparent: true, 
+    opacity: 0.3, 
+    side: THREE.DoubleSide, 
+    depthWrite: false} );
+  const StepCircle2 = new THREE.Mesh( StepCirclegeometry2, StepCirclematerial2 );
+  StepCircle2.position.copy(stepCircle2Center)
+  form_group_step_5.add( StepCircle2 );
+
+  // **************** find the circle rotation (step 5) **************** important *****************
+
+  var step5TpClosestPt = new THREE.Vector3()
+  var step5TopSp = new THREE.Sphere(new THREE.Vector3(formTpPt[1].x,formTpPt[1].y,formTpPt[1].z),0.75);
+  step5TopSp.clampPoint(formTpPt[0],step5TpClosestPt);
+
+  var step5BtClosestPt = new THREE.Vector3()
+  var step5BtSp = new THREE.Sphere(new THREE.Vector3(formTpPt[1].x,formTpPt[1].y,formTpPt[1].z),0.9);
+  step5BtSp.clampPoint(formBtPt1[1],step5BtClosestPt);
+
+  
+  var nn13 = facenormal(formTpPt[1],step5BtClosestPt, step5TpClosestPt,0.2)
+
+  var p5 = new THREE.Vector3(step5TpClosestPt.x, step5TpClosestPt.y, step5TpClosestPt.z);
+  var p6 = new THREE.Vector3(formBtPt1[1].x, formBtPt1[1].y, step5TpClosestPt.z);
+
+  var l4 = distanceVector(p5, p6);
+  var pt_t3 = new THREE.Vector3(
+    (step5TpClosestPt.x + (0.5/(l4-0.5))*formBtPt1[1].x)/(1+0.5/(l4-0.5)),
+    (step5TpClosestPt.y + (0.5/(l4-0.5))*formBtPt1[1].y)/(1+0.5/(l4-0.5)),
+    (step5TpClosestPt.z + (0.5/(l4-0.5))*step5TpClosestPt.z)/(1+0.5/(l4-0.5))
+  );
+
+  var new1 = new THREE.Vector3(nn13.x+pt_t3.x, nn13.y+pt_t3.y, nn13.z+pt_t3.z);
+  var vecab = new THREE.Vector3(new1.x - pt_t3.x, new1.y - pt_t3.y,new1.z - pt_t3.z);
+
+  var Point_step_2_12 = new THREE.Vector3()
+  var Sphere_step_2_12 = new THREE.Sphere(new THREE.Vector3(formBtPt1[1].x,formBtPt1[1].y,formBtPt1[1].z),0.8);
+  Sphere_step_2_12.clampPoint(formBtPt1[0],Point_step_2_12);
+  
+  var p3 = new THREE.Vector3(formBtPt1[1].x,formBtPt1[1].y,Point_step_2_12.z);
+  var p4 = new THREE.Vector3(Point_step_2_12.x,Point_step_2_12.y,Point_step_2_12.z);
+
+  var l3 = distanceVector(p3, p4);
+  var pt_t2 = new THREE.Vector3(
+    (Point_step_2_12.x + (0.5/(l3-0.5))*formBtPt1[1].x)/(1+0.5/(l3-0.5)),
+    (Point_step_2_12.y + (0.5/(l3-0.5))*formBtPt1[1].y)/(1+0.5/(l3-0.5)),
+    (Point_step_2_12.z + (0.5/(l3-0.5))*Point_step_2_12.z)/(1+0.5/(l3-0.5))
+  );
+
+  var vec_2a = new THREE.Vector3(pt_t2.x-Point_step_2_12.x, pt_t2.y-Point_step_2_12.y, pt_t2.z-Point_step_2_12.z);
+  var vec_2b = new THREE.Vector3(formBtPt1[1].x-Point_step_2_12.x, formBtPt1[1].y-Point_step_2_12.y, formBtPt1[1].z-Point_step_2_12.z);
+
+  var an1 = vec_2a.angleTo(vec_2b);
+  if(formBtPt1[1].z<=0){
+  rotateAroundObjectAxis(StepCircle2 , vecab, Math.PI/2-an1)};
+  if(formBtPt1[1].z>0){
+  rotateAroundObjectAxis(StepCircle2 , vecab, Math.PI/2+an1)};
+
+
+  //**************** draw the dividers in the second circle (step 5) ****************
+
+  // divider - 1
+  var f1 = new THREE.Vector3(formBtPt1[1].x,formBtPt1[1].y,formBtPt1[1].z);
+  var f2 = new THREE.Vector3(formBtPt3[1].x,formBtPt3[1].y,formBtPt3[1].z);
+  var fn = new THREE.Vector3().crossVectors(f1,f2);
+  var f3 = new THREE.Vector3().crossVectors(fn,f1);
+  var q = Math.sqrt(0.6*0.6/(f3.x*f3.x+f3.y*f3.y+f3.z*f3.z));
+
+  var mf = new THREE.Vector3(Point_step_2_12.x+q*f3.x,Point_step_2_12.y+q*f3.y,Point_step_2_12.z+q*f3.z);
+ 
+  var spacedivide_geo21 = createCylinderMesh(Point_step_2_12,mf,new THREE.MeshPhongMaterial({color: "white", transparent: true, opacity:0.6}),0.008,0.008);
+  form_group_step_5.add( spacedivide_geo21 );
+
+  // divider - 2
+  var f12 = new THREE.Vector3(formBtPt1[1].x,formBtPt1[1].y,formBtPt1[1].z);
+  var f22 = new THREE.Vector3(formTpPt[1].x,formTpPt[1].y,formTpPt[1].z);
+  var fn2 = new THREE.Vector3().crossVectors(f12,f22);
+  var f32 = new THREE.Vector3().crossVectors(fn2,f12);
+  var q = Math.sqrt(0.6*0.6/(f32.x*f32.x+f32.y*f32.y+f32.z*f32.z));
+
+  var mf2 = new THREE.Vector3(Point_step_2_12.x+q*f32.x,Point_step_2_12.y+q*f32.y,Point_step_2_12.z+q*f32.z);
+  var spacedivide_geo22 = createCylinderMesh(Point_step_2_12,mf2,new THREE.MeshPhongMaterial({color: "white", transparent: true, opacity:0.6}),0.008,0.008);
+  form_group_step_5.add( spacedivide_geo22 );
+
+  // divider - 3
+  var f13 = new THREE.Vector3(formBtPt1[1].x,formBtPt1[1].y,formBtPt1[1].z);
+  var f23 = new THREE.Vector3(formBtPt2[1].x,formBtPt2[1].y,formBtPt2[1].z);
+  var fn3 = new THREE.Vector3().crossVectors(f13,f23);
+  var f33 = new THREE.Vector3().crossVectors(fn3,f13);
+  var q = Math.sqrt(0.6*0.6/(f33.x*f33.x+f33.y*f33.y+f33.z*f33.z));
+
+  var mf3 = new THREE.Vector3(Point_step_2_12.x+q*f33.x,Point_step_2_12.y+q*f33.y,Point_step_2_12.z+q*f33.z);
+  var spacedivide_geo23 = createCylinderMesh(Point_step_2_12,mf3,new THREE.MeshPhongMaterial({color: "white", transparent: true, opacity:0.6}),0.008,0.008);
+  form_group_step_5.add( spacedivide_geo23 );
+
+  // draw the faces for the divider
+  form_group_step_5.add(FormFace3ptGN(formBtPt1[1], stepCircle2Center, mf2))
+  form_group_step_5.add(FormFace3ptGR(formBtPt1[1], stepCircle2Center, mf))
+  form_group_step_5.add(FormFace3ptGR(formBtPt1[1], stepCircle2Center, mf3))
+
+  var normal_side_step_5 =new THREE.MeshPhongMaterial( {color: "black"} );
+  // draw arrow BA
+  var nn = facenormal(Point_step_2_12,formBtPt1[1],mf2, 0.2);
+  var new1 = new THREE.Vector3(nn.x+mf2.x, nn.y+mf2.y, nn.z+mf2.z);
+  var spacedivide_geo2a1 = createCylinderArrowMesh(mf2,new1,normal_side_step_5,0.01,0.02,0.6);
+
+  form_group_step_5.add(spacedivide_geo2a1);
+
+  // draw arrow AD
+  var nn2 = facenormal(Point_step_2_12,formBtPt1[1],mf, 0.2);
+  var new2 = new THREE.Vector3(nn2.x + mf.x, nn2.y + mf.y, nn2.z + mf.z);
+  var spacedivide_geo2a2 = createCylinderArrowMesh(mf,new2,normal_side_step_5,0.01,0.02,0.6);
+
+  form_group_step_5.add(spacedivide_geo2a2);
+
+  // draw arrow DB
+  var nn3 = facenormal(Point_step_2_12,formBtPt1[1],mf3, 0.2);
+  var new3 = new THREE.Vector3(nn3.x + mf3.x, nn3.y + mf3.y, nn3.z + mf3.z);
+  var spacedivide_geo2a3 = createCylinderArrowMesh(mf3,new3,normal_side_step_5,0.01,0.02,0.6);
+
+  form_group_step_5.add(spacedivide_geo2a3);
+
+  // add the text "A"
+  var sta = new THREE.Vector3((mf2.x+mf.x)/2,(mf2.y+mf.y)/2,(mf2.z+mf.z)/2);
+  var oldl = Point_step_2_12.distanceTo(sta);
+  var c = new THREE.Vector3((Point_step_2_12.x + (sta.x-Point_step_2_12.x)*0.5/oldl),(Point_step_2_12.y + (sta.y-Point_step_2_12.y)*0.5/oldl),(Point_step_2_12.z + (sta.z-Point_step_2_12.z)*0.5/oldl));
+
+  var TXMeshST21= createSpriteText("A","",c);
+  form_group_step_5.add(TXMeshST21);
+
+  // add the text "D"
+  var sta2 = new THREE.Vector3((mf.x+mf3.x)/2,(mf.y+mf3.y)/2,(mf.z+mf3.z)/2);
+  var oldl2 = Point_step_2_12.distanceTo(sta2);
+  var c2 = new THREE.Vector3((Point_step_2_12.x + (sta2.x-Point_step_2_12.x)*0.5/oldl2),(Point_step_2_12.y + (sta2.y-Point_step_2_12.y)*0.5/oldl2),(Point_step_2_12.z + (sta2.z-Point_step_2_12.z)*0.5/oldl2));
+
+  var TXMeshST22= createSpriteText("D","",c2);
+  form_group_step_5.add(TXMeshST22);
+
+  // add the text "B"
+  var sta3 = new THREE.Vector3((mf2.x+mf3.x)/2,(mf2.y+mf3.y)/2,(mf2.z+mf3.z)/2);
+  var oldl3 = Point_step_2_12.distanceTo(sta3);
+  var c3 = new THREE.Vector3((Point_step_2_12.x + (sta3.x-Point_step_2_12.x)*0.5/oldl3),(Point_step_2_12.y + (sta3.y-Point_step_2_12.y)*0.5/oldl3),(Point_step_2_12.z + (sta3.z-Point_step_2_12.z)*0.5/oldl3));
+
+  var TXMeshST23=createSpriteText("B","",c3);
+  form_group_step_5.add(TXMeshST23);
+
+  // **************************** step - 6a force ****************************
+  // add the arrow for the edge under construction (using the normal setup of the arrow)
+
+  if (result1 < 0){
+    if (resultapply>0){
+      if (areaABD/areaMax >= 0.75){
+        formedgeColor1 = 0x80002F
+      }
+      if (0.5 <= areaABD/areaMax & areaABD/areaMax < 0.75){
+        formedgeColor1 = 0x940041
+      }
+      if (0.25 <= areaABD/areaMax & areaABD/areaMax  < 0.5){
+        formedgeColor1 = 0xCC0549
+      }
+      if (0 <= areaABD/areaMax & areaABD/areaMax < 0.25){
+        formedgeColor1 = 0xD72F62
+      }
+      var stepforceFaceABD = ForceFace3pt(forcePtAOffset2, forcePtBOffset2, forcePtDOffset, formedgeColor1);
+      force_group_step_6.add(stepforceFaceABD);
+      var stepforceNormalMaterial=new THREE.MeshPhongMaterial( { 
+        color:  formedgeColor1
+      } );
+      var stepforceNormalMaterialOutline=new THREE.MeshPhongMaterial( { 
+        color: "white", transparent: false, side: THREE.BackSide 
+        
+      } );
+      force_group_step_6.add(ForceFaceNormalsArrow(forcePtBOffset2,forcePtDOffset, forcePtAOffset2, 0.4, stepforceNormalMaterial,stepforceNormalMaterialOutline,"1", true))
+    } else{
+      if (areaACD/areaMax >= 0.75){
+        formedgeColor1 = 0x80002F
+      }
+      if (0.5 <= areaACD/areaMax & areaACD/areaMax  < 0.75){
+        formedgeColor1 = 0x940041
+      }
+      if (0.25 <= areaACD/areaMax & areaACD/areaMax  < 0.5){
+        formedgeColor1 = 0xCC0549
+      }
+      if (0 <= areaACD/areaMax & areaACD/areaMax < 0.25){
+        formedgeColor1 = 0xD72F62
+      }
+      var stepforceFaceACD = ForceFace3pt(forcePtAOffset3, forcePtCOffset2, forcePtDOffset2, formedgeColor1);
+      force_group_step_6.add(stepforceFaceACD);
+      var stepforceNormalMaterial=new THREE.MeshPhongMaterial( { 
+        color:  formedgeColor1
+      } );
+      var stepforceNormalMaterialOutline=new THREE.MeshPhongMaterial( { 
+        color: "white", transparent: false, side: THREE.BackSide 
+        
+      } );
+      force_group_step_6.add(ForceFaceNormalsArrow(forcePtAOffset3,forcePtDOffset2, forcePtCOffset2, 0.4, stepforceNormalMaterial,stepforceNormalMaterialOutline,"1", true))
+    }
+  } else{
+    if (resultapply>0){
+      if (areaABD/areaMax >= 0.75){
+        formedgeColor1 = 0x0F3150
+      }
+      if (0.5 <= areaABD/areaMax & areaABD/areaMax < 0.75){
+        formedgeColor1 = 0x05416D
+      }
+      if (0.25 <= areaABD/areaMax & areaABD/areaMax  < 0.5){
+        formedgeColor1 = 0x376D9B
+      }
+      if (0 <= areaABD/areaMax & areaABD/areaMax < 0.25){
+        formedgeColor1 = 0x5B84AE
+      }
+      var stepforceFaceABD = ForceFace3pt(forcePtAOffset2, forcePtBOffset2, forcePtDOffset, formedgeColor1);
+      force_group_step_6.add(stepforceFaceABD);
+
+      var stepforceNormalMaterial=new THREE.MeshPhongMaterial( { 
+        color:  formedgeColor1
+      } );
+      var stepforceNormalMaterialOutline=new THREE.MeshPhongMaterial( { 
+        color: "white", transparent: false, side: THREE.BackSide 
+        
+      } );
+      force_group_step_6.add(ForceFaceNormalsArrow(forcePtBOffset2,forcePtDOffset, forcePtAOffset2, 0.4, stepforceNormalMaterial,stepforceNormalMaterialOutline,"1", false))
+    } else{
+      if (areaACD/areaMax >= 0.75){
+        formedgeColor1 = 0x0F3150
+      }
+      if (0.5 <= areaACD/areaMax & areaACD/areaMax  < 0.75){
+        formedgeColor1 = 0x05416D
+      }
+      if (0.25 <= areaACD/areaMax & areaACD/areaMax  < 0.5){
+        formedgeColor1 = 0x376D9B
+      }
+      if (0 <= areaACD/areaMax & areaACD/areaMax < 0.25){
+        formedgeColor1 = 0x5B84AE
+      }
+      var stepforceFaceACD = ForceFace3pt(forcePtAOffset3, forcePtCOffset2, forcePtDOffset2, formedgeColor1);
+      force_group_step_6.add(stepforceFaceACD);
+
+      var stepforceNormalMaterial=new THREE.MeshPhongMaterial( { 
+        color:  formedgeColor1
+      } );
+      var stepforceNormalMaterialOutline=new THREE.MeshPhongMaterial( { 
+        color: "white", transparent: false, side: THREE.BackSide 
+        
+      } );
+      force_group_step_6.add(ForceFaceNormalsArrow(forcePtAOffset3,forcePtDOffset2, forcePtCOffset2, 0.4, stepforceNormalMaterial, stepforceNormalMaterialOutline,"1", false))
+    }
+  }
+  var stepformEdge1Material=new THREE.MeshPhongMaterial( { 
+    color:  formedgeColor1
+  } );
+  //create end sphere for bottom vertice 1
+  const step6endPtVertice1SpV = addVectorAlongDir(formBtPt1[1], formTpPt[0], -0.14);
+  const step6endPtVertice1Sp = addEdgeSphere(edgeSize1, step6endPtVertice1SpV, formedgeColor1)
+  //create edge bottom vertice 1
+  const step6endPtVertice1 = addVectorAlongDir(formTpPt[0],formBtPt1[1],  -0.1);
+  const step6formEdge1 = createCylinderMesh(step6endPtVertice1SpV,step6endPtVertice1,stepformEdge1Material,edgeSize1,edgeSize1);
+
+
+  form_group_step_6.add(step6endPtVertice1Sp)
+  form_group_step_6.add(step6formEdge1)
+
+
+
+
+  //fucntions related to draw circle perpenticular to edge
+  function facenormal(pt1, pt2, pt3, k){
+    var cb = new THREE.Vector3();
+    var ab = new THREE.Vector3();
+    var normal1 = new THREE.Vector3();
+    cb.subVectors(pt1, pt2);
+    ab.subVectors(pt3, pt1);
+    cb.cross(ab);
+    normal1.copy(cb).normalize();
+    var normal2 = new THREE.Vector3(k*normal1.x, k*normal1.y, k*normal1.z)
+    return normal2
+  }
+
+  function distanceVector( v1, v2 )
+  {
+    var dx = v1.x - v2.x;
+    var dy = v1.y - v2.y;
+    var dz = v1.z - v2.z;
+
+    return Math.sqrt( dx * dx + dy * dy + dz * dz );
+  }
+
+  function rotateAroundObjectAxis(object, axis, radians) {
+    var rotObjectMatrix = new THREE.Matrix4();
+    rotObjectMatrix.makeRotationAxis(axis.normalize(), radians);
+
+    // old code for Three.JS pre r54:
+    // object.matrix.multiplySelf(rotObjectMatrix);      // post-multiply
+    // new code for Three.JS r55+:
+    object.matrix.multiply(rotObjectMatrix);
+
+    // old code for Three.js pre r49:
+    // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+    // old code for Three.js r50-r58:
+    // object.rotation.setEulerFromRotationMatrix(object.matrix);
+    // new code for Three.js r59+:
+    object.rotation.setFromRotationMatrix(object.matrix);
+  }
+
+
+
+
+
+
+
+
+
   // visual of the elements
 
   form_general_global.traverse(function(obj) {
@@ -2053,9 +3506,166 @@ force_group_mink.add( forceMinkFaceABC )
     }
   });
 
+  // hide the steps - start from step general
+
+  force_group_step.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  }); 
+
+  form_group_step.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  });
 
 
+  // hide the steps - start from step 3
 
+  force_group_step_3.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  }); 
+
+  form_group_step_3.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  });
+
+  // hide the steps - start from step 4
+
+  force_group_step_4.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  }); 
+
+  form_group_step_4.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  });
+
+   // hide the steps - start from step 5
+
+   force_group_step_5.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  }); 
+
+  form_group_step_5.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  });
+
+
+  // hide the steps - start from step 6
+  force_group_step_6.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  }); 
+
+  form_group_step_6.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = false;
+    }
+    if (obj.type === "Line") {
+      obj.material.visible = false;
+    }
+  });
 
   scene.add(form_group_v);
   scene.add(form_group_f);
@@ -2074,6 +3684,13 @@ force_group_mink.add( forceMinkFaceABC )
   scene.add(form_general_trial);
   scene.add(form_group_mink);
 
+  scene.add(form_group_step);
+  scene.add(form_group_step_3);
+  scene.add(form_group_step_4);
+  scene.add(form_group_step_5);
+  scene.add(form_group_step_6);
+  scene.add(form_group_step_7);
+
   scene2.add(force_group_v);
   scene2.add(force_group_f);
   scene2.add(force_group_e);
@@ -2085,6 +3702,13 @@ force_group_mink.add( forceMinkFaceABC )
   scene2.add(force_group_f_trial);
   scene2.add(force_general_trial);
   scene2.add(force_group_mink);
+
+  scene2.add(force_group_step);
+  scene2.add(force_group_step_3);
+  scene2.add(force_group_step_4);
+  scene2.add(force_group_step_5);
+  scene2.add(force_group_step_6);
+  scene2.add(force_group_step_7);
 
 
 }
@@ -2254,7 +3878,7 @@ function initRender(){
   renderer.shadowMapEnabled = true;
   renderer.shadowMaptype = THREE.PCFSoftShadowMap;
   renderer.localClippingEnabled = true;
-  //renderer.setPixelRatio(devicePixelRatio);
+  renderer.setPixelRatio(devicePixelRatio);
   document.body.appendChild(renderer.domElement);//insert this into body
 }
 
@@ -2414,6 +4038,14 @@ function subVec(n1, n2) {
     sub.y = n1.y - n2.y;
     sub.z = n1.z - n2.z;
     return sub;
+}
+
+function addVec(n1, n2) {
+  var sub = new THREE.Vector3(0, 0, 0);
+  sub.x = n1.x + n2.x;
+  sub.y = n1.y + n2.y;
+  sub.z = n1.z + n2.z;
+  return sub;
 }
 
 function drawArrowfromVec(startPt, endPt, length){
@@ -2661,6 +4293,18 @@ function addVertice(size, name, location){
     return pt_sphare
 }
 
+function addVerticeStep(size, name, location){
+  var pt_material = new THREE.MeshPhongMaterial({color: "green", transparent: false});
+  var pt_geo = new THREE.SphereGeometry(size);
+  var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+  
+  pt_sphare.name= name;
+  pt_sphare.position.copy(location);
+  pt_sphare.castShadow=true;
+
+  return pt_sphare
+}
+
 //construct vertices outlines
 function addVerticeOut(size, location, scale){
     var pt_material_outline = new THREE.MeshBasicMaterial( { color: "black", transparent: false, side: THREE.BackSide } );
@@ -2750,7 +4394,7 @@ function FormFace3ptGR(pt1, pt2, pt3){
         //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
         new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true, opacity: 0.8 }),
         new THREE.MeshPhongMaterial({
-            color: 0x808080, transparent: true, opacity: 0.15, side: THREE.DoubleSide, depthWrite: false
+            color: 0x808080, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false
         })
     ];
 
@@ -2777,7 +4421,7 @@ function ForceFace3pt(pt1, pt2, pt3, color){
         new THREE.MeshPhongMaterial({
             color: color, 
             transparent: true, 
-            opacity: 0.8, 
+            opacity: 0.5, 
             side: THREE.DoubleSide, 
             // depthWrite: false 
         })
@@ -3134,6 +4778,16 @@ function addCell4Face(point1,point2,point3,point4, scale){
     return cell
 
 }
+function addOffsetPt3V(point1,point2,point3,scale){
+
+    var centroid = new THREE.Vector3((point1.x+point2.x+point3.x)/3,(point1.y+point2.y+point3.y)/3,(point1.z+point2.z+point3.z)/3);
+    
+
+    var scale_point1 = new THREE.Vector3(centroid.x + (point1.x - centroid.x)*scale, centroid.y + (point1.y - centroid.y)*scale, centroid.z + (point1.z - centroid.z)*scale );
+
+    return scale_point1
+}
+
 
 function create_trial_intec (startpoint,forceP1,forceP2,forceP3,intecP1,intecP1B){
                             
@@ -3155,7 +4809,7 @@ function create_trial_intec (startpoint,forceP1,forceP2,forceP3,intecP1,intecP1B
 
 }
 
-function createdashline (point1, point2,trialline_dash){
+function createdashline (point1, point2,color){
 
     var dashline = [];
     dashline.push(point1);
@@ -3165,7 +4819,7 @@ function createdashline (point1, point2,trialline_dash){
     var dashline_geo = new THREE.BufferGeometry().setFromPoints( dashline );
 
     var trialline_dash = new THREE.LineDashedMaterial({
-                 color: "black",//color
+                 color: color,//color
                  dashSize: 0.1,
                 gapSize: 0.03,
                 linewidth: 1
@@ -3472,6 +5126,85 @@ function createCircleFaceArrow(centerPt,radius,arr_dir)
   var face_arrow1=createCylinderArrowMesh(points[length],Arr_Pt1,arrow_material1,0.01,0.02,0.01);
   CircleMesh.add(face_arrow1);
   return CircleMesh;
+}
+
+function createCircleFaceArrowStep(centerPt,radius,arr_dir,color)
+{
+  var Vec_a=cross(arr_dir,new THREE.Vector3(1,0,0)); 
+  if(Vec_a.x===0&&Vec_a.y===0&&Vec_a.z===0)
+  {
+    Vec_a=cross(arr_dir,new THREE.Vector3(0,1,0));
+  }
+  var Vec_b=cross(arr_dir,Vec_a);
+  Vec_a.normalize();
+  Vec_b.normalize();
+  // console.log("vec_a,vec_b",Vec_a,Vec_b);
+  var points = [];
+  var length = 20;
+  for (var i = 0; i <= length; i++)
+  {
+    var Pts_Circle=new THREE.Vector3(0,0,0);
+    Pts_Circle.x=centerPt.x + radius*Vec_a.x*Math.cos(Math.PI*1.5*i/length) + radius*Vec_b.x*Math.sin(Math.PI*1.5*i/length);
+    Pts_Circle.y=centerPt.y + radius*Vec_a.y*Math.cos(Math.PI*1.5*i/length) + radius*Vec_b.y*Math.sin(Math.PI*1.5*i/length);
+    Pts_Circle.z=centerPt.z + radius*Vec_a.z*Math.cos(Math.PI*1.5*i/length) + radius*Vec_b.z*Math.sin(Math.PI*1.5*i/length);
+    points.push(Pts_Circle);
+  }
+  var geometrySpacedPoints = new THREE.BufferGeometry().setFromPoints(points);
+  //var line2 = new THREE.Line( geometrySpacedPoints, material);
+  var arcMaterial = new THREE.LineDashedMaterial({
+    color: 0x00ff00,
+    dashSize: 0.1,
+    gapSize: 0.05
+  });
+  var CircleMesh = new THREE.Line(geometrySpacedPoints,arcMaterial);
+  //console.log("points=",points[1],points[5]);
+  CircleMesh.computeLineDistances();//dash
+  var arrow_material1=new THREE.MeshPhongMaterial( {
+    color:  color 
+    //0x009600//green
+  } );
+  // var CircleMesh=createCylinderMesh(points[0],points[1],arrow_material1,0.02,0.02);
+  for(i=0;i<length;i++)
+  {
+    var CircleMesh1=createCylinderMesh(points[i],points[i+1],arrow_material1,0.005,0.005);
+    CircleMesh1.castShadow = false;
+    CircleMesh.add(CircleMesh1);
+  }
+  var Arr_Pt1=new THREE.Vector3(0,0,0);
+  Arr_Pt1.x=centerPt.x + radius*Vec_a.x*Math.cos(Math.PI*1.6*i/length) + radius*Vec_b.x*Math.sin(Math.PI*1.6*i/length);
+  Arr_Pt1.y=centerPt.y + radius*Vec_a.y*Math.cos(Math.PI*1.6*i/length) + radius*Vec_b.y*Math.sin(Math.PI*1.6*i/length);
+  Arr_Pt1.z=centerPt.z + radius*Vec_a.z*Math.cos(Math.PI*1.6*i/length) + radius*Vec_b.z*Math.sin(Math.PI*1.6*i/length);
+  var face_arrow1=createCylinderArrowMesh(points[length],Arr_Pt1,arrow_material1,0.01,0.02,0.01);
+  CircleMesh.add(face_arrow1);
+  return CircleMesh;
+}
+
+function drawDivider (TopPt, midPt,btPt,circlecenter,radius){
+  var stepDiviPt1 =  addVec(subVecUpdated(
+    subVecUpdated(TopPt,midPt),subVecUpdated(midPt, btPt)
+    ), circlecenter)
+  stepDiviPt1.z = midPt.z+0.3
+
+  const stepDiviPt1vec = subVecUpdated(stepDiviPt1,circlecenter);
+  var divilen1 = Math.sqrt(radius*radius/(stepDiviPt1vec.x*stepDiviPt1vec.x+stepDiviPt1vec.y*stepDiviPt1vec.y+stepDiviPt1vec.z*stepDiviPt1vec.z));
+  var stepDiviPt1end = drawArrowfromVec(circlecenter, stepDiviPt1vec, divilen1)
+  var stepDiviEdge = createCylinderMesh(
+    circlecenter,
+    stepDiviPt1end,
+    new THREE.MeshPhongMaterial({color: "white", transparent: true, opacity:0.6}),0.008,0.008);
+  return stepDiviEdge
+}
+
+function findDividerPt (TopPt, midPt,btPt,circlecenter,radius){
+  var stepDiviPt1 =  addVec(subVecUpdated(
+    subVecUpdated(TopPt,midPt),subVecUpdated(midPt, btPt)
+    ), circlecenter)
+  stepDiviPt1.z = midPt.z+0.3
+
+  const stepDiviPt1vec = subVecUpdated(stepDiviPt1,circlecenter);
+  var divilen1 = Math.sqrt(radius*radius/(stepDiviPt1vec.x*stepDiviPt1vec.x+stepDiviPt1vec.y*stepDiviPt1vec.y+stepDiviPt1vec.z*stepDiviPt1vec.z));
+  var stepDiviPt1end = drawArrowfromVec(circlecenter, stepDiviPt1vec, divilen1)
+  return stepDiviPt1end
 }
 </script>
 </html>
