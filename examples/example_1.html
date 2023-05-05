@@ -14,9 +14,32 @@
       display: block;
     }
 
+    /* ************** texts in the web ************** */
+
+    /* #form{
+      position:absolute;
+      top:75%;
+      margin-left:25%;
+      font-family:'Palatino';
+      color:"darkgrey";
+      font-size:.9em;
+      font-weight: bold;
+      }
+
+    #force{
+      position:absolute;
+      top:75%;
+      margin-left:75%;
+      font-family:'Palatino';
+      color:"darkgrey";
+      font-size:.9em;
+      font-weight: bold;
+      } */
+    /* ************** UI - Checkbox ************** */
+
     #left_container_wrapper {
       position: fixed;
-      left: 43%;
+      left: 18%;
       top: 76%;
       margin: 0 auto;
       cursor: grab;
@@ -109,11 +132,11 @@
 <body>
 
   <div id="left_container_wrapper">
-    <div id="left_container_header">form & force</div>
+    <div id="left_container_header">form</div>
     <div id="left_container"></div>
   </div>
   <div id="right_container_wrapper">
-    <div id="right_container_header"></div>
+    <div id="right_container_header">force</div>
     <div id="right_container"></div>
   </div>
   <div id="credits">
@@ -127,53 +150,15 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/three@0.101.1/examples/js/controls/OrbitControls.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.js"></script>
-<!-- <script src="https://threejs.org/examples/js/curves/NURBSCurve.js"></script>
-<script src="https://threejs.org/examples/js/curves/NURBSUtils.js"></script> -->
-
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
-
-<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/7/Stats.js"></script> -->
-
-<!-- 
-<script type="text/javascript" src="/libs/three/three.js"></script>
-<script type="text/javascript" src="/libs/three/utils/SceneUtils.js"></script>
-<script type="text/javascript" src="/libs/three/controls/TransformControls.js"></script>
-<script type="text/javascript" src="/libs/three/controls/OrbitControls.js"></script>
-<script type="text/javascript" src="/libs/three/loaders/loaders/OBJLoader.js"></script>
-<script type="text/javascript" src="/libs/three/loaders/loaders/GLTFLoader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.js"></script>
-<script src="https://threejs.org/examples/js/curves/NURBSCurve.js"></script>
-<script src="https://threejs.org/examples/js/curves/NURBSUtils.js"></script>
-
-<script src='js/lines/LineSegmentsGeometry.js'></script>
-<script src='js/lines/LineGeometry.js'></script>
-<script src='js/lines/LineMaterial.js'></script>
-<script src='js/lines/LineSegments2.js'></script>
-<script src='js/lines/Line2.js'></script>
-<script src='js/THREE.CSG.js'></script>
-<script src='js/Plane.js'></script>
-
-
-
-<link rel="stylesheet" href="libs/jqueryV1.10.2/jquery-ui.min.css">
-<script type="text/javascript" src="libs/jqueryV1.10.2/jquery.min.js"></script>
-<script type="text/javascript" src="libs/jqueryV1.10.2/jquery-ui.min.js"></script> -->
-
-<!-- <script type="text/javascript" src="libs/util/dat.gui.js"></script>
-<script type="text/javascript" src="libs/util/stats.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
 
+
 <script>
-
-
-
-
-//claim variables
+  //claim variables
 var renderer;
 var camera;
 var scene, scene2;
@@ -390,47 +375,47 @@ minkVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and
 
 paneLeft.refresh();
 
-// /************************* Right Panel *************************/
+/************************* Right Panel *************************/
 
-// const rightPane = new Tweakpane.Pane({
-//     container: document.getElementById('right_container'),
-// });
+const rightPane = new Tweakpane.Pane({
+    container: document.getElementById('right_container'),
+});
 
-// const stepVisibilityCheckboxParams = {
-//     'steps': false, //at first, box is unchecked so value is "false"
-// };
+const stepVisibilityCheckboxParams = {
+    'steps': false, //at first, box is unchecked so value is "false"
+};
 
-// //make the checkbox
-// const stepVisibilityCheckbox = rightPane.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
-//      force_group_c.traverse(function(obj) {
-//       if (obj.type === "Mesh") {
-//         obj.material.visible =ev.value;
-//       }
-//       });
-// });
+//make the checkbox
+const stepVisibilityCheckbox = rightPane.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
+     force_group_c.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible =ev.value;
+      }
+      });
+});
 
 
-// const stepSliderParams = {
-//     size: 1, //starts as double the size of the box's params
-// };
-// //make the plane size slider
-// const stepSlider = rightPane.addInput(stepSliderParams, 'size', {
-//     min: 1, //min = double the size of the box's params
-//     max: 5, //max = quadruple the size of the box's params
-// }).on('change', (ev) => { //on change, dispose old plane geometry and create new
-//     forceCellScale = ev.value;
-//     Redraw();
-//     force_group_c.traverse(function(obj) {
-//       if (obj.type === "Mesh") {
-//         obj.material.visible =ev.value;
-//       }
-//       });
-// });
-// stepSlider.hidden = true; 
+const stepSliderParams = {
+    size: 1, //starts as double the size of the box's params
+};
+//make the plane size slider
+const stepSlider = rightPane.addInput(stepSliderParams, 'size', {
+    min: 1, //min = double the size of the box's params
+    max: 5, //max = quadruple the size of the box's params
+}).on('change', (ev) => { //on change, dispose old plane geometry and create new
+    forceCellScale = ev.value;
+    Redraw();
+    force_group_c.traverse(function(obj) {
+      if (obj.type === "Mesh") {
+        obj.material.visible =ev.value;
+      }
+      });
+});
+stepSlider.hidden = true; 
 
-// stepVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
-//   stepSlider.hidden = !stepSlider.hidden;
-// });
+stepVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
+  stepSlider.hidden = !stepSlider.hidden;
+});
 
 var forceCellScale = 0.7
 
@@ -3488,8 +3473,5 @@ function createCircleFaceArrow(centerPt,radius,arr_dir)
   CircleMesh.add(face_arrow1);
   return CircleMesh;
 }
-
-
-  
 </script>
 </html>
