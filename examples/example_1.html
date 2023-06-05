@@ -3785,9 +3785,6 @@ function initModel() {
       {
         selectObj = intersects[0].object;
         trfm_ctrl.attach(selectObj);
-        trfm_ctrl.position.update();
-        console.log(selectObj.position)
-        console.log(trfm_ctrl.position)
       }
   }
   function onMouseUp(event) 
@@ -3923,7 +3920,7 @@ function render()
 
   if (selectObj != null) {
     selectObj.position.clamp(ctrlMin, ctrlMax);
-    trfm_ctrl.position.clamp(ctrlMin, ctrlMax);
+    trfm_ctrl.object.position.clamp(ctrlMin, ctrlMax);
   }
 
   //var rayCaster=new THREE.Raycaster();
