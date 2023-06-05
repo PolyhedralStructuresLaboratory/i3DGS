@@ -3918,12 +3918,12 @@ var INTERSECTED;
 function render() 
 {
 
-  let ctrlMin = new THREE.Vector3( - 1, - 1, - 1 );
-  let ctrlMax = new THREE.Vector3( 1, 1, 1 );
+  let ctrlMin = new THREE.Vector3( - 2, - 2, - 2 );
+  let ctrlMax = new THREE.Vector3( 2, 2, 2 );
 
-  let object = trfm_ctrl.object;
-  if (object != null) {
-    object.position.clamp(ctrlMin, ctrlMax);
+  if (selectObj != null) {
+    selectObj.position.clamp(ctrlMin, ctrlMax);
+    trfm_ctrl.position.clamp(ctrlMin, ctrlMax);
   }
 
   //var rayCaster=new THREE.Raycaster();
@@ -3937,6 +3937,7 @@ function render()
       if (INTERSECTED) //
       {
         INTERSECTED.material.color.setHex(INTERSECTED.currentHex);
+
         if (event.button === 2) { 
           trfm_ctrl.detach();
         }
