@@ -3730,9 +3730,11 @@ function initModel() {
   trfm_ctrl = new THREE.TransformControls(camera, renderer.domElement);
 
   trfm_ctrl.addEventListener('change', render);
+
+  // transform control operations
   trfm_ctrl.addEventListener('objectChange', function(e) {
-    if(Math.abs(selectObj.position.x) <= 2 && Math.abs(selectObj.position.y)<=2 && Math.abs(selectObj.position.z) <= 2)
-    {
+    // if(Math.abs(selectObj.position.x) <= 2 && Math.abs(selectObj.position.y)<=2 && Math.abs(selectObj.position.z) <= 2)
+    // {
       if(selectObj.name.charAt(2)==='1')
       {
         formBtPt1[1].x=selectObj.position.x;
@@ -3754,13 +3756,12 @@ function initModel() {
         formBtPt3[1].z=selectObj.position.z;
       }
       Redraw();
-    }
+    // }
   })
 
   trfm_ctrl.addEventListener('mouseDown', (evt) => {
     orbit_ctrl.enabled = false;
-    
-    });
+  });
 
   trfm_ctrl.addEventListener('mouseUp', (evt) => {
 
@@ -3916,6 +3917,14 @@ var INTERSECTED;
 //rendering the scenes
 function render() 
 {
+
+  let ctrlMin = new THREE.Vector3( - 1, - 1, - 1 );
+  let ctrlMax = new THREE.Vector3( 1, 1, 1 );
+
+  let object = trfm_ctrl.object;
+  if (object != null) {
+    object.position.clamp(ctrlMin, ctrlMax);
+  }
 
   //var rayCaster=new THREE.Raycaster();
   rayCaster.setFromCamera(mouse, camera);
