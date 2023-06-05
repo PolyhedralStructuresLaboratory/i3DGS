@@ -301,7 +301,7 @@ const faceVisibilityCheckboxParams = {
 
 // faces - checkbox
 const faceVisibilityCheckbox = tab.pages[1].addInput(faceVisibilityCheckboxParams, 'face').on('change', (ev) => { //on change, dispose old plane geometry and create new
-  Redraw() 
+  //Redraw()
   form_group_f.traverse(function(obj) {
     if (obj.type === "Mesh") {
       obj.material.visible =ev.value;
@@ -320,7 +320,7 @@ const globalVisibilityCheckbox = tab.pages[1].addInput(globalVisibilityCheckboxP
 
    // showTrial = !showTrial;
     //  trialHeight = ev.value;
-  Redraw();
+  //Redraw();
   form_general_global.traverse(function(obj) {
     if (obj.type === "Mesh") {
       obj.material.visible = ev.value;
