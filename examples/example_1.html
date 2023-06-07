@@ -290,6 +290,8 @@
         if (ev.value) {
             paneLeft.importPreset(minkPreset);
         }
+        tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
+        tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
         form_group_mink.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
