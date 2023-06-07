@@ -287,6 +287,9 @@
         'show': false, //at first, box is unchecked so value is "false"
     };
     const minkVisibilityCheckbox = tab.pages[1].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
+        if (ev.value) {
+            paneLeft.importPreset(minkPreset);
+        }
         form_group_mink.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
@@ -383,6 +386,10 @@
         minkSlider.hidden = !minkSlider.hidden;
     });
 
+    const minkPreset = paneLeft.exportPreset();
+    minkPreset.show = true;
+    const disableLeftPane = paneLeft.exportPreset();
+
     paneLeft.refresh();
 
     /************************* Right Panel *************************/
@@ -400,6 +407,13 @@
     };
     //make the checkbox
     const stepVisibilityCheckbox = rightPane.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
+        if (ev.value) {
+            rightPane.importPreset(resetSizeTo1On);
+            paneLeft.importPreset(disableLeftPane);
+        } else {
+            rightPane.importPreset(resetSizeTo1Off);
+        }
+        paneLeft.disabled = !paneLeft.disabled;
         form_group_e.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = !ev.value;
@@ -429,11 +443,6 @@
         });
 
     });
-    if (stepVisibilityCheckbox.value) {
-        console.log('Checkbox is checked');
-    } else {
-        console.log('Checkbox is not checked');
-    }
 
     //make the plane size slider
     const stepSlider = rightPane.addInput(stepSliderParams, 'size', {
@@ -452,11 +461,6 @@
             force_group_e.traverse(function (obj) {
                 if (obj.type === "Mesh") {
                     obj.material.visible = !ev.value;
-                }
-            });
-            form_group_f.traverse(function (obj) {
-                if (obj.type === "Mesh") {
-                    obj.material.visible = true;
                 }
             });
             form_group_step.traverse(function (obj) {
@@ -838,6 +842,10 @@
     stepVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
         stepSlider.hidden = !stepSlider.hidden;
     });
+
+    const resetSizeTo1On = rightPane.exportPreset();
+    resetSizeTo1On.steps = true;
+    const resetSizeTo1Off = rightPane.exportPreset();
 
     var forceCellScale = 0.7
 
@@ -3693,6 +3701,23 @@
                     console.log("error in selecting object");
             }
             Redraw();
+            if (faceVisibilityCheckboxParams.face) {
+                form_group_f.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = true;
+                    }
+                });
+            }
+            if (cellVisibilityCheckboxParams.cell) {
+                form_group_c.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = true;
+                    }
+                    if (obj.type === "Sprite") {
+                        obj.material.visible = true;
+                    }
+                });
+            }
         })
 
         trfm_ctrl.addEventListener('mouseDown', () => {
