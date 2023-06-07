@@ -385,7 +385,7 @@ oSlider.on('change', (ev) => { //on change, dispose old geometry and create new
   Redraw()
 });
 
-globalVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
+globalVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
   oSlider.disabled = !oSlider.disabled;
 });
 
@@ -2745,40 +2745,35 @@ function initModel() {
   trfm_ctrl = new THREE.TransformControls(camera, renderer.domElement);
 
   trfm_ctrl.addEventListener('change', render);
-  trfm_ctrl.addEventListener('objectChange', function(e) {
-    if(Math.abs(selectObj.position.x) <= 2 && Math.abs(selectObj.position.y)<=2 && Math.abs(selectObj.position.z) <= 2)
-    {
-      if(selectObj.name.charAt(2)==='1')
-      {
-        formBtPt1.x=selectObj.position.x;
-        formBtPt1.y=selectObj.position.y;
-        formBtPt1.z=selectObj.position.z;
-      }
-
-      if(selectObj.name.charAt(2)==='2')
-      {
-        formBtPt2.x=selectObj.position.x;
-        formBtPt2.y=selectObj.position.y;
-        formBtPt2.z=selectObj.position.z;
-      }
-
-      if(selectObj.name.charAt(2)==='3')
-      {
-        formBtPt3.x=selectObj.position.x;
-        formBtPt3.y=selectObj.position.y;
-        formBtPt3.z=selectObj.position.z;
-      }
-
-      Redraw();
+  trfm_ctrl.addEventListener('objectChange', function() {
+    switch(selectObj.name.charAt(2)) {
+      case '1':
+        formBtPt1.x = selectObj.position.x;
+        formBtPt1.y = selectObj.position.y;
+        formBtPt1.z = selectObj.position.z;
+        break;
+      case '2':
+        formBtPt2.x = selectObj.position.x;
+        formBtPt2.y = selectObj.position.y;
+        formBtPt2.z = selectObj.position.z;
+        break;
+      case '3':
+        formBtPt3.x = selectObj.position.x;
+        formBtPt3.y = selectObj.position.y;
+        formBtPt3.z = selectObj.position.z;
+        break;
+      default:
+        console.log("error in selecting object");
     }
+    Redraw();
   })
 
-  trfm_ctrl.addEventListener('mouseDown', (evt) => {
+  trfm_ctrl.addEventListener('mouseDown', () => {
     orbit_ctrl.enabled = false;
     
     });
 
-  trfm_ctrl.addEventListener('mouseUp', (evt) => {
+  trfm_ctrl.addEventListener('mouseUp', () => {
 
     orbit_ctrl.enabled = true;
   });
@@ -2808,7 +2803,7 @@ function initModel() {
         // console.log(trfm_ctrl.position)
       }
   }
-  function onMouseUp(event) 
+  function onMouseUp()
   {
     leftMouseDown = false;
     rightMouseDown = false;
@@ -2936,51 +2931,14 @@ var INTERSECTED;
 function render() 
 {
 
-  // if (showTrial) {
-  //   form_group_e_trial.traverse(function(obj) {
-  //     if (obj.type === "Mesh") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //     if (obj.type === "LineSegments") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //   });
-  //   form_general_trial.traverse(function(obj) {
-  //     if (obj.type === "Mesh") {
-  //       obj.material.visible =trialHeight;
-  //     }
-  //     if (obj.type === "LineSegments") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //   });
-  //   force_general_trial.traverse(function(obj) {
-  //     if (obj.type === "Mesh") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //     if (obj.type === "LineSegments") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //   });
-  //   force_group_e.traverse(function(obj) {
-  //     if (obj.type === "Mesh") {
-  //       obj.material.visible =trialHeight;
-  //     }
-  //     if (obj.type === "LineSegments") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //   });
-  //   force_group_f_trial.traverse(function(obj) {
-  //     if (obj.type === "Mesh") {
-  //       obj.material.visible =trialHeight;
-  //     }
-  //     if (obj.type === "LineSegments") {
-  //       obj.material.visible = trialHeight;
-  //     }
-  //   });
-  // }
-  
+  let ctrlMin = new THREE.Vector3(-2, -2, -2);
+  let ctrlMax = new THREE.Vector3(2, 2, 2);
 
-  //var rayCaster=new THREE.Raycaster();
+  if (selectObj != null) {
+    selectObj.position.clamp(ctrlMin, ctrlMax);
+    trfm_ctrl.position.clamp(ctrlMin, ctrlMax);
+  }
+
   rayCaster.setFromCamera(mouse, camera);
   var intersects = rayCaster.intersectObjects(Ctrl_pts);
 

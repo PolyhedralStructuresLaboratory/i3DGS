@@ -3614,6 +3614,7 @@
 
         trfm_ctrl.addEventListener('change', render);
         trfm_ctrl.addEventListener('objectChange', function () {
+            console.log(selectObj.position);
             switch(selectObj.name.charAt(2)) {
                 case '1':
                     formBtPt1.x = selectObj.position.x;
@@ -3810,8 +3811,8 @@
                     ctrlMax = new THREE.Vector3(2, -1.5, -0.1);
                     break;
                 case '2':
-                    ctrlMin = new THREE.Vector3(-1.25, -1, -2);
-                    ctrlMax = new THREE.Vector3(2, -0.25, -0.25);
+                    ctrlMin = new THREE.Vector3(-2, -1, -2);
+                    ctrlMax = new THREE.Vector3(-1.25, -0.25, -0.25);
                     break;
                 case '3':
                     ctrlMin = new THREE.Vector3(-0.4, 0.5, -1.25);
