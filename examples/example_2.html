@@ -3613,7 +3613,7 @@
         trfm_ctrl = new THREE.TransformControls(camera, renderer.domElement);
 
         trfm_ctrl.addEventListener('change', render);
-        trfm_ctrl.addEventListener('objectChange', function (e) {
+        trfm_ctrl.addEventListener('objectChange', function () {
             switch(selectObj.name.charAt(2)) {
                 case '1':
                     formBtPt1.x = selectObj.position.x;
@@ -3641,12 +3641,12 @@
             Redraw();
         })
 
-        trfm_ctrl.addEventListener('mouseDown', (evt) => {
+        trfm_ctrl.addEventListener('mouseDown', () => {
             orbit_ctrl.enabled = false;
 
         });
 
-        trfm_ctrl.addEventListener('mouseUp', (evt) => {
+        trfm_ctrl.addEventListener('mouseUp', () => {
 
             orbit_ctrl.enabled = true;
         });
@@ -3673,7 +3673,7 @@
             }
         }
 
-        function onMouseUp(event) {
+        function onMouseUp() {
             leftMouseDown = false;
             rightMouseDown = false;
             //document.removeEventListener('mousemove', onMouseMove);
@@ -3795,24 +3795,40 @@
 
     var INTERSECTED;
 
+    let printPosition;
+
     //rendering the scenes
     function render() {
         let ctrlMin, ctrlMax;
 
-        // if (selectObj != null) {
-        //     switch(selectObj)
-        // }
-        //
-        // let ctrlMin = new THREE.Vector3(-2, -2, -2);
-        // let ctrlMax = new THREE.Vector3(-0.5, 0, 0);
-        //
-        // if (selectObj != null) {
-        //
-        //     selectObj.position.clamp(ctrlMin, ctrlMax);
-        //     trfm_ctrl.position.clamp(ctrlMin, ctrlMax);
-        // }
+        // x = red, y = green, z = blue
 
-        //var rayCaster=new THREE.Raycaster();
+        if (selectObj != null) {
+            console.log(selectObj.position);
+            switch(selectObj.name.charAt(2)) {
+                case '1':
+                    ctrlMin = new THREE.Vector3(-1, -2, -1.25);
+                    ctrlMax = new THREE.Vector3(2, -1.5, -0.1);
+                    break;
+                case '2':
+                    ctrlMin = new THREE.Vector3(-2, -2, -2);
+                    ctrlMax = new THREE.Vector3(2, 2, 2);
+                    break;
+                case '3':
+                    ctrlMin = new THREE.Vector3(-2, -2, -2);
+                    ctrlMax = new THREE.Vector3(2, 2, 2);
+                    break;
+                case '4':
+                    ctrlMin = new THREE.Vector3(-2, -2, -2);
+                    ctrlMax = new THREE.Vector3(2, 2, 2);
+                    break;
+                default:
+                    console.log("error in selecting object");
+            }
+            selectObj.position.clamp(ctrlMin, ctrlMax);
+            trfm_ctrl.position.clamp(ctrlMin, ctrlMax);
+        }
+
         rayCaster.setFromCamera(mouse, camera);
         var intersects = rayCaster.intersectObjects(Ctrl_pts);
 

@@ -107,9 +107,8 @@
         #credits {
             position: absolute;
             width: 100%;
-            margin: auto;
             bottom: 0;
-            margin-bottom: 15px;
+            margin: auto auto 15px;
             font-family: 'Open Sans', sans-serif;
             color: #cbcbcb;;
             font-size: 0.4em;
@@ -380,7 +379,7 @@
         });
     });
     minkSlider.hidden = true;
-    minkVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
+    minkVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
         minkSlider.hidden = !minkSlider.hidden;
     });
 
@@ -836,7 +835,7 @@
     });
     stepSlider.hidden = true;
 
-    stepVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
+    stepVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
         stepSlider.hidden = !stepSlider.hidden;
     });
 
@@ -3673,32 +3672,34 @@
         trfm_ctrl.addEventListener('change', render);
 
         // transform control operations
-        trfm_ctrl.addEventListener('objectChange', function (e) {
-            if (selectObj.name.charAt(2) === '1') {
-                formBtPt1[1].x = selectObj.position.x;
-                formBtPt1[1].y = selectObj.position.y;
-                formBtPt1[1].z = selectObj.position.z;
-            }
-
-            if (selectObj.name.charAt(2) === '2') {
-                formBtPt2[1].x = selectObj.position.x;
-                formBtPt2[1].y = selectObj.position.y;
-                formBtPt2[1].z = selectObj.position.z;
-            }
-
-            if (selectObj.name.charAt(2) === '3') {
-                formBtPt3[1].x = selectObj.position.x;
-                formBtPt3[1].y = selectObj.position.y;
-                formBtPt3[1].z = selectObj.position.z;
+        trfm_ctrl.addEventListener('objectChange', function () {
+            switch(selectObj.name.charAt(2)) {
+                case '1':
+                    formBtPt1[1].x = selectObj.position.x;
+                    formBtPt1[1].y = selectObj.position.y;
+                    formBtPt1[1].z = selectObj.position.z;
+                    break;
+                case '2':
+                    formBtPt2[1].x = selectObj.position.x;
+                    formBtPt2[1].y = selectObj.position.y;
+                    formBtPt2[1].z = selectObj.position.z;
+                    break;
+                case '3':
+                    formBtPt3[1].x = selectObj.position.x;
+                    formBtPt3[1].y = selectObj.position.y;
+                    formBtPt3[1].z = selectObj.position.z;
+                    break;
+                default:
+                    console.log("error in selecting object");
             }
             Redraw();
         })
 
-        trfm_ctrl.addEventListener('mouseDown', (evt) => {
+        trfm_ctrl.addEventListener('mouseDown', () => {
             orbit_ctrl.enabled = false;
         });
 
-        trfm_ctrl.addEventListener('mouseUp', (evt) => {
+        trfm_ctrl.addEventListener('mouseUp', () => {
 
             orbit_ctrl.enabled = true;
         });
@@ -3721,7 +3722,7 @@
             }
         }
 
-        function onMouseUp(event) {
+        function onMouseUp() {
             leftMouseDown = false;
             rightMouseDown = false;
             //document.removeEventListener('mousemove', onMouseMove);
