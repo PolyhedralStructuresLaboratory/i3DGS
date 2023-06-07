@@ -3614,6 +3614,7 @@
 
         trfm_ctrl.addEventListener('change', render);
         trfm_ctrl.addEventListener('objectChange', function () {
+            console.log(selectObj.position);
             switch(selectObj.name.charAt(2)) {
                 case '1':
                     formBtPt1.x = selectObj.position.x;
@@ -3804,23 +3805,22 @@
         // x = red, y = green, z = blue
 
         if (selectObj != null) {
-            console.log(selectObj.position);
             switch(selectObj.name.charAt(2)) {
                 case '1':
                     ctrlMin = new THREE.Vector3(-1, -2, -1.25);
                     ctrlMax = new THREE.Vector3(2, -1.5, -0.1);
                     break;
                 case '2':
-                    ctrlMin = new THREE.Vector3(-2, -2, -2);
-                    ctrlMax = new THREE.Vector3(2, 2, 2);
+                    ctrlMin = new THREE.Vector3(-1.25, -1, -2);
+                    ctrlMax = new THREE.Vector3(2, -0.25, -0.25);
                     break;
                 case '3':
-                    ctrlMin = new THREE.Vector3(-2, -2, -2);
-                    ctrlMax = new THREE.Vector3(2, 2, 2);
+                    ctrlMin = new THREE.Vector3(-0.4, 0.5, -1.25);
+                    ctrlMax = new THREE.Vector3(1, 2, -0.5);
                     break;
                 case '4':
-                    ctrlMin = new THREE.Vector3(-2, -2, -2);
-                    ctrlMax = new THREE.Vector3(2, 2, 2);
+                    ctrlMin = new THREE.Vector3(0.5, 0, -1.75);
+                    ctrlMax = new THREE.Vector3(2, 0.65, -0.7);
                     break;
                 default:
                     console.log("error in selecting object");
