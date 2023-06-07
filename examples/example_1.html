@@ -3868,10 +3868,7 @@
 
                     if (event.button === 2) {
                         trfm_ctrl.detach();
-                    }
-                    //document.addEventListener('mousemove', onMouseMove);
-
-                    if (event.button === 0 && intersects[0]) {
+                    } else if (event.button === 0 && intersects[0]) {
 
                         selectObj = intersects[0].object;
                         //console.log("selectobj.name="+intersects[0].object.name.charAt(2));

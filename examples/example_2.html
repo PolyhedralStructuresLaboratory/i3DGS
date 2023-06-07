@@ -3614,32 +3614,31 @@
 
         trfm_ctrl.addEventListener('change', render);
         trfm_ctrl.addEventListener('objectChange', function (e) {
-            if (Math.abs(selectObj.position.x) <= 2 && Math.abs(selectObj.position.y) <= 2 && Math.abs(selectObj.position.z) <= 2) {
-                if (selectObj.name.charAt(2) === '1') {
+            switch(selectObj.name.charAt(2)) {
+                case '1':
                     formBtPt1.x = selectObj.position.x;
                     formBtPt1.y = selectObj.position.y;
                     formBtPt1.z = selectObj.position.z;
-                }
-
-                if (selectObj.name.charAt(2) === '2') {
+                    break;
+                case '2':
                     formBtPt2.x = selectObj.position.x;
                     formBtPt2.y = selectObj.position.y;
                     formBtPt2.z = selectObj.position.z;
-                }
-
-                if (selectObj.name.charAt(2) === '3') {
+                    break;
+                case '3':
                     formBtPt3.x = selectObj.position.x;
                     formBtPt3.y = selectObj.position.y;
                     formBtPt3.z = selectObj.position.z;
-                }
-
-                if (selectObj.name.charAt(2) === '4') {
+                    break;
+                case '4':
                     formBtPt4.x = selectObj.position.x;
                     formBtPt4.y = selectObj.position.y;
                     formBtPt4.z = selectObj.position.z;
-                }
-                Redraw();
+                    break;
+                default:
+                    console.log("error in selecting object");
             }
+            Redraw();
         })
 
         trfm_ctrl.addEventListener('mouseDown', (evt) => {
@@ -3798,6 +3797,20 @@
 
     //rendering the scenes
     function render() {
+        let ctrlMin, ctrlMax;
+
+        // if (selectObj != null) {
+        //     switch(selectObj)
+        // }
+        //
+        // let ctrlMin = new THREE.Vector3(-2, -2, -2);
+        // let ctrlMax = new THREE.Vector3(-0.5, 0, 0);
+        //
+        // if (selectObj != null) {
+        //
+        //     selectObj.position.clamp(ctrlMin, ctrlMax);
+        //     trfm_ctrl.position.clamp(ctrlMin, ctrlMax);
+        // }
 
         //var rayCaster=new THREE.Raycaster();
         rayCaster.setFromCamera(mouse, camera);
@@ -3812,10 +3825,7 @@
                     INTERSECTED.material.color.setHex(INTERSECTED.currentHex);
                     if (event.button === 2) {
                         trfm_ctrl.detach();
-                    }
-                    //document.addEventListener('mousemove', onMouseMove);
-
-                    if (event.button === 0 && intersects[0]) {
+                    } else if (event.button === 0 && intersects[0]) {
 
                         selectObj = intersects[0].object;
                         //console.log("selectobj.name="+intersects[0].object.name.charAt(2));
