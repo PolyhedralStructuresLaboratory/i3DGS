@@ -3614,7 +3614,6 @@
 
         trfm_ctrl.addEventListener('change', render);
         trfm_ctrl.addEventListener('objectChange', function () {
-            console.log(selectObj.position);
             switch(selectObj.name.charAt(2)) {
                 case '1':
                     formBtPt1.x = selectObj.position.x;
