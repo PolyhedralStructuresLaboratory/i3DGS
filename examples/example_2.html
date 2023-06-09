@@ -701,7 +701,7 @@
     var formBtPt3 = new THREE.Vector3(0.39, 1.03, -1);
     var formBtPt4 = new THREE.Vector3(1.11, 0.31, -1);
 
-    var Ctrl_pts = [];
+    var Ctrl_pts = new Array(4);
 
     var form_general
 
@@ -803,7 +803,7 @@
 
         //1nd. bottom point (movable) - bottom vertice 1
         const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1)
-        Ctrl_pts.push(vertice_1); //adding to gumbal selection
+        Ctrl_pts[0] = vertice_1; //adding to gumbal selection
         const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
 
         form_group_v.add(vertice_1);
@@ -811,7 +811,7 @@
 
         //2nd. bottom point (movable) - bottom vertice 2
         const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2)
-        Ctrl_pts.push(vertice_2); //adding to gumbal selection
+        Ctrl_pts[1] = vertice_2; //adding to gumbal selection
         const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
 
         form_group_v.add(vertice_2);
@@ -819,14 +819,14 @@
 
         //3rd. bottom point (movable) - bottom vertice 3
         const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3)
-        Ctrl_pts.push(vertice_3); //adding to gumbal selection
+        Ctrl_pts[2] = vertice_3; //adding to gumbal selection
         const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
         form_group_v.add(vertice_3);
         form_group_v.add(vertice_3_out);
 
         //4th. bottom point (movable) - bottom vertice 4
         const vertice_4 = addVerticeSup(0.04, "sp4", formBtPt4)
-        Ctrl_pts.push(vertice_4); //adding to gumbal selection
+        Ctrl_pts[3] = vertice_4; //adding to gumbal selection
         const vertice_4_out = addVerticeOutSup(0.04, vertice_4.position, 1.55);
         form_group_v.add(vertice_4);
         form_group_v.add(vertice_4_out);
@@ -3614,7 +3614,6 @@
 
         trfm_ctrl.addEventListener('change', render);
         trfm_ctrl.addEventListener('objectChange', function () {
-            console.log(selectObj.position);
             switch(selectObj.name.charAt(2)) {
                 case '1':
                     formBtPt1.x = selectObj.position.x;

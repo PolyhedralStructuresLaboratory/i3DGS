@@ -397,7 +397,7 @@ var formBtPt1 = new THREE.Vector3(1.3,-1.3,-1.3);
 var formBtPt2 = new THREE.Vector3(-1.776,-0.476,-1.3);
 var formBtPt3 = new THREE.Vector3(0.476,1.776,-1.3);
 
-var Ctrl_pts=[];
+var Ctrl_pts= new Array(3);
 
 var form_general
 
@@ -523,7 +523,7 @@ function Redraw(){
 
   //1nd. bottom point (movable) - bottom vertice 1
   const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1)
-  Ctrl_pts.push(vertice_1); //adding to gumbal selection
+  Ctrl_pts[0] = vertice_1; //adding to gumbal selection
   const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
 
   form_group_v.add(vertice_1);
@@ -531,7 +531,7 @@ function Redraw(){
 
   //2nd. bottom point (movable) - bottom vertice 2
   const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2)
-  Ctrl_pts.push(vertice_2); //adding to gumbal selection
+  Ctrl_pts[1] = vertice_2; //adding to gumbal selection
   const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
 
   form_group_v.add(vertice_2);
@@ -539,7 +539,7 @@ function Redraw(){
 
   //3rd. bottom point (movable) - bottom vertice 3
   const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3)
-  Ctrl_pts.push(vertice_3); //adding to gumbal selection
+  Ctrl_pts[2] = vertice_3; //adding to gumbal selection
   const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
   form_group_v.add(vertice_3);
   form_group_v.add(vertice_3_out);
