@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Interactive 3DGS</title>
-    <style type="text/css">
+    <style>
         html, body {
             margin: 0;
             height: 100%;
@@ -55,7 +55,7 @@
         }
 
         #left_container_header {
-            font-family: 'Palatino';
+            font-family: 'Palatino',serif;
             color: #000000;
             font-size: 15px;
             padding-bottom: 5px;
@@ -64,7 +64,7 @@
         }
 
         #right_container_header {
-            font-family: 'Palatino';
+            font-family: 'Palatino',serif;
             color: #000000;
             font-size: 15px;
             padding-bottom: 5px;
@@ -3710,6 +3710,47 @@
                     }
                 });
             }
+            if (minkVisibilityCheckboxParams.show) {
+                form_group_mink.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = true;
+                    }
+                    if (obj.type === "LineSegments") {
+                        obj.material.visible = true;
+                    }
+                });
+                force_group_mink.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = true;
+                    }
+                });
+                form_group_e.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = false;
+                    }
+                });
+                force_group_e.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = false;
+                    }
+                });
+                force_group_f.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = false;
+                    }
+                });
+                force_general.traverse(function (obj) {
+                    if (obj.type === "Mesh") {
+                        obj.material.visible = false;
+                    }
+                    if (obj.type === "Sprite") {
+                        obj.material.visible = false;
+                    }
+                    if (obj.type === "Line") {
+                        obj.material.visible = false;
+                    }
+                });
+            }
         })
 
         trfm_ctrl.addEventListener('mouseDown', () => {
@@ -3733,7 +3774,7 @@
             }
             //document.addEventListener('mousemove', onMouseMove);
 
-            if (event.button === 0 && intersects[0]) {
+            if (event.button === 0 && intersects[0]  && !stepVisibilityCheckboxParams.steps) {
                 selectObj = intersects[0].object;
                 trfm_ctrl.attach(selectObj);
             }
@@ -3754,7 +3795,7 @@
             raycaster.setFromCamera(mouse, camera);
             var intersects = raycaster.intersectObjects(Ctrl_pts);
 
-            if (intersects.length > 0) {
+            if (intersects.length > 0  && !stepVisibilityCheckboxParams.steps) {
                 $('html,body').css('cursor', 'pointer');
             } else {
                 $('html,body').css('cursor', 'default');
@@ -3876,7 +3917,7 @@
         rayCaster.setFromCamera(mouse, camera);
         var intersects = rayCaster.intersectObjects(Ctrl_pts);
 
-        if (intersects.length > 0) {//有相交的object时
+        if (intersects.length > 0  && !stepVisibilityCheckboxParams.steps) {//有相交的object时
 
             if (INTERSECTED != intersects[0].object) {
 
@@ -3884,14 +3925,14 @@
                 {
                     INTERSECTED.material.color.setHex(INTERSECTED.currentHex);
 
-                    if (event.button === 2) {
-                        trfm_ctrl.detach();
-                    } else if (event.button === 0 && intersects[0]) {
-
-                        selectObj = intersects[0].object;
-                        //console.log("selectobj.name="+intersects[0].object.name.charAt(2));
-                        trfm_ctrl.attach(selectObj);
-                    }
+                    // if (event.button === 2) {
+                    //     trfm_ctrl.detach();
+                    // } else if (event.button === 0 && intersects[0]) {
+                    //
+                    //     selectObj = intersects[0].object;
+                    //     //console.log("selectobj.name="+intersects[0].object.name.charAt(2));
+                    //     trfm_ctrl.attach(selectObj);
+                    // }
 
                 }
 
@@ -3921,7 +3962,6 @@
     //create recursive function to keep updating the animation
     function animate() {
         requestAnimationFrame(animate);
-        orbit_ctrl.update();
         render();
     }
 
