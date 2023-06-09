@@ -860,7 +860,7 @@
     formBtPt3.push(new THREE.Vector3(0, 0, 0));
     formBtPt3.push(new THREE.Vector3(0.3660, 1.3660, -1));
 
-    var Ctrl_pts = [];
+    var Ctrl_pts = new Array(3);
 
     var form_general
 
@@ -989,7 +989,7 @@
 
         //2nd. bottom point (movable) - bottom vertice 1
         const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1[1])
-        Ctrl_pts.push(vertice_1); //adding to gumbal selection
+        Ctrl_pts[0] = vertice_1; //adding to gumbal selection
         const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
 
         form_group_v.add(vertice_1);
@@ -997,7 +997,7 @@
 
         //3rd. bottom point (movable) - bottom vertice 2
         const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2[1])
-        Ctrl_pts.push(vertice_2); //adding to gumbal selection
+        Ctrl_pts[1] = vertice_2; //adding to gumbal selection
         const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
 
         form_group_v.add(vertice_2);
@@ -1005,7 +1005,7 @@
 
         //4th. bottom point (movable) - bottom vertice 3
         const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3[1])
-        Ctrl_pts.push(vertice_3); //adding to gumbal selection
+        Ctrl_pts[2] = vertice_3; //adding to gumbal selection
         const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
         form_group_v.add(vertice_3);
         form_group_v.add(vertice_3_out);
@@ -3901,6 +3901,7 @@
 
 
     var INTERSECTED;
+    var intersects;
 
     //rendering the scenes
     function render() {
@@ -3915,7 +3916,7 @@
 
         //var rayCaster=new THREE.Raycaster();
         rayCaster.setFromCamera(mouse, camera);
-        var intersects = rayCaster.intersectObjects(Ctrl_pts);
+        intersects = rayCaster.intersectObjects(Ctrl_pts);
 
         if (intersects.length > 0  && !stepVisibilityCheckboxParams.steps) {//有相交的object时
 
@@ -3924,15 +3925,6 @@
                 if (INTERSECTED) //
                 {
                     INTERSECTED.material.color.setHex(INTERSECTED.currentHex);
-
-                    // if (event.button === 2) {
-                    //     trfm_ctrl.detach();
-                    // } else if (event.button === 0 && intersects[0]) {
-                    //
-                    //     selectObj = intersects[0].object;
-                    //     //console.log("selectobj.name="+intersects[0].object.name.charAt(2));
-                    //     trfm_ctrl.attach(selectObj);
-                    // }
 
                 }
 
