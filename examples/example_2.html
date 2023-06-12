@@ -254,50 +254,7 @@
     };
     const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxParams, 'show').on
     ('change', (ev) => { //on change, dispose old plane geometry and create new
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawTrial();
     });
     const primeheightParams = {
         trialHeight: -2,
@@ -309,51 +266,7 @@
         max: 1, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         fo.z = ev.value;
-        Redraw();
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawTrial();
     });
 
     const trialHeightSliderParams = {
@@ -365,51 +278,7 @@
         max: 1, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         triP1.z = ev.value;
-        Redraw();
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawTrial();
     });
     trialHeightSlider.hidden = true
     primeHeightSlider.hidden = true
@@ -844,207 +713,20 @@
     }
 
     function redrawTrial() {
-        // testing
-    }
-
-
-    // *********************** redraw the form and force diagram when parametrer is changing ****************
-    function Redraw() {
-
-        if (faceVisibilityCheckboxParams.face) {
-            redrawFace();
-        }
-
-        //form groups
-        scene.remove(form_group_v);
-        scene.remove(form_group_e);
-        scene.remove(form_group_c);
-        scene.remove(form_general);
         scene.remove(form_group_e_trial);
         scene.remove(form_general_trial);
-        scene.remove(form_group_mink);
-
-
-        form_group_v = new THREE.Group();
-        form_group_e = new THREE.Group();
-        form_group_c = new THREE.Group();
-        form_general = new THREE.Group();
-        form_general_trial = new THREE.Group();
-        form_group_mink = new THREE.Group();
-
-        form_group_e_trial = new THREE.Group();
-
-        //force groups
-        scene2.remove(force_group_v);
-        scene2.remove(force_group_f);
-        scene2.remove(force_group_e);
-        scene2.remove(force_group_c);
-        scene2.remove(force_general);
         scene2.remove(force_group_f_trial);
         scene2.remove(force_group_e_trial);
         scene2.remove(force_general_trial);
-        scene2.remove(force_group_mink);
 
-        scene2.remove(force_text);
-
-        force_group_v = new THREE.Group();
-        force_group_f = new THREE.Group();
-        force_group_e = new THREE.Group();
-        force_group_c = new THREE.Group();
-        force_general = new THREE.Group();
-        force_text = new THREE.Group();
+        form_general_trial = new THREE.Group();
+        form_group_e_trial = new THREE.Group();
 
         force_group_f_trial = new THREE.Group();
         force_group_e_trial = new THREE.Group();
         force_general_trial = new THREE.Group();
-        force_group_mink = new THREE.Group();
 
-
-        // *********************** form vertices **************************
-
-        //1nd. bottom point (movable) - bottom vertice 1
-        const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1)
-        Ctrl_pts[0] = vertice_1; //adding to gumbal selection
-        const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
-
-        form_group_v.add(vertice_1);
-        form_group_v.add(vertice_1_out);
-
-        //2nd. bottom point (movable) - bottom vertice 2
-        const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2)
-        Ctrl_pts[1] = vertice_2; //adding to gumbal selection
-        const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
-
-        form_group_v.add(vertice_2);
-        form_group_v.add(vertice_2_out);
-
-        //3rd. bottom point (movable) - bottom vertice 3
-        const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3)
-        Ctrl_pts[2] = vertice_3; //adding to gumbal selection
-        const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
-        form_group_v.add(vertice_3);
-        form_group_v.add(vertice_3_out);
-
-        //4th. bottom point (movable) - bottom vertice 4
-        const vertice_4 = addVerticeSup(0.04, "sp4", formBtPt4)
-        Ctrl_pts[3] = vertice_4; //adding to gumbal selection
-        const vertice_4_out = addVerticeOutSup(0.04, vertice_4.position, 1.55);
-        form_group_v.add(vertice_4);
-        form_group_v.add(vertice_4_out);
-
-
-        var TXformNode1 = createSpriteText('1', "", new THREE.Vector3(formBtPt1.x, formBtPt1.y, formBtPt1.z - 0.3));
-        form_general.add(TXformNode1);
-        var TXformNode2 = createSpriteText('2', "", new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 0.3));
-        form_general.add(TXformNode2);
-        var TXformNode3 = createSpriteText('3', "", new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 0.3));
-        form_general.add(TXformNode3);
-        var TXformNode4 = createSpriteText('4', "", new THREE.Vector3(formBtPt4.x, formBtPt4.y, formBtPt4.z - 0.3));
-        form_general.add(TXformNode4);
-
-        // add apply loads arrows
-
-        var arrow_apply = new THREE.MeshPhongMaterial({color: 0x009600});
-        var arrow_apply_outline = new THREE.MeshBasicMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-
-        var apply_arrow1 = createCylinderArrowMesh(formPtO1, new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 0.4), arrow_apply, 0.02, 0.05, 0.56);
-        var apply_arrow2 = createCylinderArrowMesh(formPtO2, new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z - 0.4), arrow_apply, 0.02, 0.05, 0.56);
-
-        form_general.add(apply_arrow1);
-        form_general.add(apply_arrow2);
-
-        var apply_arrow12 = createCylinderArrowMesh(new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z + 0.005), new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 0.425), arrow_apply_outline, 0.025, 0.06, 0.53);
-        var apply_arrow22 = createCylinderArrowMesh(new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z + 0.005), new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z - 0.425), arrow_apply_outline, 0.025, 0.06, 0.53);
-
-        form_general.add(apply_arrow22);
-        form_general.add(apply_arrow12);
-
-        // add dash lines o1o1B, o2o2B
-        var applyline_dash_form = new THREE.LineDashedMaterial({
-            color: 0x009600,//color
-            dashSize: 0.05,
-            gapSize: 0.03,
-            linewidth: 1
-        });
-
-        var apply_o1o1B = [];
-        apply_o1o1B.push(formPtO1);
-        apply_o1o1B.push(formPtO1b);
-        var apply_1_geo = new THREE.BufferGeometry().setFromPoints(apply_o1o1B);
-        var applyline_o1B = new THREE.LineSegments(apply_1_geo, applyline_dash_form);
-        applyline_o1B.computeLineDistances();//compute
-        form_general.add(applyline_o1B);
-
-        var apply_o2o2B = [];
-        apply_o2o2B.push(formPtO2);
-        apply_o2o2B.push(formPtO2b);
-        var apply_2_geo = new THREE.BufferGeometry().setFromPoints(apply_o2o2B);
-        var applyline_o2B = new THREE.LineSegments(apply_2_geo, applyline_dash_form);
-        applyline_o2B.computeLineDistances();//compute
-        form_general.add(applyline_o2B);
-
-        // ***********************            form faces                **************************
-
-        //form closing plane
-        //plane mesh
-        var form_closingplane = FormPlane(formBtPt2, formBtPt1, formBtPt4, formBtPt3)
-        form_general.add(form_closingplane);
-
-        var formline_dash = new THREE.LineDashedMaterial({
-            color: "black",//color
-            dashSize: 0.1,
-            gapSize: 0.03,
-            linewidth: 1
-
-        });
-
-        var form_linep1p2 = createdashline(formBtPt1, formBtPt2, formline_dash)
-        var form_linep2p3 = createdashline(formBtPt2, formBtPt3, formline_dash)
-        var form_linep2p4 = createdashline(formBtPt2, formBtPt4, formline_dash)
-        var form_linep3p4 = createdashline(formBtPt3, formBtPt4, formline_dash)
-        var form_linep1p4 = createdashline(formBtPt1, formBtPt4, formline_dash)
-
-        form_general.add(form_linep1p2);
-        form_general.add(form_linep2p3);
-        form_general.add(form_linep2p4);
-        form_general.add(form_linep3p4);
-        form_general.add(form_linep1p4);
-
-        //plane face nromals
-        var normal_material = new THREE.MeshPhongMaterial({color: "red"})
-        var normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
-        var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-        //normal 124
-        var mid_p1p2p4 = new THREE.Vector3((formBtPt1.x + formBtPt2.x + formBtPt4.x) / 3, (formBtPt1.y + formBtPt2.y + formBtPt4.y) / 3, (formBtPt1.z + formBtPt2.z + formBtPt4.z) / 3)
-        var vec_p1p2p4_temp = CalNormalVectorUpdated(formBtPt4, formBtPt2, formBtPt1, 1.2)
-        var normal_p1p2p4 = new THREE.Vector3(mid_p1p2p4.x - 0.2 * vec_p1p2p4_temp.x, mid_p1p2p4.y - 0.2 * vec_p1p2p4_temp.y, mid_p1p2p4.z - 0.2 * vec_p1p2p4_temp.z)
-
-        var form_normal_1 = createCylinderArrowMesh(mid_p1p2p4, normal_p1p2p4, normal_material, 0.015, 0.035, 0.55);
-        var form_normal_1_outline = createCylinderArrowMesh(mid_p1p2p4, normal_p1p2p4, normal_outlinematerial, 0.018, 0.038, 0.54);
-
-        form_general.add(form_normal_1);
-        form_general.add(form_normal_1_outline);
-
-        //normal 234
-        var mid_p2p3p4 = new THREE.Vector3((formBtPt3.x + formBtPt2.x + formBtPt4.x) / 3, (formBtPt3.y + formBtPt2.y + formBtPt4.y) / 3, (formBtPt3.z + formBtPt2.z + formBtPt4.z) / 3)
-        var vec_p2p3p4_temp = CalNormalVectorUpdated(formBtPt4, formBtPt3, formBtPt2, 1.2)
-        var normal_p2p3p4 = new THREE.Vector3(mid_p2p3p4.x - 0.2 * vec_p2p3p4_temp.x, mid_p2p3p4.y - 0.2 * vec_p2p3p4_temp.y, mid_p2p3p4.z - 0.2 * vec_p2p3p4_temp.z)
-
-        var form_normal_2 = createCylinderArrowMesh(mid_p2p3p4, normal_p2p3p4, normal_material, 0.015, 0.035, 0.55);
-        var form_normal_2_outline = createCylinderArrowMesh(mid_p2p3p4, normal_p2p3p4, normal_outlinematerial, 0.018, 0.038, 0.54);
-
-        form_general.add(form_normal_2);
-        form_general.add(form_normal_2_outline);
-
-        var TXapplyForce = createSpriteTextApply('f', "1", new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z + 0.05));
-        form_general.add(TXapplyForce);
-
-
-        // ***********************            foce diagram            **************************
+        // ***********************            force diagram            **************************
         var edgescale = 2; // size of the force diagram
 
         //PtA
@@ -1077,67 +759,6 @@
         var dirAD = new THREE.Vector3(); // create once an reuse it
         dirAD.subVectors(forcePtD2, forcePtA).normalize();
         var forcePtD = LinesSectPt(dirCD, forcePtC, dirAD, forcePtA);
-
-        //force edges
-        var edgeSize = 0.005;
-        var edgeColor = "lightgrey";
-
-        var forceEdgeMaterial = new THREE.MeshPhongMaterial({
-            color: edgeColor
-        });
-
-        const forceEdgeAB = createCylinderMesh(forcePtA, forcePtB, forceEdgeMaterial, edgeSize, edgeSize);
-        force_group_e.add(forceEdgeAB);
-
-        const forceEdgeAC = createCylinderMesh(forcePtA, forcePtC, forceEdgeMaterial, edgeSize, edgeSize);
-        force_group_e.add(forceEdgeAC);
-
-        const forceEdgeBC = createCylinderMesh(forcePtB, forcePtC, forceEdgeMaterial, edgeSize, edgeSize);
-        force_group_e.add(forceEdgeBC)
-
-        const forceEdgeAD = createCylinderMesh(forcePtA, forcePtD, forceEdgeMaterial, edgeSize, edgeSize);
-        force_group_e.add(forceEdgeAD)
-
-        const forceEdgeCD = createCylinderMesh(forcePtC, forcePtD, forceEdgeMaterial, edgeSize, edgeSize);
-        force_group_e.add(forceEdgeCD)
-
-        var applyForceArrowMaterial = new THREE.MeshPhongMaterial({
-            color: 0x009600//green
-        });
-
-        var applyForceArrowMaterialOut = new THREE.MeshPhongMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-        const applyArrow = createCylinderArrowMesh(
-            new THREE.Vector3(
-                face_center(forcePtA, forcePtB, forcePtC).x,
-                face_center(forcePtA, forcePtB, forcePtC).y,
-                face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), applyForceArrowMaterial, 0.015, 0.04, 0.55);
-        force_general.add(applyArrow);
-        const applyArrowOut = createCylinderArrowMesh(new THREE.Vector3(
-            face_center(forcePtA, forcePtB, forcePtC).x,
-            face_center(forcePtA, forcePtB, forcePtC).y,
-            face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), applyForceArrowMaterialOut, 0.02, 0.045, 0.545);
-        force_general.add(applyArrowOut);
-
-        force_general.add(createSpriteTextApply('n', "f", new THREE.Vector3(
-            face_center(forcePtA, forcePtB, forcePtC).x,
-            face_center(forcePtA, forcePtB, forcePtC).y,
-            face_center(forcePtA, forcePtB, forcePtC).z + 0.4)))
-
-        const applyArrow2 = createCylinderArrowMesh(
-            new THREE.Vector3(
-                face_center(forcePtA, forcePtC, forcePtD).x,
-                face_center(forcePtA, forcePtC, forcePtD).y,
-                face_center(forcePtA, forcePtC, forcePtD).z + 0.4), face_center(forcePtA, forcePtD, forcePtC), applyForceArrowMaterial, 0.015, 0.04, 0.55);
-        force_general.add(applyArrow2);
-        const applyArrowOut2 = createCylinderArrowMesh(new THREE.Vector3(
-            face_center(forcePtA, forcePtC, forcePtD).x,
-            face_center(forcePtA, forcePtC, forcePtD).y,
-            face_center(forcePtA, forcePtC, forcePtD).z + 0.4), face_center(forcePtA, forcePtD, forcePtC), applyForceArrowMaterialOut, 0.02, 0.045, 0.545);
-        force_general.add(applyArrowOut2);
 
         // *********************** force trial point O **************************
 
@@ -1333,6 +954,500 @@
         force_general_trial.add(outlineMeshnewx2);
         var TXforcex2 = createSpriteText('x', "2", new THREE.Vector3(ForceX2.x, ForceX2.y, ForceX2.z + 0.1));
         force_general_trial.add(TXforcex2);
+
+        scene.add(form_group_e_trial);
+        scene.add(form_general_trial);
+
+        scene2.add(force_group_e_trial);
+        scene2.add(force_group_f_trial);
+        scene2.add(force_general_trial);
+
+        form_group_e_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+        form_general_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_general_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_group_f_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+    }
+
+
+    // *********************** redraw the form and force diagram when parametrer is changing ****************
+    function Redraw() {
+
+        if (faceVisibilityCheckboxParams.face) {
+            redrawFace();
+        }
+
+        if (trialVisibilityCheckboxParams.show) {
+            redrawTrial();
+        }
+
+        //form groups
+        scene.remove(form_group_v);
+        scene.remove(form_group_e);
+        scene.remove(form_group_c);
+        scene.remove(form_general);
+        scene.remove(form_group_mink);
+
+
+        form_group_v = new THREE.Group();
+        form_group_e = new THREE.Group();
+        form_group_c = new THREE.Group();
+        form_general = new THREE.Group();
+        form_group_mink = new THREE.Group();
+
+        //force groups
+        scene2.remove(force_group_v);
+        scene2.remove(force_group_f);
+        scene2.remove(force_group_e);
+        scene2.remove(force_group_c);
+        scene2.remove(force_general);
+        scene2.remove(force_group_mink);
+
+        scene2.remove(force_text);
+
+        force_group_v = new THREE.Group();
+        force_group_f = new THREE.Group();
+        force_group_e = new THREE.Group();
+        force_group_c = new THREE.Group();
+        force_general = new THREE.Group();
+        force_text = new THREE.Group();
+
+        force_group_mink = new THREE.Group();
+
+
+        // *********************** form vertices **************************
+
+        //1nd. bottom point (movable) - bottom vertice 1
+        const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1)
+        Ctrl_pts[0] = vertice_1; //adding to gumbal selection
+        const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
+
+        form_group_v.add(vertice_1);
+        form_group_v.add(vertice_1_out);
+
+        //2nd. bottom point (movable) - bottom vertice 2
+        const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2)
+        Ctrl_pts[1] = vertice_2; //adding to gumbal selection
+        const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
+
+        form_group_v.add(vertice_2);
+        form_group_v.add(vertice_2_out);
+
+        //3rd. bottom point (movable) - bottom vertice 3
+        const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3)
+        Ctrl_pts[2] = vertice_3; //adding to gumbal selection
+        const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
+        form_group_v.add(vertice_3);
+        form_group_v.add(vertice_3_out);
+
+        //4th. bottom point (movable) - bottom vertice 4
+        const vertice_4 = addVerticeSup(0.04, "sp4", formBtPt4)
+        Ctrl_pts[3] = vertice_4; //adding to gumbal selection
+        const vertice_4_out = addVerticeOutSup(0.04, vertice_4.position, 1.55);
+        form_group_v.add(vertice_4);
+        form_group_v.add(vertice_4_out);
+
+
+        var TXformNode1 = createSpriteText('1', "", new THREE.Vector3(formBtPt1.x, formBtPt1.y, formBtPt1.z - 0.3));
+        form_general.add(TXformNode1);
+        var TXformNode2 = createSpriteText('2', "", new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 0.3));
+        form_general.add(TXformNode2);
+        var TXformNode3 = createSpriteText('3', "", new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 0.3));
+        form_general.add(TXformNode3);
+        var TXformNode4 = createSpriteText('4', "", new THREE.Vector3(formBtPt4.x, formBtPt4.y, formBtPt4.z - 0.3));
+        form_general.add(TXformNode4);
+
+        // add apply loads arrows
+
+        var arrow_apply = new THREE.MeshPhongMaterial({color: 0x009600});
+        var arrow_apply_outline = new THREE.MeshBasicMaterial({
+            color: "white",
+            transparent: false,
+            side: THREE.BackSide
+        });
+
+        var apply_arrow1 = createCylinderArrowMesh(formPtO1, new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 0.4), arrow_apply, 0.02, 0.05, 0.56);
+        var apply_arrow2 = createCylinderArrowMesh(formPtO2, new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z - 0.4), arrow_apply, 0.02, 0.05, 0.56);
+
+        form_general.add(apply_arrow1);
+        form_general.add(apply_arrow2);
+
+        var apply_arrow12 = createCylinderArrowMesh(new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z + 0.005), new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 0.425), arrow_apply_outline, 0.025, 0.06, 0.53);
+        var apply_arrow22 = createCylinderArrowMesh(new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z + 0.005), new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z - 0.425), arrow_apply_outline, 0.025, 0.06, 0.53);
+
+        form_general.add(apply_arrow22);
+        form_general.add(apply_arrow12);
+
+        // add dash lines o1o1B, o2o2B
+        var applyline_dash_form = new THREE.LineDashedMaterial({
+            color: 0x009600,//color
+            dashSize: 0.05,
+            gapSize: 0.03,
+            linewidth: 1
+        });
+
+        var apply_o1o1B = [];
+        apply_o1o1B.push(formPtO1);
+        apply_o1o1B.push(formPtO1b);
+        var apply_1_geo = new THREE.BufferGeometry().setFromPoints(apply_o1o1B);
+        var applyline_o1B = new THREE.LineSegments(apply_1_geo, applyline_dash_form);
+        applyline_o1B.computeLineDistances();//compute
+        form_general.add(applyline_o1B);
+
+        var apply_o2o2B = [];
+        apply_o2o2B.push(formPtO2);
+        apply_o2o2B.push(formPtO2b);
+        var apply_2_geo = new THREE.BufferGeometry().setFromPoints(apply_o2o2B);
+        var applyline_o2B = new THREE.LineSegments(apply_2_geo, applyline_dash_form);
+        applyline_o2B.computeLineDistances();//compute
+        form_general.add(applyline_o2B);
+
+        // ***********************            form faces                **************************
+
+        //form closing plane
+        //plane mesh
+        var form_closingplane = FormPlane(formBtPt2, formBtPt1, formBtPt4, formBtPt3)
+        form_general.add(form_closingplane);
+
+        var formline_dash = new THREE.LineDashedMaterial({
+            color: "black",//color
+            dashSize: 0.1,
+            gapSize: 0.03,
+            linewidth: 1
+
+        });
+
+        var form_linep1p2 = createdashline(formBtPt1, formBtPt2, formline_dash)
+        var form_linep2p3 = createdashline(formBtPt2, formBtPt3, formline_dash)
+        var form_linep2p4 = createdashline(formBtPt2, formBtPt4, formline_dash)
+        var form_linep3p4 = createdashline(formBtPt3, formBtPt4, formline_dash)
+        var form_linep1p4 = createdashline(formBtPt1, formBtPt4, formline_dash)
+
+        form_general.add(form_linep1p2);
+        form_general.add(form_linep2p3);
+        form_general.add(form_linep2p4);
+        form_general.add(form_linep3p4);
+        form_general.add(form_linep1p4);
+
+        //plane face nromals
+        var normal_material = new THREE.MeshPhongMaterial({color: "red"})
+        var normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
+        var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+        //normal 124
+        var mid_p1p2p4 = new THREE.Vector3((formBtPt1.x + formBtPt2.x + formBtPt4.x) / 3, (formBtPt1.y + formBtPt2.y + formBtPt4.y) / 3, (formBtPt1.z + formBtPt2.z + formBtPt4.z) / 3)
+        var vec_p1p2p4_temp = CalNormalVectorUpdated(formBtPt4, formBtPt2, formBtPt1, 1.2)
+        var normal_p1p2p4 = new THREE.Vector3(mid_p1p2p4.x - 0.2 * vec_p1p2p4_temp.x, mid_p1p2p4.y - 0.2 * vec_p1p2p4_temp.y, mid_p1p2p4.z - 0.2 * vec_p1p2p4_temp.z)
+
+        var form_normal_1 = createCylinderArrowMesh(mid_p1p2p4, normal_p1p2p4, normal_material, 0.015, 0.035, 0.55);
+        var form_normal_1_outline = createCylinderArrowMesh(mid_p1p2p4, normal_p1p2p4, normal_outlinematerial, 0.018, 0.038, 0.54);
+
+        form_general.add(form_normal_1);
+        form_general.add(form_normal_1_outline);
+
+        //normal 234
+        var mid_p2p3p4 = new THREE.Vector3((formBtPt3.x + formBtPt2.x + formBtPt4.x) / 3, (formBtPt3.y + formBtPt2.y + formBtPt4.y) / 3, (formBtPt3.z + formBtPt2.z + formBtPt4.z) / 3)
+        var vec_p2p3p4_temp = CalNormalVectorUpdated(formBtPt4, formBtPt3, formBtPt2, 1.2)
+        var normal_p2p3p4 = new THREE.Vector3(mid_p2p3p4.x - 0.2 * vec_p2p3p4_temp.x, mid_p2p3p4.y - 0.2 * vec_p2p3p4_temp.y, mid_p2p3p4.z - 0.2 * vec_p2p3p4_temp.z)
+
+        var form_normal_2 = createCylinderArrowMesh(mid_p2p3p4, normal_p2p3p4, normal_material, 0.015, 0.035, 0.55);
+        var form_normal_2_outline = createCylinderArrowMesh(mid_p2p3p4, normal_p2p3p4, normal_outlinematerial, 0.018, 0.038, 0.54);
+
+        form_general.add(form_normal_2);
+        form_general.add(form_normal_2_outline);
+
+        var TXapplyForce = createSpriteTextApply('f', "1", new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z + 0.05));
+        form_general.add(TXapplyForce);
+
+
+        // ***********************            force diagram            **************************
+        var edgescale = 2; // size of the force diagram
+
+        //PtA
+        var forcePtA = new THREE.Vector3(1, -1.5, 0);
+
+        //PtB
+        var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale);
+        var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+
+        //PtC
+        var forcePtC1temp = CalNormalVectorUpdated(formBtPt2, formPtO1, formPtO1b, edgescale);
+        var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
+        var forcePtC2temp = CalNormalVectorUpdated(formPtO1, formPtO2, formPtO2b, edgescale);
+        var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
+        var dirBC = new THREE.Vector3(); // create once an reuse it
+        dirBC.subVectors(forcePtB, forcePtC1).normalize();
+        var dirAC = new THREE.Vector3(); // create once an reuse it
+        dirAC.subVectors(forcePtC2, forcePtA).normalize();
+
+        var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
+
+        //PtD
+        var forcePtD1temp = CalNormalVectorUpdated(formBtPt3, formPtO2, formPtO2b, edgescale);
+        var forcePtD1 = new THREE.Vector3(forcePtC.x - forcePtD1temp.x, forcePtC.y - forcePtD1temp.y, forcePtC.z - forcePtD1temp.z);
+        var forcePtD2temp = CalNormalVectorUpdated(formPtO2, formBtPt4, formPtO2b, edgescale);
+        var forcePtD2 = new THREE.Vector3(forcePtA.x - forcePtD2temp.x, forcePtA.y - forcePtD2temp.y, forcePtA.z - forcePtD2temp.z);
+
+        var dirCD = new THREE.Vector3(); // create once an reuse it
+        dirCD.subVectors(forcePtC, forcePtD1).normalize();
+        var dirAD = new THREE.Vector3(); // create once an reuse it
+        dirAD.subVectors(forcePtD2, forcePtA).normalize();
+        var forcePtD = LinesSectPt(dirCD, forcePtC, dirAD, forcePtA);
+
+        //force edges
+        var edgeSize = 0.005;
+        var edgeColor = "lightgrey";
+
+        var forceEdgeMaterial = new THREE.MeshPhongMaterial({
+            color: edgeColor
+        });
+
+        const forceEdgeAB = createCylinderMesh(forcePtA, forcePtB, forceEdgeMaterial, edgeSize, edgeSize);
+        force_group_e.add(forceEdgeAB);
+
+        const forceEdgeAC = createCylinderMesh(forcePtA, forcePtC, forceEdgeMaterial, edgeSize, edgeSize);
+        force_group_e.add(forceEdgeAC);
+
+        const forceEdgeBC = createCylinderMesh(forcePtB, forcePtC, forceEdgeMaterial, edgeSize, edgeSize);
+        force_group_e.add(forceEdgeBC)
+
+        const forceEdgeAD = createCylinderMesh(forcePtA, forcePtD, forceEdgeMaterial, edgeSize, edgeSize);
+        force_group_e.add(forceEdgeAD)
+
+        const forceEdgeCD = createCylinderMesh(forcePtC, forcePtD, forceEdgeMaterial, edgeSize, edgeSize);
+        force_group_e.add(forceEdgeCD)
+
+        var applyForceArrowMaterial = new THREE.MeshPhongMaterial({
+            color: 0x009600//green
+        });
+
+        var applyForceArrowMaterialOut = new THREE.MeshPhongMaterial({
+            color: "white",
+            transparent: false,
+            side: THREE.BackSide
+        });
+        const applyArrow = createCylinderArrowMesh(
+            new THREE.Vector3(
+                face_center(forcePtA, forcePtB, forcePtC).x,
+                face_center(forcePtA, forcePtB, forcePtC).y,
+                face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), applyForceArrowMaterial, 0.015, 0.04, 0.55);
+        force_general.add(applyArrow);
+        const applyArrowOut = createCylinderArrowMesh(new THREE.Vector3(
+            face_center(forcePtA, forcePtB, forcePtC).x,
+            face_center(forcePtA, forcePtB, forcePtC).y,
+            face_center(forcePtA, forcePtB, forcePtC).z + 0.4), face_center(forcePtA, forcePtB, forcePtC), applyForceArrowMaterialOut, 0.02, 0.045, 0.545);
+        force_general.add(applyArrowOut);
+
+        force_general.add(createSpriteTextApply('n', "f", new THREE.Vector3(
+            face_center(forcePtA, forcePtB, forcePtC).x,
+            face_center(forcePtA, forcePtB, forcePtC).y,
+            face_center(forcePtA, forcePtB, forcePtC).z + 0.4)))
+
+        const applyArrow2 = createCylinderArrowMesh(
+            new THREE.Vector3(
+                face_center(forcePtA, forcePtC, forcePtD).x,
+                face_center(forcePtA, forcePtC, forcePtD).y,
+                face_center(forcePtA, forcePtC, forcePtD).z + 0.4), face_center(forcePtA, forcePtD, forcePtC), applyForceArrowMaterial, 0.015, 0.04, 0.55);
+        force_general.add(applyArrow2);
+        const applyArrowOut2 = createCylinderArrowMesh(new THREE.Vector3(
+            face_center(forcePtA, forcePtC, forcePtD).x,
+            face_center(forcePtA, forcePtC, forcePtD).y,
+            face_center(forcePtA, forcePtC, forcePtD).z + 0.4), face_center(forcePtA, forcePtD, forcePtC), applyForceArrowMaterialOut, 0.02, 0.045, 0.545);
+        force_general.add(applyArrowOut2);
+
+        // *********************** force trial point O **************************
+
+        var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
+        var TXforceO = createSpriteTextPrime('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z - 0.3));
+
+
+        const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
+        const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
+
+        const TrialFaces = ForceTrialFace(forcePtA, forcePtB, forcePtC, forcePtD, TrialP_O)
+
+        // ***********************           trial form                **************************
+        var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
+
+        var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
+
+        var TXtrial_P1 = createSpriteTextPrime('1', "'", new THREE.Vector3(trial_P1.x, trial_P1.y, trial_P1.z - 0.3));
+
+        var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
+        var trial_P2 = create_trial_intec(trial_o1, forcePtB, TrialP_O, forcePtC, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
+        var trial_o2 = create_trial_intec(trial_o1, forcePtA, TrialP_O, forcePtC, formPtO2, formPtO2b);
+        var trial_P3 = create_trial_intec(trial_o2, forcePtC, TrialP_O, forcePtD, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
+        var trial_P4 = create_trial_intec(trial_o2, forcePtA, TrialP_O, forcePtD, formBtPt4, new THREE.Vector3(formBtPt4.x, formBtPt4.y, formBtPt4.z - 1));
+
+
+        var TXtrial_P2 = createSpriteTextPrime('2', "'", new THREE.Vector3(trial_P2.x, trial_P2.y, trial_P2.z - 0.3));
+        var TXtrial_P3 = createSpriteTextPrime('3', "'", new THREE.Vector3(trial_P3.x, trial_P3.y, trial_P3.z - 0.3));
+        var TXtrial_P4 = createSpriteTextPrime('4', "'", new THREE.Vector3(trial_P4.x, trial_P4.y, trial_P4.z - 0.3));
+
+        var trial_mesh_p1o1 = createCylinderMesh(trial_o1, trial_P1, DragPointMat, 0.02, 0.02);
+        var trial_mesh_p2o1 = createCylinderMesh(trial_o1, trial_P2, DragPointMat, 0.02, 0.02);
+        var trial_mesh_o1o2 = createCylinderMesh(trial_o1, trial_o2, DragPointMat, 0.02, 0.02);
+        var trial_mesh_p3o2 = createCylinderMesh(trial_P3, trial_o2, DragPointMat, 0.02, 0.02);
+        var trial_mesh_p4o2 = createCylinderMesh(trial_P4, trial_o2, DragPointMat, 0.02, 0.02);
+
+        //trial form closing plane
+        //plane mesh
+        var trial_closingplane = FormPlane(trial_P2, trial_P1, trial_P4, trial_P3)
+
+        var trialline_dash = new THREE.LineDashedMaterial({
+            color: "black",//color
+            dashSize: 0.1,
+            gapSize: 0.03,
+            linewidth: 1
+
+        });
+
+        var trial_linep1p2 = createdashline(trial_P1, trial_P2, trialline_dash)
+        var trial_linep2p4 = createdashline(trial_P2, trial_P4, trialline_dash)
+        var trial_linep1p4 = createdashline(trial_P1, trial_P4, trialline_dash)
+        var trial_linep2p3 = createdashline(trial_P2, trial_P3, trialline_dash)
+        var trial_linep3p4 = createdashline(trial_P3, trial_P4, trialline_dash)
+
+
+        //trial plane face nromals
+
+        var trialmid_p1p2p4 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P4.x) / 3, (trial_P1.y + trial_P2.y + trial_P4.y) / 3, (trial_P1.z + trial_P2.z + trial_P4.z) / 3)
+        var vec_p1p2p4_temp = CalNormalVectorUpdated(trial_P4, trial_P2, trial_P1, 1.2)
+        var trialnormal_p1p2p4 = new THREE.Vector3(trialmid_p1p2p4.x - 0.2 * vec_p1p2p4_temp.x, trialmid_p1p2p4.y - 0.2 * vec_p1p2p4_temp.y, trialmid_p1p2p4.z - 0.2 * vec_p1p2p4_temp.z)
+
+        var trial_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+        var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
+        var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+
+        var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p4, trialnormal_p1p2p4, trial_normal_material, 0.015, 0.035, 0.55);
+        var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p4, trialnormal_p1p2p4, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
+
+        var trialmid_p2p3p4 = new THREE.Vector3((trial_P2.x + trial_P3.x + trial_P4.x) / 3, (trial_P2.y + trial_P3.y + trial_P4.y) / 3, (trial_P2.z + trial_P3.z + trial_P4.z) / 3)
+        var vec_p2p3p4_temp = CalNormalVectorUpdated(trial_P4, trial_P3, trial_P2, 1.2)
+        var trialnormal_p2p3p4 = new THREE.Vector3(trialmid_p2p3p4.x - 0.2 * vec_p2p3p4_temp.x, trialmid_p2p3p4.y - 0.2 * vec_p2p3p4_temp.y, trialmid_p2p3p4.z - 0.2 * vec_p2p3p4_temp.z)
+
+        var trial_normal_2 = createCylinderArrowMesh(trialmid_p2p3p4, trialnormal_p2p3p4, trial_normal_material, 0.015, 0.035, 0.55);
+        var trial_normal_2_outline = createCylinderArrowMesh(trialmid_p2p3p4, trialnormal_p2p3p4, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
+
+        // ***********************          find trial force point x1 and x2              **************************
+
+        //location of x1 x2
+        //find x1
+        var ForceX1_vec = CalNormalVectorUpdated(trial_P1, trial_P2, trial_P4, 0.5);
+        var ForceX1_temp = new THREE.Vector3(TrialP_O.x - 1.2 * ForceX1_vec.x, TrialP_O.y - 1.2 * ForceX1_vec.y, TrialP_O.z - 1.2 * ForceX1_vec.z);
+
+        //define intersection point x1
+        var intersect_x1_vec = new THREE.Vector3(ForceX1_temp.x - TrialP_O.x, ForceX1_temp.y - TrialP_O.y, ForceX1_temp.z - TrialP_O.z);
+        var applyplanevec = CalNormalVectorUpdated(forcePtA, forcePtB, forcePtC, 0.5);
+        var ForceX1 = Cal_Plane_Line_Intersect_Point(TrialP_O, intersect_x1_vec, forcePtB, applyplanevec);
+
+        var line_ox1 = [];
+        line_ox1.push(TrialP_O);
+        line_ox1.push(ForceX1);
+        var line_ox1_geo = new THREE.BufferGeometry().setFromPoints(line_ox1);
+        var applyline_1 = new THREE.LineDashedMaterial({
+            color: "black",//color
+            dashSize: 0.2,
+            gapSize: 0.03,
+            linewidth: 1
+        });
+        var applylineox1 = new THREE.LineSegments(line_ox1_geo, applyline_1);
+        applylineox1.computeLineDistances();//compute
+
+        //find x2
+
+        var ForceX2_vec = CalNormalVectorUpdated(trial_P2, trial_P4, trial_P3, 0.5);
+        var ForceX2_temp = new THREE.Vector3(TrialP_O.x - 1.2 * ForceX2_vec.x, TrialP_O.y - 1.2 * ForceX2_vec.y, TrialP_O.z - 1.2 * ForceX2_vec.z);
+
+        var intersect_x2_vec = new THREE.Vector3(ForceX2_temp.x - TrialP_O.x, ForceX2_temp.y - TrialP_O.y, ForceX2_temp.z - TrialP_O.z);
+        var ForceX2 = Cal_Plane_Line_Intersect_Point(TrialP_O, intersect_x2_vec, forcePtB, applyplanevec);
+
+        var line_ox2 = [];
+        line_ox2.push(TrialP_O);
+        line_ox2.push(ForceX2);
+
+        var line_ox2_geo = new THREE.BufferGeometry().setFromPoints(line_ox2);
+        var applylineox2 = new THREE.LineSegments(line_ox2_geo, applyline_1);
+        applylineox2.computeLineDistances();//compute
+
+        //add x1 x2 arrow
+
+        var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
+        var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
+
+        var x1_arrow = createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
+
+        var x2_closeP1 = addVectorAlongDir(TrialP_O, ForceX2, -1);
+
+        var x2_closeP2 = addVectorAlongDir(TrialP_O, ForceX2, -0.8);
+
+        var x2_arrow = createCylinderArrowMesh(x2_closeP1, x2_closeP2, force_normal_material, 0.012, 0.025, 0.55);
+
+        //add x1 x2 sphere
+        var materialpointx = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+
+        var spforcePointx = new THREE.SphereGeometry(0.01);
+        var new_forcePointx1 = new THREE.Mesh(spforcePointx, materialpointx);
+
+        new_forcePointx1.position.copy(ForceX1);
+
+        var outlineMaterialx = new THREE.MeshBasicMaterial({color: "red", transparent: false, side: THREE.BackSide});
+        var outlineMeshnewx1 = new THREE.Mesh(spforcePointx, outlineMaterialx);
+        outlineMeshnewx1.position.copy(ForceX1);
+        outlineMeshnewx1.scale.multiplyScalar(1.55);
+
+        var TXforcex1 = createSpriteText('x', "1", new THREE.Vector3(ForceX1.x, ForceX1.y, ForceX1.z + 0.1));
+
+        var new_forcePointx2 = new THREE.Mesh(spforcePointx, materialpointx);
+
+        new_forcePointx2.position.copy(ForceX2);
+
+        var outlineMaterialx = new THREE.MeshBasicMaterial({color: "red", transparent: false, side: THREE.BackSide});
+        var outlineMeshnewx2 = new THREE.Mesh(spforcePointx, outlineMaterialx);
+        outlineMeshnewx2.position.copy(ForceX2);
+        outlineMeshnewx2.scale.multiplyScalar(1.55);
+
+        var TXforcex2 = createSpriteText('x', "2", new THREE.Vector3(ForceX2.x, ForceX2.y, ForceX2.z + 0.1));
 
         //draw x1o1, x2o2
         //find constrain point o1
@@ -3510,8 +3625,6 @@
         scene.add(form_group_e);
         scene.add(form_group_c);
         scene.add(form_general);
-        scene.add(form_group_e_trial);
-        scene.add(form_general_trial);
         scene.add(form_group_mink);
 
         scene2.add(force_group_v);
@@ -3520,57 +3633,7 @@
         scene2.add(force_group_c);
         scene2.add(force_general);
 
-        scene2.add(force_group_e_trial);
-        scene2.add(force_group_f_trial);
-        scene2.add(force_general_trial);
         scene2.add(force_group_mink);
-
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
 
         force_group_mink.traverse(function (obj) {
             if (obj.type === "Mesh") {
