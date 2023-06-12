@@ -253,9 +253,6 @@
     };
     const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxParams, 'show').on
     ('change', (ev) => { //on change, dispose old plane geometry and create new
-
-        // showTrial = !showTrial;
-        //  trialHeight = ev.value;
         form_group_e_trial.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
@@ -427,6 +424,9 @@
         'show': false, //at first, box is unchecked so value is "false"
     };
     const minkVisibilityCheckbox = tab.pages[2].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
+        tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
+        tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
+        rightPane.disabled = !rightPane.disabled;
         form_group_mink.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
@@ -445,11 +445,6 @@
                 obj.material.visible = !ev.value;
             }
         });
-        // form_group_v.traverse(function(obj) {
-        //   if (obj.type === "Mesh") {
-        //     obj.material.visible = !ev.value;
-        //   }
-        //   });
         form_general.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = !ev.value;
@@ -517,11 +512,6 @@
                 obj.material.visible = !ev.value;
             }
         });
-        // form_group_v.traverse(function(obj) {
-        //   if (obj.type === "Mesh") {
-        //     obj.material.visible = !ev.value;
-        //   }
-        //   });
         form_general.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = !ev.value;
@@ -558,7 +548,7 @@
 
     /************************* Right Panel *************************/
 
-    const hiddenPane = new Tweakpane.Pane({
+    const rightPane = new Tweakpane.Pane({
         container: document.getElementById('right_container'),
     });
 
@@ -566,7 +556,7 @@
         O1len: 2, //starts as double the size of the box's params
     };
     //make the plane size slider
-    const forceO1Slider = hiddenPane.addInput(o1SizeSliderParams, 'O1len', {
+    const forceO1Slider = rightPane.addInput(o1SizeSliderParams, 'O1len', {
         min: -1, //min = double the size of the box's params
         max: 3, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -578,7 +568,7 @@
         O2len: 2, //starts as double the size of the box's params
     };
     //make the plane size slider
-    const forceO2Slider = hiddenPane.addInput(o2SizeSliderParams, 'O2len', {
+    const forceO2Slider = rightPane.addInput(o2SizeSliderParams, 'O2len', {
         min: -1, //min = double the size of the box's params
         max: 3, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -591,7 +581,7 @@
     };
 
     //make the checkbox
-    const planeVisibilityCheckbox = hiddenPane.addInput(planeVisibilityCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
+    const planeVisibilityCheckbox = rightPane.addInput(planeVisibilityCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
         force_group_c.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
@@ -637,7 +627,7 @@
     };
     var forceCellScale = 0.7
     //make the plane size slider
-    const forceCellSlider = hiddenPane.addInput(planeSizeSliderParams, 'size', {
+    const forceCellSlider = rightPane.addInput(planeSizeSliderParams, 'size', {
         min: 0.5, //min = double the size of the box's params
         max: 1, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
