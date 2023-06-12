@@ -297,56 +297,7 @@
         tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
         tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
         rightPane.disabled = !rightPane.disabled;
-        form_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        form_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-        });
+        redrawMink();
     });
 
     const minkParams = {
@@ -357,58 +308,8 @@
         min: -0.226,
         step: 0.001
     }).on('change', (ev) => { //on change, dispose old geometry and create new
-        Redraw();
-        minkscale.l = -ev.value
-        form_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        form_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-        });
+        minkscale.l = -ev.value;
+        redrawMink();
     });
     minkSlider.hidden = true;
     minkVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
@@ -1010,6 +911,1343 @@
         });
     }
 
+    function redrawMink() {
+        scene.remove(form_group_mink);
+        scene2.remove(force_group_mink);
+
+        form_group_mink = new THREE.Group();
+        force_group_mink = new THREE.Group();
+
+        // ***********************            force diagram            **************************
+        var edgescale = 2; // size of the force diagram
+
+        //PtA
+        var forcePtA = new THREE.Vector3(1, -1.5, 0);
+
+        //PtB
+        var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale);
+        var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+
+        //PtC
+        var forcePtC1temp = CalNormalVectorUpdated(formBtPt2, formPtO1, formPtO1b, edgescale);
+        var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
+        var forcePtC2temp = CalNormalVectorUpdated(formPtO1, formPtO2, formPtO2b, edgescale);
+        var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
+        var dirBC = new THREE.Vector3(); // create once an reuse it
+        dirBC.subVectors(forcePtB, forcePtC1).normalize();
+        var dirAC = new THREE.Vector3(); // create once an reuse it
+        dirAC.subVectors(forcePtC2, forcePtA).normalize();
+
+        var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
+
+        //PtD
+        var forcePtD1temp = CalNormalVectorUpdated(formBtPt3, formPtO2, formPtO2b, edgescale);
+        var forcePtD1 = new THREE.Vector3(forcePtC.x - forcePtD1temp.x, forcePtC.y - forcePtD1temp.y, forcePtC.z - forcePtD1temp.z);
+        var forcePtD2temp = CalNormalVectorUpdated(formPtO2, formBtPt4, formPtO2b, edgescale);
+        var forcePtD2 = new THREE.Vector3(forcePtA.x - forcePtD2temp.x, forcePtA.y - forcePtD2temp.y, forcePtA.z - forcePtD2temp.z);
+
+        var dirCD = new THREE.Vector3(); // create once an reuse it
+        dirCD.subVectors(forcePtC, forcePtD1).normalize();
+        var dirAD = new THREE.Vector3(); // create once an reuse it
+        dirAD.subVectors(forcePtD2, forcePtA).normalize();
+        var forcePtD = LinesSectPt(dirCD, forcePtC, dirAD, forcePtA);
+
+        // *********************** force trial point O **************************
+
+        var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
+
+        // ***********************           trial form                **************************
+
+        var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
+
+        var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
+        var trial_P2 = create_trial_intec(trial_o1, forcePtB, TrialP_O, forcePtC, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
+        var trial_o2 = create_trial_intec(trial_o1, forcePtA, TrialP_O, forcePtC, formPtO2, formPtO2b);
+        var trial_P3 = create_trial_intec(trial_o2, forcePtC, TrialP_O, forcePtD, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
+        var trial_P4 = create_trial_intec(trial_o2, forcePtA, TrialP_O, forcePtD, formBtPt4, new THREE.Vector3(formBtPt4.x, formBtPt4.y, formBtPt4.z - 1))
+
+        // ***********************          find trial force point x1 and x2              **************************
+
+        //location of x1 x2
+        //find x1
+        var ForceX1_vec = CalNormalVectorUpdated(trial_P1, trial_P2, trial_P4, 0.5);
+        var ForceX1_temp = new THREE.Vector3(TrialP_O.x - 1.2 * ForceX1_vec.x, TrialP_O.y - 1.2 * ForceX1_vec.y, TrialP_O.z - 1.2 * ForceX1_vec.z);
+
+        //define intersection point x1
+        var intersect_x1_vec = new THREE.Vector3(ForceX1_temp.x - TrialP_O.x, ForceX1_temp.y - TrialP_O.y, ForceX1_temp.z - TrialP_O.z);
+        var applyplanevec = CalNormalVectorUpdated(forcePtA, forcePtB, forcePtC, 0.5);
+        var ForceX1 = Cal_Plane_Line_Intersect_Point(TrialP_O, intersect_x1_vec, forcePtB, applyplanevec);
+
+        //find x2
+
+        var ForceX2_vec = CalNormalVectorUpdated(trial_P2, trial_P4, trial_P3, 0.5);
+        var ForceX2_temp = new THREE.Vector3(TrialP_O.x - 1.2 * ForceX2_vec.x, TrialP_O.y - 1.2 * ForceX2_vec.y, TrialP_O.z - 1.2 * ForceX2_vec.z);
+
+        var intersect_x2_vec = new THREE.Vector3(ForceX2_temp.x - TrialP_O.x, ForceX2_temp.y - TrialP_O.y, ForceX2_temp.z - TrialP_O.z);
+        var ForceX2 = Cal_Plane_Line_Intersect_Point(TrialP_O, intersect_x2_vec, forcePtB, applyplanevec);
+
+        //draw x1o1, x2o2
+        //find constrain point o1
+
+        var ForceO1_temp = CalNormalVectorUpdated(formBtPt1, formBtPt2, formBtPt4, 0.5);
+        var ForceO1 = new THREE.Vector3(ForceX1.x - o1.l * ForceO1_temp.x, ForceX1.y - o1.l * ForceO1_temp.y, ForceX1.z - o1.l * ForceO1_temp.z);
+
+        //find constrain point o2
+
+        var ForceO2_temp = CalNormalVectorUpdated(formBtPt2, formBtPt3, formBtPt4, 0.5);
+        var ForceO2 = new THREE.Vector3(ForceX2.x - o2.l * ForceO2_temp.x, ForceX2.y - o2.l * ForceO2_temp.y, ForceX2.z - o2.l * ForceO2_temp.z);
+
+        // ***********************          find form edges        **************************
+
+        //New Point o1
+        var formPt1 = CalNormalVectorUpdated(forcePtA, ForceO1, forcePtB, 0.5);
+        var formPt1end = new THREE.Vector3(formBtPt1.x - 1.2 * formPt1.x, formBtPt1.y - 1.2 * formPt1.y, formBtPt1.z - 1.2 * formPt1.z);
+        var formPt2 = CalNormalVectorUpdated(forcePtC, ForceO1, forcePtB, 0.5);
+        var formPt2end = new THREE.Vector3(formBtPt2.x - 1.2 * formPt2.x, formBtPt2.y - 1.2 * formPt2.y, formBtPt2.z - 1.2 * formPt2.z);
+
+        var diro1 = new THREE.Vector3(); // create once an reuse it
+        diro1.subVectors(formBtPt1, formPt1end).normalize();
+        var diro12 = new THREE.Vector3(); // create once an reuse it
+        diro12.subVectors(formBtPt2, formPt2end).normalize();
+        var formPtO1new = LinesSectPt(diro1, formBtPt1, diro12, formBtPt2);
+        var materialpointo = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+        var spformPointO1 = new THREE.SphereGeometry(0.04);
+        var new_formPtO1 = new THREE.Mesh(spformPointO1, materialpointo);
+        new_formPtO1.position.copy(formPtO1new);
+        new_formPtO1.castShadow = true;
+        var outlineMaterial1 = new THREE.MeshBasicMaterial({color: "black", transparent: false, side: THREE.BackSide});
+        var outlineMeshnew1 = new THREE.Mesh(spformPointO1, outlineMaterial1);
+        outlineMeshnew1.position.copy(formPtO1new);
+        outlineMeshnew1.scale.multiplyScalar(1.55);
+
+        //New Point o2
+        var formPt3 = CalNormalVectorUpdated(forcePtD, forcePtC, ForceO2, 0.5);
+        var formPt3end = new THREE.Vector3(formBtPt3.x - 1.2 * formPt3.x, formBtPt3.y - 1.2 * formPt3.y, formBtPt3.z - 1.2 * formPt3.z);
+        var formPt4 = CalNormalVectorUpdated(forcePtA, forcePtD, ForceO2, 0.5);
+        var formPt4end = new THREE.Vector3(formBtPt4.x - 1.2 * formPt4.x, formBtPt4.y - 1.2 * formPt4.y, formBtPt4.z - 1.2 * formPt4.z);
+
+        var diro2 = new THREE.Vector3(); // create once an reuse it
+        diro2.subVectors(formBtPt3, formPt3end).normalize();
+        var diro22 = new THREE.Vector3(); // create once an reuse it
+        diro22.subVectors(formBtPt4, formPt4end).normalize();
+        var formPtO2new = LinesSectPt(diro2, formBtPt3, diro22, formBtPt4);
+        var materialpointo = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+        var spformPointO2 = new THREE.SphereGeometry(0.04);
+        var new_formPtO2 = new THREE.Mesh(spformPointO2, materialpointo);
+        new_formPtO2.position.copy(formPtO2new);
+        new_formPtO2.castShadow = true;
+        var outlineMaterial2 = new THREE.MeshBasicMaterial({color: "black", transparent: false, side: THREE.BackSide});
+        var outlineMeshnew2 = new THREE.Mesh(spformPointO2, outlineMaterial2);
+        outlineMeshnew2.position.copy(formPtO2new);
+        outlineMeshnew2.scale.multiplyScalar(1.55);
+
+        //New Point o3
+        var formPtO3a = CalNormalVectorUpdated(forcePtC, forcePtA, ForceO1, 0.5);
+        var formPtO3aend = new THREE.Vector3(formPtO1new.x - 1.2 * formPtO3a.x, formPtO1new.y - 1.2 * formPtO3a.y, formPtO1new.z - 1.2 * formPtO3a.z);
+        var formPtO3b = CalNormalVectorUpdated(forcePtA, forcePtC, ForceO2, 0.5);
+        var formPtO3bend = new THREE.Vector3(formPtO2new.x - 1.2 * formPtO3b.x, formPtO2new.y - 1.2 * formPtO3b.y, formPtO2new.z - 1.2 * formPtO3b.z);
+
+        var diro3 = new THREE.Vector3(); // create once an reuse it
+        diro3.subVectors(formPtO1new, formPtO3aend).normalize();
+        var diro32 = new THREE.Vector3(); // create once an reuse it
+        diro32.subVectors(formPtO2new, formPtO3bend).normalize();
+        var formPtO3new = LinesSectPt(diro3, formPtO1new, diro32, formPtO2new);
+        var materialpointo = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+        var spformPointO3 = new THREE.SphereGeometry(0.04);
+        var new_formPtO3 = new THREE.Mesh(spformPointO3, materialpointo);
+        new_formPtO3.position.copy(formPtO3new);
+        new_formPtO3.castShadow = true;
+        var outlineMaterial3 = new THREE.MeshBasicMaterial({color: "black", transparent: false, side: THREE.BackSide});
+        var outlineMeshnew3 = new THREE.Mesh(spformPointO3, outlineMaterial3);
+        outlineMeshnew3.position.copy(formPtO3new);
+        outlineMeshnew3.scale.multiplyScalar(1.55);
+
+
+        //Cal areas
+        var areaACO2 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(forcePtA, ForceO2),
+            new THREE.Vector3().subVectors(forcePtC, ForceO2),
+        ).length() / 2
+
+        var areaCO1O2 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(ForceO1, forcePtC),
+            new THREE.Vector3().subVectors(ForceO2, forcePtC),
+        ).length() / 2
+
+        var areaAO1O2 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(ForceO1, forcePtA),
+            new THREE.Vector3().subVectors(ForceO2, forcePtA),
+        ).length() / 2
+
+        var areaACO1 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(forcePtC, ForceO1),
+            new THREE.Vector3().subVectors(forcePtA, ForceO1),
+        ).length() / 2
+
+        var areaABO1 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(forcePtB, ForceO1),
+            new THREE.Vector3().subVectors(forcePtA, ForceO1),
+        ).length() / 2
+
+        var areaBCO1 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(forcePtB, ForceO1),
+            new THREE.Vector3().subVectors(forcePtC, ForceO1),
+        ).length() / 2
+
+        var areaCDO2 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(forcePtC, ForceO2),
+            new THREE.Vector3().subVectors(forcePtD, ForceO2),
+        ).length() / 2
+
+        var areaADO2 = new THREE.Vector3().crossVectors(
+            new THREE.Vector3().subVectors(forcePtA, ForceO2),
+            new THREE.Vector3().subVectors(forcePtD, ForceO2),
+        ).length() / 2
+
+        var areaMax = Math.max(areaACO2, areaCO1O2, areaAO1O2, areaACO1, areaABO1, areaBCO1, areaCDO2, areaADO2)
+
+        // ********************************** Minkowski Sum Generation ************************************
+
+        //Minkowski Test
+        var formMSedgeMaterial = new THREE.MeshPhongMaterial({
+            color: "lightgrey"
+        });
+
+        var minkedgeSize = 0.005
+        // chose the start point - formPtO1new (z - 0.5)
+        var minkStPt = new THREE.Vector3(formPtO1new.x, formPtO1new.y, formPtO1new.z)
+
+        // ******************          - force cell ABCO1 - cell at minkStPt ******************
+        var formMSedgeBO1temp = subVecUpdated(forcePtB, ForceO1)
+        var formMSptB_ABCO1 = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgeBO1temp.x,
+            minkStPt.y - minkscale.l * formMSedgeBO1temp.y,
+            minkStPt.z - minkscale.l * formMSedgeBO1temp.z
+        );
+        const formMSedgeBO1 = createCylinderMesh(minkStPt, formMSptB_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1)
+
+        var formMSedgeAO1temp = subVecUpdated(forcePtA, ForceO1)
+        var formMSptA_ABCO1 = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgeAO1temp.x,
+            minkStPt.y - minkscale.l * formMSedgeAO1temp.y,
+            minkStPt.z - minkscale.l * formMSedgeAO1temp.z
+        );
+        const formMSedgeAO1 = createCylinderMesh(minkStPt, formMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1)
+
+        var formMSedgeCO1temp = subVecUpdated(forcePtC, ForceO1)
+        var formMSptC_ABCO1 = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgeCO1temp.x,
+            minkStPt.y - minkscale.l * formMSedgeCO1temp.y,
+            minkStPt.z - minkscale.l * formMSedgeCO1temp.z
+        );
+        const formMSedgeCO1 = createCylinderMesh(minkStPt, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO1)
+
+        const formMSedgeAB_ABCO1 = createCylinderMesh(formMSptB_ABCO1, formMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAB_ABCO1)
+        const formMSedgeBC_ABCO1 = createCylinderMesh(formMSptB_ABCO1, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBC_ABCO1)
+        const formMSedgeAC_ABCO1 = createCylinderMesh(formMSptA_ABCO1, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAC_ABCO1)
+
+        // 1.1 - project to formBtPt1
+        // a. from formMSptBO1 (0.8 is the max number of minkscale.l)
+
+        var formMSptBO1_BtPt1 = new THREE.Vector3(
+            formBtPt1.x - minkscale.l * formMSedgeBO1temp.x,
+            formBtPt1.y - minkscale.l * formMSedgeBO1temp.y,
+            formBtPt1.z - minkscale.l * formMSedgeBO1temp.z
+        );
+        const formMSedgeBO1_BtPt1 = createCylinderMesh(formBtPt1, formMSptBO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1_BtPt1)
+
+        var formMSptAO1_BtPt1 = new THREE.Vector3(
+            formBtPt1.x - minkscale.l * formMSedgeAO1temp.x,
+            formBtPt1.y - minkscale.l * formMSedgeAO1temp.y,
+            formBtPt1.z - minkscale.l * formMSedgeAO1temp.z
+        );
+        const formMSedgeAO1_BtPt1 = createCylinderMesh(formBtPt1, formMSptAO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1_BtPt1)
+
+        const formMSedgeAO1BO1_BtPt1 = createCylinderMesh(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1BO1_BtPt1)
+
+        //connecting the rest edges back to cell ABCO1
+        const formMSedgeminkStPt_BtPt1 = createCylinderMesh(minkStPt, formBtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeminkStPt_BtPt1)
+
+        const formMSedgeAO1_edge = createCylinderMesh(formMSptA_ABCO1, formMSptAO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1_edge)
+
+        const formMSedgeBO1_edge = createCylinderMesh(formMSptB_ABCO1, formMSptBO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1_edge)
+
+        var formMSptBO1_BtPt2 = new THREE.Vector3(
+            formBtPt2.x - minkscale.l * formMSedgeBO1temp.x,
+            formBtPt2.y - minkscale.l * formMSedgeBO1temp.y,
+            formBtPt2.z - minkscale.l * formMSedgeBO1temp.z
+        );
+        const formMSedgeBO1_BtPt2 = createCylinderMesh(formBtPt2, formMSptBO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1_BtPt2)
+
+        var formMSptCO1_BtPt2 = new THREE.Vector3(
+            formBtPt2.x - minkscale.l * formMSedgeCO1temp.x,
+            formBtPt2.y - minkscale.l * formMSedgeCO1temp.y,
+            formBtPt2.z - minkscale.l * formMSedgeCO1temp.z
+        );
+        const formMSedgeCO1_BtPt2 = createCylinderMesh(formBtPt2, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO1_BtPt2)
+
+        const formMSedgeCO1BO1_BtPt1 = createCylinderMesh(formMSptCO1_BtPt2, formMSptBO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO1BO1_BtPt1)
+
+        //connecting the rest edges to cell ABCO1
+        const formMSedgeminkStPt_BtPt2 = createCylinderMesh(minkStPt, formBtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeminkStPt_BtPt2)
+
+        const formMSedgeCO1_edge = createCylinderMesh(formMSptC_ABCO1, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO1_edge)
+
+        const formMSedgeBO1_edge2 = createCylinderMesh(formMSptB_ABCO1, formMSptBO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1_edge2)
+
+        // ******************          - force cell ACO1O2 - cell at formPtO3new ******************
+        // 2 - force cell ACO1O2 to formPtO3new
+
+        var formMSptA_ACO1O2 = new THREE.Vector3(
+            formPtO3new.x - minkscale.l * formMSedgeAO1temp.x,
+            formPtO3new.y - minkscale.l * formMSedgeAO1temp.y,
+            formPtO3new.z - minkscale.l * formMSedgeAO1temp.z
+        );
+        const formMSedgeAO1_ACO1O2 = createCylinderMesh(formPtO3new, formMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1_ACO1O2)
+
+        var formMSptO1O2temp = subVecUpdated(ForceO2, ForceO1);
+        var formMSptO2_ACO1O2 = new THREE.Vector3(
+            formPtO3new.x - minkscale.l * formMSptO1O2temp.x,
+            formPtO3new.y - minkscale.l * formMSptO1O2temp.y,
+            formPtO3new.z - minkscale.l * formMSptO1O2temp.z
+        );
+        const formMSedgePtO3O2_ACO1O2 = createCylinderMesh(formPtO3new, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgePtO3O2_ACO1O2)
+
+        var formMSptC_ACO1O2 = new THREE.Vector3(
+            formPtO3new.x - minkscale.l * formMSedgeCO1temp.x,
+            formPtO3new.y - minkscale.l * formMSedgeCO1temp.y,
+            formPtO3new.z - minkscale.l * formMSedgeCO1temp.z
+        );
+        const formMSedgePtO3C_ACO1O2 = createCylinderMesh(formPtO3new, formMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgePtO3C_ACO1O2)
+
+        const formMSedgeAO2_ACO1O2 = createCylinderMesh(formMSptA_ACO1O2, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO2_ACO1O2)
+        const formMSedgeAC_ACO1O2 = createCylinderMesh(formMSptA_ACO1O2, formMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAC_ACO1O2)
+        const formMSedgeCO2_ACO1O2 = createCylinderMesh(formMSptC_ACO1O2, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO2_ACO1O2)
+
+        // connecting cell ACO1O2 to cell ABCO1
+        const formMSedgeAA_cell1tocell2 = createCylinderMesh(formMSptA_ACO1O2, formMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAA_cell1tocell2)
+        const formMSedgeO1O3_cell1tocell2 = createCylinderMesh(formPtO1new, formPtO3new, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO1O3_cell1tocell2)
+        const formMSedgeCC_cell1tocell2 = createCylinderMesh(formMSptC_ACO1O2, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCC_cell1tocell2)
+
+        // project the cell ACO1O2 to BtPt2
+        var formMSedgeO1O2temp = subVecUpdated(ForceO2, ForceO1)
+        var formMSptO2_BtPt2 = new THREE.Vector3(
+            formBtPt2.x - minkscale.l * formMSedgeO1O2temp.x,
+            formBtPt2.y - minkscale.l * formMSedgeO1O2temp.y,
+            formBtPt2.z - minkscale.l * formMSedgeO1O2temp.z
+        );
+        const formMSedgeO1O2_BtPt2 = createCylinderMesh(formBtPt2, formMSptO2_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO1O2_BtPt2)
+
+        const formMSedgeCO2_BtPt2 = createCylinderMesh(formMSptO2_ACO1O2, formMSptO2_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO2_BtPt2)
+
+        const formMSedgePt2O3_BtPt2 = createCylinderMesh(formBtPt2, formPtO3new, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgePt2O3_BtPt2)
+
+        const formMSedgePtCO2_BtPt2 = createCylinderMesh(formMSptO2_BtPt2, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgePtCO2_BtPt2)
+
+        const formMSedgePtCC_BtPt2 = createCylinderMesh(formMSptC_ACO1O2, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgePtCC_BtPt2)
+
+        // ******************          - force cell ACDO2 - cell at formPtO2new ******************
+        // 2 - force cell ACDO2 to formPtO3new
+        var formMSedgeAO2temp = subVecUpdated(forcePtA, ForceO2)
+        // define the new node to replace the formPtO2new
+        var formMSedgeO2O3temp = subVecUpdated(formPtO2new, formPtO3new)
+        var formPtO2new_mink = new THREE.Vector3(
+            formMSptO2_ACO1O2.x - formMSedgeO2O3temp.x,
+            formMSptO2_ACO1O2.y - formMSedgeO2O3temp.y,
+            formMSptO2_ACO1O2.z - formMSedgeO2O3temp.z
+        );
+
+        var formMSptA_ACDO2 = new THREE.Vector3(
+            formPtO2new_mink.x - minkscale.l * formMSedgeAO2temp.x,
+            formPtO2new_mink.y - minkscale.l * formMSedgeAO2temp.y,
+            formPtO2new_mink.z - minkscale.l * formMSedgeAO2temp.z
+        );
+        const formMSedgeAO2_ACDO2 = createCylinderMesh(formPtO2new_mink, formMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO2_ACDO2)
+
+        var formMSedgeCO2temp = subVecUpdated(forcePtC, ForceO2)
+        var formMSptC_ACDO2 = new THREE.Vector3(
+            formPtO2new_mink.x - minkscale.l * formMSedgeCO2temp.x,
+            formPtO2new_mink.y - minkscale.l * formMSedgeCO2temp.y,
+            formPtO2new_mink.z - minkscale.l * formMSedgeCO2temp.z
+        );
+        const formMSedgeCO2_ACDO2 = createCylinderMesh(formPtO2new_mink, formMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO2_ACDO2)
+
+        var formMSedgeDO2temp = subVecUpdated(forcePtD, ForceO2)
+        var formMSptD_ACDO2 = new THREE.Vector3(
+            formPtO2new_mink.x - minkscale.l * formMSedgeDO2temp.x,
+            formPtO2new_mink.y - minkscale.l * formMSedgeDO2temp.y,
+            formPtO2new_mink.z - minkscale.l * formMSedgeDO2temp.z
+        );
+        const formMSedgeDO2_ACDO2 = createCylinderMesh(formPtO2new_mink, formMSptD_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDO2_ACDO2)
+
+        const formMSedgeAD_ACDO2 = createCylinderMesh(formMSptA_ACDO2, formMSptD_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAD_ACDO2)
+
+        const formMSedgeCD_ACDO2 = createCylinderMesh(formMSptC_ACDO2, formMSptD_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCD_ACDO2)
+
+        const formMSedgeAC_ACDO2 = createCylinderMesh(formMSptA_ACDO2, formMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAC_ACDO2)
+
+        // proejct to BtPt4
+        // reolace the new point to BtPt4
+        var formMSedgeO2BtPt4temp = subVecUpdated(formBtPt4, formPtO2new)
+        var formBtPt4_mink = new THREE.Vector3(
+            formPtO2new_mink.x - formMSedgeO2BtPt4temp.x,
+            formPtO2new_mink.y - formMSedgeO2BtPt4temp.y,
+            formPtO2new_mink.z - formMSedgeO2BtPt4temp.z
+        );
+
+        var formMSptAO2_BtPt4 = new THREE.Vector3(
+            formBtPt4_mink.x - minkscale.l * formMSedgeAO2temp.x,
+            formBtPt4_mink.y - minkscale.l * formMSedgeAO2temp.y,
+            formBtPt4_mink.z - minkscale.l * formMSedgeAO2temp.z
+        );
+        const formMSedgeAO2_BtPt4 = createCylinderMesh(formBtPt4_mink, formMSptAO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO2_BtPt4)
+
+        var formMSptDO2_BtPt4 = new THREE.Vector3(
+            formBtPt4_mink.x - minkscale.l * formMSedgeDO2temp.x,
+            formBtPt4_mink.y - minkscale.l * formMSedgeDO2temp.y,
+            formBtPt4_mink.z - minkscale.l * formMSedgeDO2temp.z
+        );
+        const formMSedgeDO2_BtPt4 = createCylinderMesh(formBtPt4_mink, formMSptDO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDO2_BtPt4)
+
+        const formMSedgeAD_BtPt4 = createCylinderMesh(formMSptAO2_BtPt4, formMSptDO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAD_BtPt4)
+
+        // connecting rest edges to BtPt4
+        const formMSedgeDD_BtPt4 = createCylinderMesh(formMSptD_ACDO2, formMSptDO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDD_BtPt4)
+        const formMSedgeAA_BtPt4 = createCylinderMesh(formMSptA_ACDO2, formMSptAO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAA_BtPt4)
+        const formMSedgeO2_BtPt4 = createCylinderMesh(formPtO2new_mink, formBtPt4_mink, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO2_BtPt4)
+
+        // proejct to BtPt3
+        // reolace the new point to BtPt3
+        var formMSedgeO2BtPt3temp = subVecUpdated(formBtPt3, formPtO2new)
+        var formBtPt3_mink = new THREE.Vector3(
+            formPtO2new_mink.x - formMSedgeO2BtPt3temp.x,
+            formPtO2new_mink.y - formMSedgeO2BtPt3temp.y,
+            formPtO2new_mink.z - formMSedgeO2BtPt3temp.z
+        );
+
+        var formMSptCO2_BtPt3 = new THREE.Vector3(
+            formBtPt3_mink.x - minkscale.l * formMSedgeCO2temp.x,
+            formBtPt3_mink.y - minkscale.l * formMSedgeCO2temp.y,
+            formBtPt3_mink.z - minkscale.l * formMSedgeCO2temp.z
+        );
+        const formMSedgeCO2_BtPt3 = createCylinderMesh(formBtPt3_mink, formMSptCO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO2_BtPt3)
+
+        var formMSptDO2_BtPt3 = new THREE.Vector3(
+            formBtPt3_mink.x - minkscale.l * formMSedgeDO2temp.x,
+            formBtPt3_mink.y - minkscale.l * formMSedgeDO2temp.y,
+            formBtPt3_mink.z - minkscale.l * formMSedgeDO2temp.z
+        );
+        const formMSedgeDO2_BtPt3 = createCylinderMesh(formBtPt3_mink, formMSptDO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDO2_BtPt3)
+
+        const formMSedgeCD_BtPt3 = createCylinderMesh(formMSptCO2_BtPt3, formMSptDO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCD_BtPt3)
+
+        // connecting rest edges to BtPt3
+        const formMSedgeDD_BtPt3 = createCylinderMesh(formMSptD_ACDO2, formMSptDO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDD_BtPt3)
+        const formMSedgeCC_BtPt3 = createCylinderMesh(formMSptC_ACDO2, formMSptCO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCC_BtPt3)
+        const formMSedgeO2_BtPt3 = createCylinderMesh(formPtO2new_mink, formBtPt3_mink, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO2_BtPt3)
+
+        // project to BtPt4 from cell ACO1O2
+        var formMSptO1O2_BtPt4 = new THREE.Vector3(
+            formBtPt4_mink.x + minkscale.l * formMSedgeO1O2temp.x,
+            formBtPt4_mink.y + minkscale.l * formMSedgeO1O2temp.y,
+            formBtPt4_mink.z + minkscale.l * formMSedgeO1O2temp.z
+        );
+        const formMSedgeO1O2_BtPt4 = createCylinderMesh(formBtPt4_mink, formMSptO1O2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO1O2_BtPt4)
+
+        const formMSedgeAO1O2_BtPt4 = createCylinderMesh(formMSptAO2_BtPt4, formMSptO1O2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1O2_BtPt4)
+
+        // connecting rest edges
+        const formMSedgeAA_BtPt4_ACO1O2 = createCylinderMesh(formMSptAO2_BtPt4, formMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAA_BtPt4_ACO1O2)
+
+        const formMSedgeO3_BtPt4_ACO1O2 = createCylinderMesh(formPtO3new, formMSptO1O2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO3_BtPt4_ACO1O2)
+
+        const formMSedgeO2_BtPt4_ACO1O2 = createCylinderMesh(formBtPt4_mink, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO2_BtPt4_ACO1O2)
+
+
+        // connecting cell ACO1O2 & ACDO2
+        const formMSedgeAA_ACDO2_ACO1O2 = createCylinderMesh(formMSptA_ACDO2, formMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAA_ACDO2_ACO1O2)
+        const formMSedgeCC_ACDO2_ACO1O2 = createCylinderMesh(formMSptC_ACDO2, formMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCC_ACDO2_ACO1O2)
+        const formMSedgeO2_ACDO2_ACO1O2 = createCylinderMesh(formMSptO2_ACO1O2, formPtO2new_mink, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeO2_ACDO2_ACO1O2)
+
+        // ********************************** Minkowski Sum Generation - force ************************************
+
+        var silderSize = 0.8
+
+        var minkS = 2.5
+
+        //******************* 1. - Cell ABCO1 （new) *******************
+
+        // find the starting point - O1 from Cell ABCO1
+        var forceMSptO1_ABCO1 = Pnt_copy(new THREE.Vector3(formPtO1new.x, formPtO1new.y, formPtO1new.z))
+
+        // find - B from Cell ABCO1
+        var formMSedgetempB_ABCO1 = subVecUpdated(forcePtB, ForceO1)
+        var forceMSptB_ABCO1 = new THREE.Vector3(
+            forceMSptO1_ABCO1.x - (silderSize - minkS * minkscale.l) * formMSedgetempB_ABCO1.x,
+            forceMSptO1_ABCO1.y - (silderSize - minkS * minkscale.l) * formMSedgetempB_ABCO1.y,
+            forceMSptO1_ABCO1.z - (silderSize - minkS * minkscale.l) * formMSedgetempB_ABCO1.z
+        );
+
+        // find - A from Cell ABCO1
+        var formMSedgetempA_ABCO1 = subVecUpdated(forcePtA, ForceO1)
+        var forceMSptA_ABCO1 = new THREE.Vector3(
+            forceMSptO1_ABCO1.x - (silderSize - minkS * minkscale.l) * formMSedgetempA_ABCO1.x,
+            forceMSptO1_ABCO1.y - (silderSize - minkS * minkscale.l) * formMSedgetempA_ABCO1.y,
+            forceMSptO1_ABCO1.z - (silderSize - minkS * minkscale.l) * formMSedgetempA_ABCO1.z
+        );
+
+        // find - C from Cell ABCO1
+        var formMSedgetempC_ABCO1 = subVecUpdated(forcePtC, ForceO1)
+        var forceMSptC_ABCO1 = new THREE.Vector3(
+            forceMSptO1_ABCO1.x - (silderSize - minkS * minkscale.l) * formMSedgetempC_ABCO1.x,
+            forceMSptO1_ABCO1.y - (silderSize - minkS * minkscale.l) * formMSedgetempC_ABCO1.y,
+            forceMSptO1_ABCO1.z - (silderSize - minkS * minkscale.l) * formMSedgetempC_ABCO1.z
+        );
+
+        const forceMSedgeBO1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptB_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBO1_ABCO1)
+
+        const forceMSedgeAO1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO1_ABCO1)
+
+        const forceMSedgeCO1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO1_ABCO1)
+
+        const forceMSedgeAB_ABCO1 = createCylinderMesh(forceMSptA_ABCO1, forceMSptB_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAB_ABCO1)
+
+        const forceMSedgeBC_ABCO1 = createCylinderMesh(forceMSptB_ABCO1, forceMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBC_ABCO1)
+
+        const forceMSedgeAC_ABCO1 = createCylinderMesh(forceMSptA_ABCO1, forceMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAC_ABCO1)
+
+        // project to BtPt1 from Cell ABCO1
+        // project from Pt A
+        var formMSedgetempA_BtPt1_ABCO1 = subVecUpdated(formPtO1new, formBtPt1)
+        var forceMSptA_BtPt1_ABCO1 = new THREE.Vector3(
+            forceMSptA_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt1_ABCO1.x,
+            forceMSptA_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt1_ABCO1.y,
+            forceMSptA_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt1_ABCO1.z
+        );
+        const forceMSedgeAA__BtPt1_ABCO1 = createCylinderMesh(forceMSptA_ABCO1, forceMSptA_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAA__BtPt1_ABCO1)
+
+        // project from Pt B
+        var formMSedgetempB_BtPt1_ABCO1 = subVecUpdated(formPtO1new, formBtPt1)
+        var forceMSptB_BtPt1_ABCO1 = new THREE.Vector3(
+            forceMSptB_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt1_ABCO1.x,
+            forceMSptB_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt1_ABCO1.y,
+            forceMSptB_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt1_ABCO1.z
+        );
+        const forceMSedgeBB__BtPt1_ABCO1 = createCylinderMesh(forceMSptB_ABCO1, forceMSptB_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBB__BtPt1_ABCO1)
+
+        // project from Pt O1
+        var formMSedgetempO1_BtPt1_ABCO1 = subVecUpdated(formPtO1new, formBtPt1)
+        var forceMSptO1_BtPt1_ABCO1 = new THREE.Vector3(
+            forceMSptO1_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt1_ABCO1.x,
+            forceMSptO1_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt1_ABCO1.y,
+            forceMSptO1_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt1_ABCO1.z
+        );
+        const forceMSedgeO1O1__BtPt1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptO1_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O1__BtPt1_ABCO1)
+
+        // connect rest of edges - BtPt 1
+        const forceMSedgeAB__BtPt1_ABCO1 = createCylinderMesh(forceMSptA_BtPt1_ABCO1, forceMSptB_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAB__BtPt1_ABCO1)
+        const forceMSedgeAO1__BtPt1_ABCO1 = createCylinderMesh(forceMSptA_BtPt1_ABCO1, forceMSptO1_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO1__BtPt1_ABCO1)
+        const forceMSedgeBO1__BtPt1_ABCO1 = createCylinderMesh(forceMSptB_BtPt1_ABCO1, forceMSptO1_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBO1__BtPt1_ABCO1)
+
+        // project to BtPt2 from Cell ABCO1
+        // project from Pt B
+        var formMSedgetempB_BtPt2_ABCO1 = subVecUpdated(formPtO1new, formBtPt2)
+        var forceMSptB_BtPt2_ABCO1 = new THREE.Vector3(
+            forceMSptB_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt2_ABCO1.x,
+            forceMSptB_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt2_ABCO1.y,
+            forceMSptB_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt2_ABCO1.z
+        );
+        const forceMSedgeBB__BtPt2_ABCO1 = createCylinderMesh(forceMSptB_ABCO1, forceMSptB_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBB__BtPt2_ABCO1)
+
+        // project from Pt C
+        var formMSedgetempC_BtPt2_ABCO1 = subVecUpdated(formPtO1new, formBtPt2)
+        var forceMSptC_BtPt2_ABCO1 = new THREE.Vector3(
+            forceMSptC_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ABCO1.x,
+            forceMSptC_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ABCO1.y,
+            forceMSptC_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ABCO1.z
+        );
+        const forceMSedgeCC__BtPt2_ABCO1 = createCylinderMesh(forceMSptC_ABCO1, forceMSptC_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCC__BtPt2_ABCO1)
+
+        // project from Pt O1
+        var formMSedgetempO1_BtPt2_ABCO1 = subVecUpdated(formPtO1new, formBtPt2)
+        var forceMSptO1_BtPt2_ABCO1 = new THREE.Vector3(
+            forceMSptO1_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ABCO1.x,
+            forceMSptO1_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ABCO1.y,
+            forceMSptO1_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ABCO1.z
+        );
+        const forceMSedgeO1O1__BtPt2_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptO1_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O1__BtPt2_ABCO1)
+
+        // connect rest of edges - BtPt 2
+        const forceMSedgeBC__BtPt2_ABCO1 = createCylinderMesh(forceMSptB_BtPt2_ABCO1, forceMSptC_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBC__BtPt2_ABCO1)
+        const forceMSedgeBO1__BtPt2_ABCO1 = createCylinderMesh(forceMSptB_BtPt2_ABCO1, forceMSptO1_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBO1__BtPt2_ABCO1)
+        const forceMSedgeCO1__BtPt2_ABCO1 = createCylinderMesh(forceMSptC_BtPt2_ABCO1, forceMSptO1_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO1__BtPt2_ABCO1)
+
+        //******************* 2. - Cell ACO1O2 （new) *******************
+
+        // project from cell ABCO1 to cell ACO1O2
+        // point A - cell ACO1O2
+        var formMSedgetempA_ACO1O2 = subVecUpdated(formPtO1new, formPtO3new)
+        var forceMSptA_ACO1O2 = new THREE.Vector3(
+            forceMSptA_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACO1O2.x,
+            forceMSptA_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACO1O2.y,
+            forceMSptA_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACO1O2.z
+        );
+        const forceMSedgeAA_ABCO1_ACO1O2 = createCylinderMesh(forceMSptA_ABCO1, forceMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAA_ABCO1_ACO1O2)
+
+        // point O1 - cell ACO1O2
+        var formMSedgetempO1_ACO1O2 = subVecUpdated(formPtO1new, formPtO3new)
+        var forceMSptO1_ACO1O2 = new THREE.Vector3(
+            forceMSptO1_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_ACO1O2.x,
+            forceMSptO1_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_ACO1O2.y,
+            forceMSptO1_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_ACO1O2.z
+        );
+        const forceMSedgeO1O1_ABCO1_ACO1O2 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptO1_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O1_ABCO1_ACO1O2)
+
+        // point C - cell ACO1O2
+        var formMSedgetempC_ACO1O2 = subVecUpdated(formPtO1new, formPtO3new)
+        var forceMSptC_ACO1O2 = new THREE.Vector3(
+            forceMSptC_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACO1O2.x,
+            forceMSptC_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACO1O2.y,
+            forceMSptC_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACO1O2.z
+        );
+        const forceMSedgeCC_ABCO1_ACO1O2 = createCylinderMesh(forceMSptC_ABCO1, forceMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCC_ABCO1_ACO1O2)
+
+        // point O2 - cell ACO1O2 *********** important ************
+        var formMSedgetempO2_ACO1O2 = subVecUpdated(ForceO2, ForceO1)
+        var forceMSptO2_ACO1O2 = new THREE.Vector3(
+            forceMSptO1_ACO1O2.x - (silderSize - minkS * minkscale.l) * formMSedgetempO2_ACO1O2.x,
+            forceMSptO1_ACO1O2.y - (silderSize - minkS * minkscale.l) * formMSedgetempO2_ACO1O2.y,
+            forceMSptO1_ACO1O2.z - (silderSize - minkS * minkscale.l) * formMSedgetempO2_ACO1O2.z
+        );
+
+        // connect rest of edges - cell ACO1O2
+        const forceMSedgeO1O2_ACO1O2 = createCylinderMesh(forceMSptO1_ACO1O2, forceMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O2_ACO1O2)
+        const forceMSedgeAO1_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptO1_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO1_ACO1O2)
+        const forceMSedgeAO2_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO2_ACO1O2)
+        const forceMSedgeAC_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAC_ACO1O2)
+        const forceMSedgeCO1_ACO1O2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptO1_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO1_ACO1O2)
+        const forceMSedgeCO2_ACO1O2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO2_ACO1O2)
+
+        // project to BtPt2 from Cell ACO1O2
+        // project from Pt C
+        var formMSedgetempC_BtPt2_ACO1O2 = subVecUpdated(formPtO3new, formBtPt2)
+        var forceMSptC_BtPt2_ACO1O2 = new THREE.Vector3(
+            forceMSptC_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ACO1O2.x,
+            forceMSptC_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ACO1O2.y,
+            forceMSptC_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ACO1O2.z
+        );
+        const forceMSedgeCC__BtPt2_ACO1O2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptC_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCC__BtPt2_ACO1O2)
+
+        // project from Pt O1
+        var formMSedgetempO1_BtPt2_ACO1O2 = subVecUpdated(formPtO3new, formBtPt2)
+        var forceMSptO1_BtPt2_ACO1O2 = new THREE.Vector3(
+            forceMSptO1_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ACO1O2.x,
+            forceMSptO1_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ACO1O2.y,
+            forceMSptO1_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ACO1O2.z
+        );
+        const forceMSedgeO1O1__BtPt2_ACO1O2 = createCylinderMesh(forceMSptO1_ACO1O2, forceMSptO1_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O1__BtPt2_ACO1O2)
+
+        // project from Pt O2
+        var formMSedgetempO2_BtPt2_ACO1O2 = subVecUpdated(formPtO3new, formBtPt2)
+        var forceMSptO2_BtPt2_ACO1O2 = new THREE.Vector3(
+            forceMSptO2_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt2_ACO1O2.x,
+            forceMSptO2_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt2_ACO1O2.y,
+            forceMSptO2_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt2_ACO1O2.z
+        );
+        const forceMSedgeO2O2__BtPt2_ACO1O2 = createCylinderMesh(forceMSptO2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO2O2__BtPt2_ACO1O2)
+
+        // connect rest edges
+        const forceMSedgeO1O2__BtPt2_ACO1O2 = createCylinderMesh(forceMSptO1_BtPt2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O2__BtPt2_ACO1O2)
+        const forceMSedgeCO2__BtPt2_ACO1O2 = createCylinderMesh(forceMSptC_BtPt2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO2__BtPt2_ACO1O2)
+
+        // project to BtPt4 from Cell ACO1O2
+        // project from Pt A
+        var formMSedgetempA_BtPt4_ACO1O2 = subVecUpdated(formPtO3new, formBtPt4)
+        var forceMSptA_BtPt4_ACO1O2 = new THREE.Vector3(
+            forceMSptA_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACO1O2.x,
+            forceMSptA_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACO1O2.y,
+            forceMSptA_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACO1O2.z
+        );
+        const forceMSedgeAA__BtPt4_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptA_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAA__BtPt4_ACO1O2)
+
+        // project from Pt O1
+        var formMSedgetempO1_BtPt4_ACO1O2 = subVecUpdated(formPtO3new, formBtPt4)
+        var forceMSptO1_BtPt4_ACO1O2 = new THREE.Vector3(
+            forceMSptO1_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt4_ACO1O2.x,
+            forceMSptO1_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt4_ACO1O2.y,
+            forceMSptO1_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt4_ACO1O2.z
+        );
+        const forceMSedgeO1O1__BtPt4_ACO1O2 = createCylinderMesh(forceMSptO1_ACO1O2, forceMSptO1_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O1__BtPt4_ACO1O2)
+
+        // project from Pt O2
+        var formMSedgetempO2_BtPt4_ACO1O2 = subVecUpdated(formPtO3new, formBtPt4)
+        var forceMSptO2_BtPt4_ACO1O2 = new THREE.Vector3(
+            forceMSptO2_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACO1O2.x,
+            forceMSptO2_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACO1O2.y,
+            forceMSptO2_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACO1O2.z
+        );
+        const forceMSedgeO2O2__BtPt4_ACO1O2 = createCylinderMesh(forceMSptO2_ACO1O2, forceMSptO2_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO2O2__BtPt4_ACO1O2)
+
+        // connect rest edges
+        const forceMSedgeO1O2__BtPt4_ACO1O2 = createCylinderMesh(forceMSptO1_BtPt4_ACO1O2, forceMSptO2_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO1O2__BtPt4_ACO1O2)
+        const forceMSedgeAO2__BtPt4_ACO1O2 = createCylinderMesh(forceMSptA_BtPt4_ACO1O2, forceMSptO2_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO2__BtPt4_ACO1O2)
+        const forceMSedgeAO1__BtPt4_ACO1O2 = createCylinderMesh(forceMSptA_BtPt4_ACO1O2, forceMSptO1_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO1__BtPt4_ACO1O2)
+
+        //******************* 3. - Cell ACDO2 （new) *******************
+
+        // project from cell ACO1O2 to cell ACDO2
+        // point A - cell ACDO2
+        var formMSedgetempA_ACDO2 = subVecUpdated(formPtO3new, formPtO2new)
+        var forceMSptA_ACDO2 = new THREE.Vector3(
+            forceMSptA_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACDO2.x,
+            forceMSptA_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACDO2.y,
+            forceMSptA_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACDO2.z
+        );
+        const forceMSedgeAA_ACO1O2_ACDO2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAA_ACO1O2_ACDO2)
+
+        // point C - cell ACDO2
+        var formMSedgetempC_ACDO2 = subVecUpdated(formPtO3new, formPtO2new)
+        var forceMSptC_ACDO2 = new THREE.Vector3(
+            forceMSptC_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACDO2.x,
+            forceMSptC_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACDO2.y,
+            forceMSptC_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACDO2.z
+        );
+        const forceMSedgeCC_ACO1O2_ACDO2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCC_ACO1O2_ACDO2)
+
+        // point o2 - cell ACDO2
+        var formMSedgetempO2_ACDO2 = subVecUpdated(formPtO3new, formPtO2new)
+        var forceMSptO2_ACDO2 = new THREE.Vector3(
+            forceMSptO2_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_ACDO2.x,
+            forceMSptO2_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_ACDO2.y,
+            forceMSptO2_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_ACDO2.z
+        );
+        const forceMSedgeO2O2_ACO1O2_ACDO2 = createCylinderMesh(forceMSptO2_ACO1O2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO2O2_ACO1O2_ACDO2)
+
+        // point O2 - cell ACDO2 *********** important ************
+        var formMSedgetempD_ACDO2 = subVecUpdated(forcePtD, ForceO2)
+        var forceMSptD_ACDO2 = new THREE.Vector3(
+            forceMSptO2_ACDO2.x - (silderSize - minkS * minkscale.l) * formMSedgetempD_ACDO2.x,
+            forceMSptO2_ACDO2.y - (silderSize - minkS * minkscale.l) * formMSedgetempD_ACDO2.y,
+            forceMSptO2_ACDO2.z - (silderSize - minkS * minkscale.l) * formMSedgetempD_ACDO2.z
+        );
+        const forceMSedgeDO2_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeDO2_ACDO2)
+
+        const forceMSedgeAO2_ACDO2 = createCylinderMesh(forceMSptA_ACDO2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO2_ACDO2)
+        const forceMSedgeCO2_ACDO2 = createCylinderMesh(forceMSptC_ACDO2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO2_ACDO2)
+
+        const forceMSedgeAC_ACDO2 = createCylinderMesh(forceMSptC_ACDO2, forceMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAC_ACDO2)
+        const forceMSedgeAD_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAD_ACDO2)
+        const forceMSedgeCD_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCD_ACDO2)
+
+        // project to BtPt4 from Cell ACDO2
+        // project from Pt A
+        var formMSedgetempA_BtPt4_ACDO2 = subVecUpdated(formPtO2new, formBtPt4)
+        var forceMSptA_BtPt4_ACDO2 = new THREE.Vector3(
+            forceMSptA_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACDO2.x,
+            forceMSptA_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACDO2.y,
+            forceMSptA_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACDO2.z
+        );
+        const forceMSedgeAA__BtPt4_ACDO2 = createCylinderMesh(forceMSptA_ACDO2, forceMSptA_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAA__BtPt4_ACDO2)
+
+        // project from Pt D
+        var formMSedgetempD_BtPt4_ACDO2 = subVecUpdated(formPtO2new, formBtPt4)
+        var forceMSptD_BtPt4_ACDO2 = new THREE.Vector3(
+            forceMSptD_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt4_ACDO2.x,
+            forceMSptD_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt4_ACDO2.y,
+            forceMSptD_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt4_ACDO2.z
+        );
+        const forceMSedgeDD__BtPt4_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptD_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeDD__BtPt4_ACDO2)
+
+        // project from Pt O2
+        var formMSedgetempO2_BtPt4_ACDO2 = subVecUpdated(formPtO2new, formBtPt4)
+        var forceMSptO2_BtPt4_ACDO2 = new THREE.Vector3(
+            forceMSptO2_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACDO2.x,
+            forceMSptO2_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACDO2.y,
+            forceMSptO2_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACDO2.z
+        );
+        const forceMSedgeO2O2__BtPt4_ACDO2 = createCylinderMesh(forceMSptO2_ACDO2, forceMSptO2_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO2O2__BtPt4_ACDO2)
+
+        // connect rest edges
+        const forceMSedgeDO2__BtPt4_ACDO2 = createCylinderMesh(forceMSptD_BtPt4_ACDO2, forceMSptO2_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeDO2__BtPt4_ACDO2)
+        const forceMSedgeAD__BtPt4_ACDO2 = createCylinderMesh(forceMSptD_BtPt4_ACDO2, forceMSptA_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAD__BtPt4_ACDO2)
+
+        // project to BtPt3 from Cell ACDO2
+        // project from Pt C
+        var formMSedgetempC_BtPt3_ACDO2 = subVecUpdated(formPtO2new, formBtPt3)
+        var forceMSptC_BtPt3_ACDO2 = new THREE.Vector3(
+            forceMSptC_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt3_ACDO2.x,
+            forceMSptC_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt3_ACDO2.y,
+            forceMSptC_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt3_ACDO2.z
+        );
+        const forceMSedgeCC__BtPt3_ACDO2 = createCylinderMesh(forceMSptC_ACDO2, forceMSptC_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCC__BtPt3_ACDO2)
+
+        // project from Pt D
+        var formMSedgetempD_BtPt3_ACDO2 = subVecUpdated(formPtO2new, formBtPt3)
+        var forceMSptD_BtPt3_ACDO2 = new THREE.Vector3(
+            forceMSptD_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt3_ACDO2.x,
+            forceMSptD_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt3_ACDO2.y,
+            forceMSptD_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt3_ACDO2.z
+        );
+        const forceMSedgeDD__BtPt3_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptD_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeDD__BtPt3_ACDO2)
+
+        // project from Pt O2
+        var formMSedgetempO2_BtPt3_ACDO2 = subVecUpdated(formPtO2new, formBtPt3)
+        var forceMSptO2_BtPt3_ACDO2 = new THREE.Vector3(
+            forceMSptO2_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt3_ACDO2.x,
+            forceMSptO2_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt3_ACDO2.y,
+            forceMSptO2_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt3_ACDO2.z
+        );
+        const forceMSedgeO2O2__BtPt3_ACDO2 = createCylinderMesh(forceMSptO2_ACDO2, forceMSptO2_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeO2O2__BtPt3_ACDO2)
+
+        // connect rest edges
+        const forceMSedgeDO2__BtPt3_ACDO2 = createCylinderMesh(forceMSptD_BtPt3_ACDO2, forceMSptO2_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeDO2__BtPt3_ACDO2)
+        const forceMSedgeCO2__BtPt3_ACDO2 = createCylinderMesh(forceMSptC_BtPt3_ACDO2, forceMSptO2_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO2__BtPt3_ACDO2)
+        const forceMSedgeCD__BtPt3_ACDO2 = createCylinderMesh(forceMSptC_BtPt3_ACDO2, forceMSptD_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCD__BtPt3_ACDO2)
+
+        // add faces to the force diagram
+
+        var formedgeColor1, formedgeColor2, formedgeColor3, formedgeColor4, formedgeColor5, formedgeColor6,
+            formedgeColor7, formedgeColor8;
+
+        // triangle ABO1 - 1
+        var normalABO1_a = subVec(forcePtB, forcePtA)
+        var normalABO1_b = subVec(forcePtA, ForceO1)
+        var normalABO1 = cross(normalABO1_a, normalABO1_b)
+        var edgePt1O1 = subVec(formBtPt1, formPtO1new);
+        var resultPt1O1 = normalABO1.dot(edgePt1O1);
+
+        if (resultPt1O1 < 0) {
+            if (areaABO1 / areaMax >= 0.75) {
+                formedgeColor1 = 0x0F3150
+            }
+            if (0.5 <= areaABO1 / areaMax & areaABO1 / areaMax < 0.75) {
+                formedgeColor1 = 0x05416D
+            }
+            if (0.25 <= areaABO1 / areaMax & areaABO1 / areaMax < 0.5) {
+                formedgeColor1 = 0x376D9B
+            }
+            if (0 <= areaABO1 / areaMax & areaABO1 / areaMax < 0.25) {
+                formedgeColor1 = 0x5B84AE
+            }
+        } else {
+            if (areaABO1 / areaMax >= 0.75) {
+                formedgeColor1 = 0x80002F
+            }
+            if (0.5 <= areaABO1 / areaMax & areaABO1 / areaMax < 0.75) {
+                formedgeColor1 = 0x940041
+            }
+            if (0.25 <= areaABO1 / areaMax & areaABO1 / areaMax < 0.5) {
+                formedgeColor1 = 0xCC0549
+            }
+            if (0 <= areaABO1 / areaMax & areaABO1 / areaMax < 0.25) {
+                formedgeColor1 = 0xD72F62
+            }
+        }
+
+        // triangle BCO1 -2
+        var normalBCO1_a = subVec(forcePtC, forcePtB)
+        var normalBCO1_b = subVec(forcePtB, ForceO1)
+        var normalBCO1 = cross(normalBCO1_a, normalBCO1_b)
+        var edgePt2O1 = subVec(formBtPt2, formPtO1new);
+        var resultPt2O1 = normalBCO1.dot(edgePt2O1)
+
+        if (resultPt2O1 < 0) {
+            if (areaBCO1 / areaMax >= 0.75) {
+                formedgeColor2 = 0x0F3150
+            }
+            if (0.5 <= areaBCO1 / areaMax & areaBCO1 / areaMax < 0.75) {
+                formedgeColor2 = 0x05416D
+            }
+            if (0.25 <= areaBCO1 / areaMax & areaBCO1 / areaMax < 0.5) {
+                formedgeColor2 = 0x376D9B
+            }
+            if (0 <= areaBCO1 / areaMax & areaBCO1 / areaMax < 0.25) {
+                formedgeColor2 = 0x5B84AE
+            }
+        } else {
+            if (areaBCO1 / areaMax >= 0.75) {
+                formedgeColor2 = 0x80002F
+            }
+            if (0.5 <= areaBCO1 / areaMax & areaBCO1 / areaMax < 0.75) {
+                formedgeColor2 = 0x940041
+            }
+            if (0.25 <= areaBCO1 / areaMax & areaBCO1 / areaMax < 0.5) {
+                formedgeColor2 = 0xCC0549
+            }
+            if (0 <= areaBCO1 / areaMax & areaBCO1 / areaMax < 0.25) {
+                formedgeColor2 = 0xD72F62
+            }
+        }
+
+        // triangle CO1O2 - 3
+        var normalCO1O2_a = subVec(forcePtC, ForceO1);
+        var normalCO1O2_b = subVec(ForceO1, ForceO2);
+        var normalCO1O2 = cross(normalCO1O2_a, normalCO1O2_b);
+        var edgePt2O3 = subVec(formBtPt2, formPtO3new);
+        var resultPt2O3 = normalCO1O2.dot(edgePt2O3);
+
+        if (resultPt2O3 < 0) {
+            if (areaCO1O2 / areaMax >= 0.75) {
+                formedgeColor3 = 0x0F3150
+            }
+            if (0.5 <= areaCO1O2 / areaMax & areaCO1O2 / areaMax < 0.75) {
+                formedgeColor3 = 0x05416D
+            }
+            if (0.25 <= areaCO1O2 / areaMax & areaCO1O2 / areaMax < 0.5) {
+                formedgeColor3 = 0x376D9B
+            }
+            if (0 <= areaCO1O2 / areaMax & areaCO1O2 / areaMax < 0.25) {
+                formedgeColor3 = 0x5B84AE
+            }
+        } else {
+            if (areaCO1O2 / areaMax >= 0.75) {
+                formedgeColor3 = 0x80002F
+            }
+            if (0.5 <= areaCO1O2 / areaMax & areaCO1O2 / areaMax < 0.75) {
+                formedgeColor3 = 0x940041
+            }
+            if (0.25 <= areaCO1O2 / areaMax & areaCO1O2 / areaMax < 0.5) {
+                formedgeColor3 = 0xCC0549
+            }
+            if (0 <= areaCO1O2 / areaMax & areaCO1O2 / areaMax < 0.25) {
+                formedgeColor3 = 0xD72F62
+            }
+        }
+
+        // triangle ACO1 - 4
+        var normalACO1_a = subVec(forcePtC, forcePtA);
+        var normalACO1_b = subVec(forcePtA, ForceO1);
+        var normalACO1 = cross(normalACO1_a, normalACO1_b);
+        var edgePtO1O3 = subVec(formPtO1new, formPtO3new);
+        var resultPtO1O3 = normalACO1.dot(edgePtO1O3);
+
+        if (resultPtO1O3 < 0) {
+            if (areaACO1 / areaMax >= 0.75) {
+                formedgeColor4 = 0x0F3150
+            }
+            if (0.5 <= areaACO1 / areaMax & areaACO1 / areaMax < 0.75) {
+                formedgeColor4 = 0x05416D
+            }
+            if (0.25 <= areaACO1 / areaMax & areaACO1 / areaMax < 0.5) {
+                formedgeColor4 = 0x376D9B
+            }
+            if (0 <= areaACO1 / areaMax & areaACO1 / areaMax < 0.25) {
+                formedgeColor4 = 0x5B84AE
+            }
+        } else {
+            if (areaACO1 / areaMax >= 0.75) {
+                formedgeColor4 = 0x80002F
+            }
+            if (0.5 <= areaACO1 / areaMax & areaACO1 / areaMax < 0.75) {
+                formedgeColor4 = 0x940041
+            }
+            if (0.25 <= areaACO1 / areaMax & areaACO1 / areaMax < 0.5) {
+                formedgeColor4 = 0xCC0549
+            }
+            if (0 <= areaACO1 / areaMax & areaACO1 / areaMax < 0.25) {
+                formedgeColor4 = 0xD72F62
+            }
+        }
+
+        // triangle AO1O2 - 5
+        var normalAO1O2_a = subVec(forcePtA, ForceO2);
+        var normalAO1O2_b = subVec(ForceO2, ForceO1);
+        var normalAO1O2 = cross(normalAO1O2_a, normalAO1O2_b);
+        var edgePt4O3 = subVec(formBtPt4, formPtO3new);
+        var resultPt4O3 = normalAO1O2.dot(edgePt4O3);
+
+        if (resultPt4O3 < 0) {
+            if (areaAO1O2 / areaMax >= 0.75) {
+                formedgeColor5 = 0x0F3150
+            }
+            if (0.5 <= areaAO1O2 / areaMax & areaAO1O2 / areaMax < 0.75) {
+                formedgeColor5 = 0x05416D
+            }
+            if (0.25 <= areaAO1O2 / areaMax & areaAO1O2 / areaMax < 0.5) {
+                formedgeColor5 = 0x376D9B
+            }
+            if (0 <= areaAO1O2 / areaMax & areaAO1O2 / areaMax < 0.25) {
+                formedgeColor5 = 0x5B84AE
+            }
+        } else {
+            if (areaAO1O2 / areaMax >= 0.75) {
+                formedgeColor5 = 0x80002F
+            }
+            if (0.5 <= areaAO1O2 / areaMax & areaAO1O2 / areaMax < 0.75) {
+                formedgeColor5 = 0x940041
+            }
+            if (0.25 <= areaAO1O2 / areaMax & areaAO1O2 / areaMax < 0.5) {
+                formedgeColor5 = 0xCC0549
+            }
+            if (0 <= areaAO1O2 / areaMax & areaAO1O2 / areaMax < 0.25) {
+                formedgeColor5 = 0xD72F62
+            }
+        }
+
+        // triangle ACO2 - 6
+        var normalACO2_a = subVec(forcePtA, forcePtC);
+        var normalACO2_b = subVec(forcePtC, ForceO2);
+        var normalACO2 = cross(normalACO2_a, normalACO2_b);
+        var edgePtO2O3 = subVec(formPtO2new, formPtO3new);
+        var resultPtO2O3 = normalACO2.dot(edgePtO2O3);
+
+        if (resultPtO2O3 < 0) {
+            if (areaACO2 / areaMax >= 0.75) {
+                formedgeColor6 = 0x0F3150
+            }
+            if (0.5 <= areaACO2 / areaMax & areaACO2 / areaMax < 0.75) {
+                formedgeColor6 = 0x05416D
+            }
+            if (0.25 <= areaACO2 / areaMax & areaACO2 / areaMax < 0.5) {
+                formedgeColor6 = 0x376D9B
+            }
+            if (0 <= areaACO2 / areaMax & areaACO2 / areaMax < 0.25) {
+                formedgeColor6 = 0x5B84AE
+            }
+        } else {
+            if (areaACO2 / areaMax >= 0.75) {
+                formedgeColor6 = 0x80002F
+            }
+            if (0.5 <= areaACO2 / areaMax & areaACO2 / areaMax < 0.75) {
+                formedgeColor6 = 0x940041
+            }
+            if (0.25 <= areaACO2 / areaMax & areaACO2 / areaMax < 0.5) {
+                formedgeColor6 = 0xCC0549
+            }
+            if (0 <= areaACO2 / areaMax & areaACO2 / areaMax < 0.25) {
+                formedgeColor6 = 0xD72F62
+            }
+        }
+
+        // triangle ADO2 - 7
+        var normalADO2_a = subVec(forcePtA, forcePtD);
+        var normalADO2_b = subVec(forcePtD, ForceO2);
+        var normalADO2 = cross(normalADO2_a, normalADO2_b);
+        var edgePt4O2 = subVec(formBtPt4, formPtO2new);
+        var resultPt4O2 = normalADO2.dot(edgePt4O2);
+
+        if (resultPt4O2 < 0) {
+            if (areaADO2 / areaMax >= 0.75) {
+                formedgeColor7 = 0x0F3150
+            }
+            if (0.5 <= areaADO2 / areaMax & areaADO2 / areaMax < 0.75) {
+                formedgeColor7 = 0x05416D
+            }
+            if (0.25 <= areaADO2 / areaMax & areaADO2 / areaMax < 0.5) {
+                formedgeColor7 = 0x376D9B
+            }
+            if (0 <= areaADO2 / areaMax & areaADO2 / areaMax < 0.25) {
+                formedgeColor7 = 0x5B84AE
+            }
+        } else {
+            if (areaADO2 / areaMax >= 0.75) {
+                formedgeColor7 = 0x80002F
+            }
+            if (0.5 <= areaADO2 / areaMax & areaADO2 / areaMax < 0.75) {
+                formedgeColor7 = 0x940041
+            }
+            if (0.25 <= areaADO2 / areaMax & areaADO2 / areaMax < 0.5) {
+                formedgeColor7 = 0xCC0549
+            }
+            if (0 <= areaADO2 / areaMax & areaADO2 / areaMax < 0.25) {
+                formedgeColor7 = 0xD72F62
+            }
+        }
+
+        // triangle CDO2 - 8
+        var normalCDO2_a = subVec(forcePtD, forcePtC);
+        var normalCDO2_b = subVec(forcePtC, ForceO2);
+        var normalCDO2 = cross(normalCDO2_a, normalCDO2_b);
+        var edgePt3O2 = subVec(formBtPt3, formPtO2new);
+        var resultPt3O2 = normalCDO2.dot(edgePt3O2);
+
+        if (resultPt3O2 < 0) {
+            if (areaCDO2 / areaMax >= 0.75) {
+                formedgeColor8 = 0x0F3150
+            }
+            if (0.5 <= areaCDO2 / areaMax & areaCDO2 / areaMax < 0.75) {
+                formedgeColor8 = 0x05416D
+            }
+            if (0.25 <= areaCDO2 / areaMax & areaCDO2 / areaMax < 0.5) {
+                formedgeColor8 = 0x376D9B
+            }
+            if (0 <= areaCDO2 / areaMax & areaCDO2 / areaMax < 0.25) {
+                formedgeColor8 = 0x5B84AE
+            }
+        } else {
+            if (areaCDO2 / areaMax >= 0.75) {
+                formedgeColor8 = 0x80002F
+            }
+            if (0.5 <= areaCDO2 / areaMax & areaCDO2 / areaMax < 0.75) {
+                formedgeColor8 = 0x940041
+            }
+            if (0.25 <= areaCDO2 / areaMax & areaCDO2 / areaMax < 0.5) {
+                formedgeColor8 = 0xCC0549
+            }
+            if (0 <= areaCDO2 / areaMax & areaCDO2 / areaMax < 0.25) {
+                formedgeColor8 = 0xD72F62
+            }
+        }
+
+        // 1. cell ABCO1
+        // ABCO1 to BtPt1
+        drawMinkForceSurf(forceMSptA_ABCO1, forceMSptB_ABCO1, forceMSptO1_ABCO1, forceMSptA_BtPt1_ABCO1, forceMSptB_BtPt1_ABCO1, forceMSptO1_BtPt1_ABCO1, formedgeColor1)
+        drawMinkForceSurf(forceMSptB_ABCO1, forceMSptC_ABCO1, forceMSptO1_ABCO1, forceMSptB_BtPt2_ABCO1, forceMSptC_BtPt2_ABCO1, forceMSptO1_BtPt2_ABCO1, formedgeColor2)
+        drawMinkForceSurf(forceMSptC_ABCO1, forceMSptA_ABCO1, forceMSptO1_ABCO1, forceMSptC_ACO1O2, forceMSptA_ACO1O2, forceMSptO1_ACO1O2, formedgeColor4)
+        drawMinkForceSurf(forceMSptO1_ACO1O2, forceMSptC_ACO1O2, forceMSptO2_ACO1O2, forceMSptO1_BtPt2_ACO1O2, forceMSptC_BtPt2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formedgeColor3)
+        drawMinkForceSurf(forceMSptO2_ACO1O2, forceMSptA_ACO1O2, forceMSptO1_ACO1O2, forceMSptO2_BtPt4_ACO1O2, forceMSptA_BtPt4_ACO1O2, forceMSptO1_BtPt4_ACO1O2, formedgeColor5)
+
+        drawMinkForceSurf(forceMSptC_ACO1O2, forceMSptA_ACO1O2, forceMSptO2_ACO1O2, forceMSptC_ACDO2, forceMSptA_ACDO2, forceMSptO2_ACDO2, formedgeColor6)
+        drawMinkForceSurf(forceMSptD_ACDO2, forceMSptA_ACDO2, forceMSptO2_ACDO2, forceMSptD_BtPt4_ACDO2, forceMSptA_BtPt4_ACDO2, forceMSptO2_BtPt4_ACDO2, formedgeColor7)
+        drawMinkForceSurf(forceMSptC_ACDO2, forceMSptD_ACDO2, forceMSptO2_ACDO2, forceMSptC_BtPt3_ACDO2, forceMSptD_BtPt3_ACDO2, forceMSptO2_BtPt3_ACDO2, formedgeColor8)
+
+        // draw green face
+        const forceMinkFace_ABC = minkFace3pt(forceMSptA_ABCO1, forceMSptB_ABCO1, forceMSptC_ABCO1, 0x014F06)
+        force_group_mink.add(forceMinkFace_ABC)
+        const forceMinkFace_ACD = minkFace3pt(forceMSptA_ACDO2, forceMSptC_ACDO2, forceMSptD_ACDO2, 0x014F06)
+        force_group_mink.add(forceMinkFace_ACD)
+
+        var formMSline1 = createdashline(formPtO3new, formPtO2new, "grey")
+        form_group_mink.add(formMSline1)
+        var formMSline2 = createdashline(formPtO2new, formBtPt4, "grey")
+        form_group_mink.add(formMSline2)
+        var formMSline3 = createdashline(formPtO2new, formBtPt3, "grey")
+        form_group_mink.add(formMSline3)
+
+        function drawMinkSurf(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1) {
+            const formMinkFace_ABO1 = minkFace3pt(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formedgeColor1)
+            form_group_mink.add(formMinkFace_ABO1)
+
+            const formMinkFace_ABO1_1 = minkFace4pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formMSptB_ABCO1, formMSptA_ABCO1, formedgeColor1)
+            form_group_mink.add(formMinkFace_ABO1_1)
+            const formMinkFace_ABO1_2 = minkFace4pt(formMSptAO1_BtPt1, formMSptA_ABCO1, formPtO1new, formBtPt1, formedgeColor1)
+            form_group_mink.add(formMinkFace_ABO1_2)
+            const formMinkFace_ABO1_3 = minkFace4pt(formMSptBO1_BtPt1, formBtPt1, formPtO1new, formMSptB_ABCO1, formedgeColor1)
+            form_group_mink.add(formMinkFace_ABO1_3)
+
+            const formMinkFace_ABO1_BtPt1 = minkFace3pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1)
+            form_group_mink.add(formMinkFace_ABO1_BtPt1)
+        }
+
+        function drawMinkForceSurf(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1) {
+            const formMinkFace_ABO1 = minkFace3pt(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formedgeColor1)
+            force_group_mink.add(formMinkFace_ABO1)
+
+            const formMinkFace_ABO1_1 = minkFace4pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formMSptB_ABCO1, formMSptA_ABCO1, formedgeColor1)
+            force_group_mink.add(formMinkFace_ABO1_1)
+            const formMinkFace_ABO1_2 = minkFace4pt(formMSptAO1_BtPt1, formMSptA_ABCO1, formPtO1new, formBtPt1, formedgeColor1)
+            force_group_mink.add(formMinkFace_ABO1_2)
+            const formMinkFace_ABO1_3 = minkFace4pt(formMSptBO1_BtPt1, formBtPt1, formPtO1new, formMSptB_ABCO1, formedgeColor1)
+            force_group_mink.add(formMinkFace_ABO1_3)
+
+            const formMinkFace_ABO1_BtPt1 = minkFace3pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1)
+            force_group_mink.add(formMinkFace_ABO1_BtPt1)
+        }
+
+        drawMinkSurf(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1)
+
+        drawMinkSurf(formMSptB_ABCO1, formMSptC_ABCO1, formPtO1new, formMSptBO1_BtPt2, formMSptCO1_BtPt2, formBtPt2, formedgeColor2)
+
+        drawMinkSurf(formMSptC_ABCO1, formMSptA_ABCO1, formPtO1new, formMSptC_ACO1O2, formMSptA_ACO1O2, formPtO3new, formedgeColor4)
+
+        drawMinkSurf(formPtO3new, formMSptC_ACO1O2, formMSptO2_ACO1O2, formBtPt2, formMSptCO1_BtPt2, formMSptO2_BtPt2, formedgeColor3)
+
+        drawMinkSurf(formMSptO2_ACO1O2, formMSptA_ACO1O2, formPtO3new, formBtPt4_mink, formMSptAO2_BtPt4, formMSptO1O2_BtPt4, formedgeColor5)
+
+        drawMinkSurf(formMSptC_ACO1O2, formMSptA_ACO1O2, formMSptO2_ACO1O2, formMSptC_ACDO2, formMSptA_ACDO2, formPtO2new_mink, formedgeColor6)
+
+        drawMinkSurf(formMSptD_ACDO2, formMSptA_ACDO2, formPtO2new_mink, formMSptDO2_BtPt4, formMSptAO2_BtPt4, formBtPt4_mink, formedgeColor7)
+
+        drawMinkSurf(formMSptC_ACDO2, formMSptD_ACDO2, formPtO2new_mink, formMSptCO2_BtPt3, formMSptDO2_BtPt3, formBtPt3_mink, formedgeColor8)
+
+        // draw green face
+        const formMinkFace_ABC = minkFace3pt(formMSptA_ABCO1, formMSptB_ABCO1, formMSptC_ABCO1, 0x014F06)
+        form_group_mink.add(formMinkFace_ABC)
+        const formMinkFace_ACD = minkFace3pt(formMSptA_ACDO2, formMSptC_ACDO2, formMSptD_ACDO2, 0x014F06)
+        form_group_mink.add(formMinkFace_ACD)
+
+        scene.add(form_group_mink);
+
+        scene2.add(force_group_mink);
+
+        force_group_mink.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        form_group_mink.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        form_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+        form_general.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+        force_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+        force_group_f.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+        force_general.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Line") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+    }
 
     // *********************** redraw the form and force diagram when parametrer is changing ****************
     function Redraw() {
@@ -1027,14 +2265,11 @@
         scene.remove(form_group_e);
         scene.remove(form_group_c);
         scene.remove(form_general);
-        scene.remove(form_group_mink);
-
 
         form_group_v = new THREE.Group();
         form_group_e = new THREE.Group();
         form_group_c = new THREE.Group();
         form_general = new THREE.Group();
-        form_group_mink = new THREE.Group();
 
         //force groups
         scene2.remove(force_group_v);
@@ -1042,7 +2277,6 @@
         scene2.remove(force_group_e);
         scene2.remove(force_group_c);
         scene2.remove(force_general);
-        scene2.remove(force_group_mink);
 
         scene2.remove(force_text);
 
@@ -1052,8 +2286,6 @@
         force_group_c = new THREE.Group();
         force_general = new THREE.Group();
         force_text = new THREE.Group();
-
-        force_group_mink = new THREE.Group();
 
 
         // *********************** form vertices **************************
@@ -2179,80 +3411,14 @@
         // ********************************** Minkowski Sum Generation ************************************
 
         //Minkowski Test
-        var formMSedgeMaterial = new THREE.MeshPhongMaterial({
-            color: "lightgrey"
-        });
-
-        var minkedgeSize = 0.005
         // chose the start point - formPtO1new (z - 0.5)
-        var minkStPt = new THREE.Vector3(formPtO1new.x, formPtO1new.y, formPtO1new.z)
 
         // ******************          - force cell ABCO1 - cell at minkStPt ******************
-        var formMSedgeBO1temp = subVecUpdated(forcePtB, ForceO1)
-        var formMSptB_ABCO1 = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgeBO1temp.x,
-            minkStPt.y - minkscale.l * formMSedgeBO1temp.y,
-            minkStPt.z - minkscale.l * formMSedgeBO1temp.z
-        );
-        const formMSedgeBO1 = createCylinderMesh(minkStPt, formMSptB_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1)
-
-        var formMSedgeAO1temp = subVecUpdated(forcePtA, ForceO1)
-        var formMSptA_ABCO1 = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgeAO1temp.x,
-            minkStPt.y - minkscale.l * formMSedgeAO1temp.y,
-            minkStPt.z - minkscale.l * formMSedgeAO1temp.z
-        );
-        const formMSedgeAO1 = createCylinderMesh(minkStPt, formMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1)
-
-        var formMSedgeCO1temp = subVecUpdated(forcePtC, ForceO1)
-        var formMSptC_ABCO1 = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgeCO1temp.x,
-            minkStPt.y - minkscale.l * formMSedgeCO1temp.y,
-            minkStPt.z - minkscale.l * formMSedgeCO1temp.z
-        );
-        const formMSedgeCO1 = createCylinderMesh(minkStPt, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO1)
-
-        const formMSedgeAB_ABCO1 = createCylinderMesh(formMSptB_ABCO1, formMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAB_ABCO1)
-        const formMSedgeBC_ABCO1 = createCylinderMesh(formMSptB_ABCO1, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBC_ABCO1)
-        const formMSedgeAC_ABCO1 = createCylinderMesh(formMSptA_ABCO1, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAC_ABCO1)
 
         // 1.1 - project to formBtPt1
         // a. from formMSptBO1 (0.8 is the max number of minkscale.l)
 
-        var formMSptBO1_BtPt1 = new THREE.Vector3(
-            formBtPt1.x - minkscale.l * formMSedgeBO1temp.x,
-            formBtPt1.y - minkscale.l * formMSedgeBO1temp.y,
-            formBtPt1.z - minkscale.l * formMSedgeBO1temp.z
-        );
-        const formMSedgeBO1_BtPt1 = createCylinderMesh(formBtPt1, formMSptBO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1_BtPt1)
-
-        var formMSptAO1_BtPt1 = new THREE.Vector3(
-            formBtPt1.x - minkscale.l * formMSedgeAO1temp.x,
-            formBtPt1.y - minkscale.l * formMSedgeAO1temp.y,
-            formBtPt1.z - minkscale.l * formMSedgeAO1temp.z
-        );
-        const formMSedgeAO1_BtPt1 = createCylinderMesh(formBtPt1, formMSptAO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1_BtPt1)
-
-        const formMSedgeAO1BO1_BtPt1 = createCylinderMesh(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1BO1_BtPt1)
-
         //connecting the rest edges back to cell ABCO1
-        const formMSedgeminkStPt_BtPt1 = createCylinderMesh(minkStPt, formBtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeminkStPt_BtPt1)
-
-        const formMSedgeAO1_edge = createCylinderMesh(formMSptA_ABCO1, formMSptAO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1_edge)
-
-        const formMSedgeBO1_edge = createCylinderMesh(formMSptB_ABCO1, formMSptBO1_BtPt1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1_edge)
 
 
         // ****************** old version (can turn the form to force) ******************
@@ -2278,36 +3444,6 @@
         // ****************** old version (can turn the form to force) end ******************
 
         // 1.2 - project to formBtPt2
-
-        var formMSptBO1_BtPt2 = new THREE.Vector3(
-            formBtPt2.x - minkscale.l * formMSedgeBO1temp.x,
-            formBtPt2.y - minkscale.l * formMSedgeBO1temp.y,
-            formBtPt2.z - minkscale.l * formMSedgeBO1temp.z
-        );
-        const formMSedgeBO1_BtPt2 = createCylinderMesh(formBtPt2, formMSptBO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1_BtPt2)
-
-        var formMSptCO1_BtPt2 = new THREE.Vector3(
-            formBtPt2.x - minkscale.l * formMSedgeCO1temp.x,
-            formBtPt2.y - minkscale.l * formMSedgeCO1temp.y,
-            formBtPt2.z - minkscale.l * formMSedgeCO1temp.z
-        );
-        const formMSedgeCO1_BtPt2 = createCylinderMesh(formBtPt2, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO1_BtPt2)
-
-        const formMSedgeCO1BO1_BtPt1 = createCylinderMesh(formMSptCO1_BtPt2, formMSptBO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO1BO1_BtPt1)
-
-        //connecting the rest edges to cell ABCO1
-        const formMSedgeminkStPt_BtPt2 = createCylinderMesh(minkStPt, formBtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeminkStPt_BtPt2)
-
-        const formMSedgeCO1_edge = createCylinderMesh(formMSptC_ABCO1, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO1_edge)
-
-        const formMSedgeBO1_edge2 = createCylinderMesh(formMSptB_ABCO1, formMSptBO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1_edge2)
-
 
         // ****************** old version (can turn the form to force) ******************
         // var formMSptPt2O1temp = subVecUpdated(formPtO1new, formBtPt2);
@@ -2335,216 +3471,26 @@
         // ******************          - force cell ACO1O2 - cell at formPtO3new ******************
         // 2 - force cell ACO1O2 to formPtO3new
 
-        var formMSptA_ACO1O2 = new THREE.Vector3(
-            formPtO3new.x - minkscale.l * formMSedgeAO1temp.x,
-            formPtO3new.y - minkscale.l * formMSedgeAO1temp.y,
-            formPtO3new.z - minkscale.l * formMSedgeAO1temp.z
-        );
-        const formMSedgeAO1_ACO1O2 = createCylinderMesh(formPtO3new, formMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1_ACO1O2)
-
-        var formMSptO1O2temp = subVecUpdated(ForceO2, ForceO1);
-        var formMSptO2_ACO1O2 = new THREE.Vector3(
-            formPtO3new.x - minkscale.l * formMSptO1O2temp.x,
-            formPtO3new.y - minkscale.l * formMSptO1O2temp.y,
-            formPtO3new.z - minkscale.l * formMSptO1O2temp.z
-        );
-        const formMSedgePtO3O2_ACO1O2 = createCylinderMesh(formPtO3new, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgePtO3O2_ACO1O2)
-
-        var formMSptC_ACO1O2 = new THREE.Vector3(
-            formPtO3new.x - minkscale.l * formMSedgeCO1temp.x,
-            formPtO3new.y - minkscale.l * formMSedgeCO1temp.y,
-            formPtO3new.z - minkscale.l * formMSedgeCO1temp.z
-        );
-        const formMSedgePtO3C_ACO1O2 = createCylinderMesh(formPtO3new, formMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgePtO3C_ACO1O2)
-
-        const formMSedgeAO2_ACO1O2 = createCylinderMesh(formMSptA_ACO1O2, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO2_ACO1O2)
-        const formMSedgeAC_ACO1O2 = createCylinderMesh(formMSptA_ACO1O2, formMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAC_ACO1O2)
-        const formMSedgeCO2_ACO1O2 = createCylinderMesh(formMSptC_ACO1O2, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO2_ACO1O2)
 
         // connecting cell ACO1O2 to cell ABCO1
-        const formMSedgeAA_cell1tocell2 = createCylinderMesh(formMSptA_ACO1O2, formMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAA_cell1tocell2)
-        const formMSedgeO1O3_cell1tocell2 = createCylinderMesh(formPtO1new, formPtO3new, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO1O3_cell1tocell2)
-        const formMSedgeCC_cell1tocell2 = createCylinderMesh(formMSptC_ACO1O2, formMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCC_cell1tocell2)
 
         // project the cell ACO1O2 to BtPt2
-        var formMSedgeO1O2temp = subVecUpdated(ForceO2, ForceO1)
-        var formMSptO2_BtPt2 = new THREE.Vector3(
-            formBtPt2.x - minkscale.l * formMSedgeO1O2temp.x,
-            formBtPt2.y - minkscale.l * formMSedgeO1O2temp.y,
-            formBtPt2.z - minkscale.l * formMSedgeO1O2temp.z
-        );
-        const formMSedgeO1O2_BtPt2 = createCylinderMesh(formBtPt2, formMSptO2_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO1O2_BtPt2)
-
-        const formMSedgeCO2_BtPt2 = createCylinderMesh(formMSptO2_ACO1O2, formMSptO2_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO2_BtPt2)
-
-        const formMSedgePt2O3_BtPt2 = createCylinderMesh(formBtPt2, formPtO3new, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgePt2O3_BtPt2)
-
-        const formMSedgePtCO2_BtPt2 = createCylinderMesh(formMSptO2_BtPt2, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgePtCO2_BtPt2)
-
-        const formMSedgePtCC_BtPt2 = createCylinderMesh(formMSptC_ACO1O2, formMSptCO1_BtPt2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgePtCC_BtPt2)
 
         // ******************          - force cell ACDO2 - cell at formPtO2new ******************
         // 2 - force cell ACDO2 to formPtO3new
-        var formMSedgeAO2temp = subVecUpdated(forcePtA, ForceO2)
         // define the new node to replace the formPtO2new
-        var formMSedgeO2O3temp = subVecUpdated(formPtO2new, formPtO3new)
-        var formPtO2new_mink = new THREE.Vector3(
-            formMSptO2_ACO1O2.x - formMSedgeO2O3temp.x,
-            formMSptO2_ACO1O2.y - formMSedgeO2O3temp.y,
-            formMSptO2_ACO1O2.z - formMSedgeO2O3temp.z
-        );
-
-        var formMSptA_ACDO2 = new THREE.Vector3(
-            formPtO2new_mink.x - minkscale.l * formMSedgeAO2temp.x,
-            formPtO2new_mink.y - minkscale.l * formMSedgeAO2temp.y,
-            formPtO2new_mink.z - minkscale.l * formMSedgeAO2temp.z
-        );
-        const formMSedgeAO2_ACDO2 = createCylinderMesh(formPtO2new_mink, formMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO2_ACDO2)
-
-        var formMSedgeCO2temp = subVecUpdated(forcePtC, ForceO2)
-        var formMSptC_ACDO2 = new THREE.Vector3(
-            formPtO2new_mink.x - minkscale.l * formMSedgeCO2temp.x,
-            formPtO2new_mink.y - minkscale.l * formMSedgeCO2temp.y,
-            formPtO2new_mink.z - minkscale.l * formMSedgeCO2temp.z
-        );
-        const formMSedgeCO2_ACDO2 = createCylinderMesh(formPtO2new_mink, formMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO2_ACDO2)
-
-        var formMSedgeDO2temp = subVecUpdated(forcePtD, ForceO2)
-        var formMSptD_ACDO2 = new THREE.Vector3(
-            formPtO2new_mink.x - minkscale.l * formMSedgeDO2temp.x,
-            formPtO2new_mink.y - minkscale.l * formMSedgeDO2temp.y,
-            formPtO2new_mink.z - minkscale.l * formMSedgeDO2temp.z
-        );
-        const formMSedgeDO2_ACDO2 = createCylinderMesh(formPtO2new_mink, formMSptD_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDO2_ACDO2)
-
-        const formMSedgeAD_ACDO2 = createCylinderMesh(formMSptA_ACDO2, formMSptD_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAD_ACDO2)
-
-        const formMSedgeCD_ACDO2 = createCylinderMesh(formMSptC_ACDO2, formMSptD_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCD_ACDO2)
-
-        const formMSedgeAC_ACDO2 = createCylinderMesh(formMSptA_ACDO2, formMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAC_ACDO2)
 
         // proejct to BtPt4
         // reolace the new point to BtPt4
-        var formMSedgeO2BtPt4temp = subVecUpdated(formBtPt4, formPtO2new)
-        var formBtPt4_mink = new THREE.Vector3(
-            formPtO2new_mink.x - formMSedgeO2BtPt4temp.x,
-            formPtO2new_mink.y - formMSedgeO2BtPt4temp.y,
-            formPtO2new_mink.z - formMSedgeO2BtPt4temp.z
-        );
-
-        var formMSptAO2_BtPt4 = new THREE.Vector3(
-            formBtPt4_mink.x - minkscale.l * formMSedgeAO2temp.x,
-            formBtPt4_mink.y - minkscale.l * formMSedgeAO2temp.y,
-            formBtPt4_mink.z - minkscale.l * formMSedgeAO2temp.z
-        );
-        const formMSedgeAO2_BtPt4 = createCylinderMesh(formBtPt4_mink, formMSptAO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO2_BtPt4)
-
-        var formMSptDO2_BtPt4 = new THREE.Vector3(
-            formBtPt4_mink.x - minkscale.l * formMSedgeDO2temp.x,
-            formBtPt4_mink.y - minkscale.l * formMSedgeDO2temp.y,
-            formBtPt4_mink.z - minkscale.l * formMSedgeDO2temp.z
-        );
-        const formMSedgeDO2_BtPt4 = createCylinderMesh(formBtPt4_mink, formMSptDO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDO2_BtPt4)
-
-        const formMSedgeAD_BtPt4 = createCylinderMesh(formMSptAO2_BtPt4, formMSptDO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAD_BtPt4)
 
         // connecting rest edges to BtPt4
-        const formMSedgeDD_BtPt4 = createCylinderMesh(formMSptD_ACDO2, formMSptDO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDD_BtPt4)
-        const formMSedgeAA_BtPt4 = createCylinderMesh(formMSptA_ACDO2, formMSptAO2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAA_BtPt4)
-        const formMSedgeO2_BtPt4 = createCylinderMesh(formPtO2new_mink, formBtPt4_mink, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO2_BtPt4)
 
         // proejct to BtPt3
         // reolace the new point to BtPt3
-        var formMSedgeO2BtPt3temp = subVecUpdated(formBtPt3, formPtO2new)
-        var formBtPt3_mink = new THREE.Vector3(
-            formPtO2new_mink.x - formMSedgeO2BtPt3temp.x,
-            formPtO2new_mink.y - formMSedgeO2BtPt3temp.y,
-            formPtO2new_mink.z - formMSedgeO2BtPt3temp.z
-        );
-
-        var formMSptCO2_BtPt3 = new THREE.Vector3(
-            formBtPt3_mink.x - minkscale.l * formMSedgeCO2temp.x,
-            formBtPt3_mink.y - minkscale.l * formMSedgeCO2temp.y,
-            formBtPt3_mink.z - minkscale.l * formMSedgeCO2temp.z
-        );
-        const formMSedgeCO2_BtPt3 = createCylinderMesh(formBtPt3_mink, formMSptCO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO2_BtPt3)
-
-        var formMSptDO2_BtPt3 = new THREE.Vector3(
-            formBtPt3_mink.x - minkscale.l * formMSedgeDO2temp.x,
-            formBtPt3_mink.y - minkscale.l * formMSedgeDO2temp.y,
-            formBtPt3_mink.z - minkscale.l * formMSedgeDO2temp.z
-        );
-        const formMSedgeDO2_BtPt3 = createCylinderMesh(formBtPt3_mink, formMSptDO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDO2_BtPt3)
-
-        const formMSedgeCD_BtPt3 = createCylinderMesh(formMSptCO2_BtPt3, formMSptDO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCD_BtPt3)
 
         // connecting rest edges to BtPt3
-        const formMSedgeDD_BtPt3 = createCylinderMesh(formMSptD_ACDO2, formMSptDO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDD_BtPt3)
-        const formMSedgeCC_BtPt3 = createCylinderMesh(formMSptC_ACDO2, formMSptCO2_BtPt3, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCC_BtPt3)
-        const formMSedgeO2_BtPt3 = createCylinderMesh(formPtO2new_mink, formBtPt3_mink, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO2_BtPt3)
 
         // project to BtPt4 from cell ACO1O2
-        var formMSptO1O2_BtPt4 = new THREE.Vector3(
-            formBtPt4_mink.x + minkscale.l * formMSedgeO1O2temp.x,
-            formBtPt4_mink.y + minkscale.l * formMSedgeO1O2temp.y,
-            formBtPt4_mink.z + minkscale.l * formMSedgeO1O2temp.z
-        );
-        const formMSedgeO1O2_BtPt4 = createCylinderMesh(formBtPt4_mink, formMSptO1O2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO1O2_BtPt4)
-
-        const formMSedgeAO1O2_BtPt4 = createCylinderMesh(formMSptAO2_BtPt4, formMSptO1O2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1O2_BtPt4)
-
-        // connecting rest edges
-        const formMSedgeAA_BtPt4_ACO1O2 = createCylinderMesh(formMSptAO2_BtPt4, formMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAA_BtPt4_ACO1O2)
-
-        const formMSedgeO3_BtPt4_ACO1O2 = createCylinderMesh(formPtO3new, formMSptO1O2_BtPt4, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO3_BtPt4_ACO1O2)
-
-        const formMSedgeO2_BtPt4_ACO1O2 = createCylinderMesh(formBtPt4_mink, formMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO2_BtPt4_ACO1O2)
-
-
-        // connecting cell ACO1O2 & ACDO2
-        const formMSedgeAA_ACDO2_ACO1O2 = createCylinderMesh(formMSptA_ACDO2, formMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAA_ACDO2_ACO1O2)
-        const formMSedgeCC_ACDO2_ACO1O2 = createCylinderMesh(formMSptC_ACDO2, formMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCC_ACDO2_ACO1O2)
-        const formMSedgeO2_ACDO2_ACO1O2 = createCylinderMesh(formMSptO2_ACO1O2, formPtO2new_mink, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeO2_ACDO2_ACO1O2)
 
         // ********************************** Minkowski Sum Generation - force ************************************
 
@@ -2557,400 +3503,94 @@
         // // chose the start point - formPtO1new (z - 0.5)
         // var minkStPt = new THREE.Vector3(formPtO1new.x, formPtO1new.y, formPtO1new.z)
 
-        var silderSize = 0.8
-
-        var minkS = 2.5
-
         //******************* 1. - Cell ABCO1 （new) *******************
 
         // find the starting point - O1 from Cell ABCO1
-        var forceMSptO1_ABCO1 = Pnt_copy(new THREE.Vector3(formPtO1new.x, formPtO1new.y, formPtO1new.z))
 
         // find - B from Cell ABCO1
-        var formMSedgetempB_ABCO1 = subVecUpdated(forcePtB, ForceO1)
-        var forceMSptB_ABCO1 = new THREE.Vector3(
-            forceMSptO1_ABCO1.x - (silderSize - minkS * minkscale.l) * formMSedgetempB_ABCO1.x,
-            forceMSptO1_ABCO1.y - (silderSize - minkS * minkscale.l) * formMSedgetempB_ABCO1.y,
-            forceMSptO1_ABCO1.z - (silderSize - minkS * minkscale.l) * formMSedgetempB_ABCO1.z
-        );
 
         // find - A from Cell ABCO1
-        var formMSedgetempA_ABCO1 = subVecUpdated(forcePtA, ForceO1)
-        var forceMSptA_ABCO1 = new THREE.Vector3(
-            forceMSptO1_ABCO1.x - (silderSize - minkS * minkscale.l) * formMSedgetempA_ABCO1.x,
-            forceMSptO1_ABCO1.y - (silderSize - minkS * minkscale.l) * formMSedgetempA_ABCO1.y,
-            forceMSptO1_ABCO1.z - (silderSize - minkS * minkscale.l) * formMSedgetempA_ABCO1.z
-        );
 
         // find - C from Cell ABCO1
-        var formMSedgetempC_ABCO1 = subVecUpdated(forcePtC, ForceO1)
-        var forceMSptC_ABCO1 = new THREE.Vector3(
-            forceMSptO1_ABCO1.x - (silderSize - minkS * minkscale.l) * formMSedgetempC_ABCO1.x,
-            forceMSptO1_ABCO1.y - (silderSize - minkS * minkscale.l) * formMSedgetempC_ABCO1.y,
-            forceMSptO1_ABCO1.z - (silderSize - minkS * minkscale.l) * formMSedgetempC_ABCO1.z
-        );
-
-        const forceMSedgeBO1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptB_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBO1_ABCO1)
-
-        const forceMSedgeAO1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptA_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO1_ABCO1)
-
-        const forceMSedgeCO1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO1_ABCO1)
-
-        const forceMSedgeAB_ABCO1 = createCylinderMesh(forceMSptA_ABCO1, forceMSptB_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAB_ABCO1)
-
-        const forceMSedgeBC_ABCO1 = createCylinderMesh(forceMSptB_ABCO1, forceMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBC_ABCO1)
-
-        const forceMSedgeAC_ABCO1 = createCylinderMesh(forceMSptA_ABCO1, forceMSptC_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAC_ABCO1)
 
         // project to BtPt1 from Cell ABCO1
         // project from Pt A
-        var formMSedgetempA_BtPt1_ABCO1 = subVecUpdated(formPtO1new, formBtPt1)
-        var forceMSptA_BtPt1_ABCO1 = new THREE.Vector3(
-            forceMSptA_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt1_ABCO1.x,
-            forceMSptA_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt1_ABCO1.y,
-            forceMSptA_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt1_ABCO1.z
-        );
-        const forceMSedgeAA__BtPt1_ABCO1 = createCylinderMesh(forceMSptA_ABCO1, forceMSptA_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAA__BtPt1_ABCO1)
+
 
         // project from Pt B
-        var formMSedgetempB_BtPt1_ABCO1 = subVecUpdated(formPtO1new, formBtPt1)
-        var forceMSptB_BtPt1_ABCO1 = new THREE.Vector3(
-            forceMSptB_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt1_ABCO1.x,
-            forceMSptB_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt1_ABCO1.y,
-            forceMSptB_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt1_ABCO1.z
-        );
-        const forceMSedgeBB__BtPt1_ABCO1 = createCylinderMesh(forceMSptB_ABCO1, forceMSptB_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBB__BtPt1_ABCO1)
-
         // project from Pt O1
-        var formMSedgetempO1_BtPt1_ABCO1 = subVecUpdated(formPtO1new, formBtPt1)
-        var forceMSptO1_BtPt1_ABCO1 = new THREE.Vector3(
-            forceMSptO1_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt1_ABCO1.x,
-            forceMSptO1_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt1_ABCO1.y,
-            forceMSptO1_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt1_ABCO1.z
-        );
-        const forceMSedgeO1O1__BtPt1_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptO1_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O1__BtPt1_ABCO1)
-
-        // connect rest of edges - BtPt 1
-        const forceMSedgeAB__BtPt1_ABCO1 = createCylinderMesh(forceMSptA_BtPt1_ABCO1, forceMSptB_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAB__BtPt1_ABCO1)
-        const forceMSedgeAO1__BtPt1_ABCO1 = createCylinderMesh(forceMSptA_BtPt1_ABCO1, forceMSptO1_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO1__BtPt1_ABCO1)
-        const forceMSedgeBO1__BtPt1_ABCO1 = createCylinderMesh(forceMSptB_BtPt1_ABCO1, forceMSptO1_BtPt1_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBO1__BtPt1_ABCO1)
 
 
         // project to BtPt2 from Cell ABCO1
         // project from Pt B
-        var formMSedgetempB_BtPt2_ABCO1 = subVecUpdated(formPtO1new, formBtPt2)
-        var forceMSptB_BtPt2_ABCO1 = new THREE.Vector3(
-            forceMSptB_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt2_ABCO1.x,
-            forceMSptB_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt2_ABCO1.y,
-            forceMSptB_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempB_BtPt2_ABCO1.z
-        );
-        const forceMSedgeBB__BtPt2_ABCO1 = createCylinderMesh(forceMSptB_ABCO1, forceMSptB_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBB__BtPt2_ABCO1)
 
         // project from Pt C
-        var formMSedgetempC_BtPt2_ABCO1 = subVecUpdated(formPtO1new, formBtPt2)
-        var forceMSptC_BtPt2_ABCO1 = new THREE.Vector3(
-            forceMSptC_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ABCO1.x,
-            forceMSptC_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ABCO1.y,
-            forceMSptC_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ABCO1.z
-        );
-        const forceMSedgeCC__BtPt2_ABCO1 = createCylinderMesh(forceMSptC_ABCO1, forceMSptC_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCC__BtPt2_ABCO1)
 
 
         // project from Pt O1
-        var formMSedgetempO1_BtPt2_ABCO1 = subVecUpdated(formPtO1new, formBtPt2)
-        var forceMSptO1_BtPt2_ABCO1 = new THREE.Vector3(
-            forceMSptO1_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ABCO1.x,
-            forceMSptO1_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ABCO1.y,
-            forceMSptO1_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ABCO1.z
-        );
-        const forceMSedgeO1O1__BtPt2_ABCO1 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptO1_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O1__BtPt2_ABCO1)
 
         // connect rest of edges - BtPt 2
-        const forceMSedgeBC__BtPt2_ABCO1 = createCylinderMesh(forceMSptB_BtPt2_ABCO1, forceMSptC_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBC__BtPt2_ABCO1)
-        const forceMSedgeBO1__BtPt2_ABCO1 = createCylinderMesh(forceMSptB_BtPt2_ABCO1, forceMSptO1_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBO1__BtPt2_ABCO1)
-        const forceMSedgeCO1__BtPt2_ABCO1 = createCylinderMesh(forceMSptC_BtPt2_ABCO1, forceMSptO1_BtPt2_ABCO1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO1__BtPt2_ABCO1)
 
 
         //******************* 2. - Cell ACO1O2 （new) *******************
 
         // project from cell ABCO1 to cell ACO1O2
         // point A - cell ACO1O2
-        var formMSedgetempA_ACO1O2 = subVecUpdated(formPtO1new, formPtO3new)
-        var forceMSptA_ACO1O2 = new THREE.Vector3(
-            forceMSptA_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACO1O2.x,
-            forceMSptA_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACO1O2.y,
-            forceMSptA_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACO1O2.z
-        );
-        const forceMSedgeAA_ABCO1_ACO1O2 = createCylinderMesh(forceMSptA_ABCO1, forceMSptA_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAA_ABCO1_ACO1O2)
 
         // point O1 - cell ACO1O2
-        var formMSedgetempO1_ACO1O2 = subVecUpdated(formPtO1new, formPtO3new)
-        var forceMSptO1_ACO1O2 = new THREE.Vector3(
-            forceMSptO1_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_ACO1O2.x,
-            forceMSptO1_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_ACO1O2.y,
-            forceMSptO1_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_ACO1O2.z
-        );
-        const forceMSedgeO1O1_ABCO1_ACO1O2 = createCylinderMesh(forceMSptO1_ABCO1, forceMSptO1_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O1_ABCO1_ACO1O2)
 
         // point C - cell ACO1O2
-        var formMSedgetempC_ACO1O2 = subVecUpdated(formPtO1new, formPtO3new)
-        var forceMSptC_ACO1O2 = new THREE.Vector3(
-            forceMSptC_ABCO1.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACO1O2.x,
-            forceMSptC_ABCO1.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACO1O2.y,
-            forceMSptC_ABCO1.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACO1O2.z
-        );
-        const forceMSedgeCC_ABCO1_ACO1O2 = createCylinderMesh(forceMSptC_ABCO1, forceMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCC_ABCO1_ACO1O2)
 
         // point O2 - cell ACO1O2 *********** important ************
-        var formMSedgetempO2_ACO1O2 = subVecUpdated(ForceO2, ForceO1)
-        var forceMSptO2_ACO1O2 = new THREE.Vector3(
-            forceMSptO1_ACO1O2.x - (silderSize - minkS * minkscale.l) * formMSedgetempO2_ACO1O2.x,
-            forceMSptO1_ACO1O2.y - (silderSize - minkS * minkscale.l) * formMSedgetempO2_ACO1O2.y,
-            forceMSptO1_ACO1O2.z - (silderSize - minkS * minkscale.l) * formMSedgetempO2_ACO1O2.z
-        );
 
         // connect rest of edges - cell ACO1O2
-        const forceMSedgeO1O2_ACO1O2 = createCylinderMesh(forceMSptO1_ACO1O2, forceMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O2_ACO1O2)
-        const forceMSedgeAO1_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptO1_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO1_ACO1O2)
-        const forceMSedgeAO2_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO2_ACO1O2)
-        const forceMSedgeAC_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptC_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAC_ACO1O2)
-        const forceMSedgeCO1_ACO1O2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptO1_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO1_ACO1O2)
-        const forceMSedgeCO2_ACO1O2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptO2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO2_ACO1O2)
 
         // project to BtPt2 from Cell ACO1O2
         // project from Pt C
-        var formMSedgetempC_BtPt2_ACO1O2 = subVecUpdated(formPtO3new, formBtPt2)
-        var forceMSptC_BtPt2_ACO1O2 = new THREE.Vector3(
-            forceMSptC_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ACO1O2.x,
-            forceMSptC_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ACO1O2.y,
-            forceMSptC_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt2_ACO1O2.z
-        );
-        const forceMSedgeCC__BtPt2_ACO1O2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptC_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCC__BtPt2_ACO1O2)
 
         // project from Pt O1
-        var formMSedgetempO1_BtPt2_ACO1O2 = subVecUpdated(formPtO3new, formBtPt2)
-        var forceMSptO1_BtPt2_ACO1O2 = new THREE.Vector3(
-            forceMSptO1_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ACO1O2.x,
-            forceMSptO1_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ACO1O2.y,
-            forceMSptO1_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt2_ACO1O2.z
-        );
-        const forceMSedgeO1O1__BtPt2_ACO1O2 = createCylinderMesh(forceMSptO1_ACO1O2, forceMSptO1_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O1__BtPt2_ACO1O2)
 
         // project from Pt O2
-        var formMSedgetempO2_BtPt2_ACO1O2 = subVecUpdated(formPtO3new, formBtPt2)
-        var forceMSptO2_BtPt2_ACO1O2 = new THREE.Vector3(
-            forceMSptO2_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt2_ACO1O2.x,
-            forceMSptO2_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt2_ACO1O2.y,
-            forceMSptO2_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt2_ACO1O2.z
-        );
-        const forceMSedgeO2O2__BtPt2_ACO1O2 = createCylinderMesh(forceMSptO2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO2O2__BtPt2_ACO1O2)
 
         // connect rest edges
-        const forceMSedgeO1O2__BtPt2_ACO1O2 = createCylinderMesh(forceMSptO1_BtPt2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O2__BtPt2_ACO1O2)
-        const forceMSedgeCO2__BtPt2_ACO1O2 = createCylinderMesh(forceMSptC_BtPt2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO2__BtPt2_ACO1O2)
 
         // project to BtPt4 from Cell ACO1O2
         // project from Pt A
-        var formMSedgetempA_BtPt4_ACO1O2 = subVecUpdated(formPtO3new, formBtPt4)
-        var forceMSptA_BtPt4_ACO1O2 = new THREE.Vector3(
-            forceMSptA_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACO1O2.x,
-            forceMSptA_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACO1O2.y,
-            forceMSptA_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACO1O2.z
-        );
-        const forceMSedgeAA__BtPt4_ACO1O2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptA_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAA__BtPt4_ACO1O2)
 
         // project from Pt O1
-        var formMSedgetempO1_BtPt4_ACO1O2 = subVecUpdated(formPtO3new, formBtPt4)
-        var forceMSptO1_BtPt4_ACO1O2 = new THREE.Vector3(
-            forceMSptO1_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt4_ACO1O2.x,
-            forceMSptO1_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt4_ACO1O2.y,
-            forceMSptO1_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO1_BtPt4_ACO1O2.z
-        );
-        const forceMSedgeO1O1__BtPt4_ACO1O2 = createCylinderMesh(forceMSptO1_ACO1O2, forceMSptO1_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O1__BtPt4_ACO1O2)
 
         // project from Pt O2
-        var formMSedgetempO2_BtPt4_ACO1O2 = subVecUpdated(formPtO3new, formBtPt4)
-        var forceMSptO2_BtPt4_ACO1O2 = new THREE.Vector3(
-            forceMSptO2_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACO1O2.x,
-            forceMSptO2_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACO1O2.y,
-            forceMSptO2_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACO1O2.z
-        );
-        const forceMSedgeO2O2__BtPt4_ACO1O2 = createCylinderMesh(forceMSptO2_ACO1O2, forceMSptO2_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO2O2__BtPt4_ACO1O2)
 
         // connect rest edges
-        const forceMSedgeO1O2__BtPt4_ACO1O2 = createCylinderMesh(forceMSptO1_BtPt4_ACO1O2, forceMSptO2_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO1O2__BtPt4_ACO1O2)
-        const forceMSedgeAO2__BtPt4_ACO1O2 = createCylinderMesh(forceMSptA_BtPt4_ACO1O2, forceMSptO2_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO2__BtPt4_ACO1O2)
-        const forceMSedgeAO1__BtPt4_ACO1O2 = createCylinderMesh(forceMSptA_BtPt4_ACO1O2, forceMSptO1_BtPt4_ACO1O2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO1__BtPt4_ACO1O2)
 
 
         //******************* 3. - Cell ACDO2 （new) *******************
 
         // project from cell ACO1O2 to cell ACDO2
         // point A - cell ACDO2
-        var formMSedgetempA_ACDO2 = subVecUpdated(formPtO3new, formPtO2new)
-        var forceMSptA_ACDO2 = new THREE.Vector3(
-            forceMSptA_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACDO2.x,
-            forceMSptA_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACDO2.y,
-            forceMSptA_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_ACDO2.z
-        );
-        const forceMSedgeAA_ACO1O2_ACDO2 = createCylinderMesh(forceMSptA_ACO1O2, forceMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAA_ACO1O2_ACDO2)
-
         // point C - cell ACDO2
-        var formMSedgetempC_ACDO2 = subVecUpdated(formPtO3new, formPtO2new)
-        var forceMSptC_ACDO2 = new THREE.Vector3(
-            forceMSptC_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACDO2.x,
-            forceMSptC_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACDO2.y,
-            forceMSptC_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_ACDO2.z
-        );
-        const forceMSedgeCC_ACO1O2_ACDO2 = createCylinderMesh(forceMSptC_ACO1O2, forceMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCC_ACO1O2_ACDO2)
 
         // point o2 - cell ACDO2
-        var formMSedgetempO2_ACDO2 = subVecUpdated(formPtO3new, formPtO2new)
-        var forceMSptO2_ACDO2 = new THREE.Vector3(
-            forceMSptO2_ACO1O2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_ACDO2.x,
-            forceMSptO2_ACO1O2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_ACDO2.y,
-            forceMSptO2_ACO1O2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_ACDO2.z
-        );
-        const forceMSedgeO2O2_ACO1O2_ACDO2 = createCylinderMesh(forceMSptO2_ACO1O2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO2O2_ACO1O2_ACDO2)
 
         // point O2 - cell ACDO2 *********** important ************
-        var formMSedgetempD_ACDO2 = subVecUpdated(forcePtD, ForceO2)
-        var forceMSptD_ACDO2 = new THREE.Vector3(
-            forceMSptO2_ACDO2.x - (silderSize - minkS * minkscale.l) * formMSedgetempD_ACDO2.x,
-            forceMSptO2_ACDO2.y - (silderSize - minkS * minkscale.l) * formMSedgetempD_ACDO2.y,
-            forceMSptO2_ACDO2.z - (silderSize - minkS * minkscale.l) * formMSedgetempD_ACDO2.z
-        );
-        const forceMSedgeDO2_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeDO2_ACDO2)
-
-        const forceMSedgeAO2_ACDO2 = createCylinderMesh(forceMSptA_ACDO2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO2_ACDO2)
-        const forceMSedgeCO2_ACDO2 = createCylinderMesh(forceMSptC_ACDO2, forceMSptO2_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO2_ACDO2)
-
-        const forceMSedgeAC_ACDO2 = createCylinderMesh(forceMSptC_ACDO2, forceMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAC_ACDO2)
-        const forceMSedgeAD_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptA_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAD_ACDO2)
-        const forceMSedgeCD_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptC_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCD_ACDO2)
 
         // project to BtPt4 from Cell ACDO2
         // project from Pt A
-        var formMSedgetempA_BtPt4_ACDO2 = subVecUpdated(formPtO2new, formBtPt4)
-        var forceMSptA_BtPt4_ACDO2 = new THREE.Vector3(
-            forceMSptA_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACDO2.x,
-            forceMSptA_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACDO2.y,
-            forceMSptA_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempA_BtPt4_ACDO2.z
-        );
-        const forceMSedgeAA__BtPt4_ACDO2 = createCylinderMesh(forceMSptA_ACDO2, forceMSptA_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAA__BtPt4_ACDO2)
 
         // project from Pt D
-        var formMSedgetempD_BtPt4_ACDO2 = subVecUpdated(formPtO2new, formBtPt4)
-        var forceMSptD_BtPt4_ACDO2 = new THREE.Vector3(
-            forceMSptD_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt4_ACDO2.x,
-            forceMSptD_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt4_ACDO2.y,
-            forceMSptD_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt4_ACDO2.z
-        );
-        const forceMSedgeDD__BtPt4_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptD_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeDD__BtPt4_ACDO2)
 
         // project from Pt O2
-        var formMSedgetempO2_BtPt4_ACDO2 = subVecUpdated(formPtO2new, formBtPt4)
-        var forceMSptO2_BtPt4_ACDO2 = new THREE.Vector3(
-            forceMSptO2_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACDO2.x,
-            forceMSptO2_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACDO2.y,
-            forceMSptO2_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt4_ACDO2.z
-        );
-        const forceMSedgeO2O2__BtPt4_ACDO2 = createCylinderMesh(forceMSptO2_ACDO2, forceMSptO2_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO2O2__BtPt4_ACDO2)
 
         // connect rest edges
-        const forceMSedgeDO2__BtPt4_ACDO2 = createCylinderMesh(forceMSptD_BtPt4_ACDO2, forceMSptO2_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeDO2__BtPt4_ACDO2)
-        const forceMSedgeAD__BtPt4_ACDO2 = createCylinderMesh(forceMSptD_BtPt4_ACDO2, forceMSptA_BtPt4_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAD__BtPt4_ACDO2)
 
         // project to BtPt3 from Cell ACDO2
         // project from Pt C
-        var formMSedgetempC_BtPt3_ACDO2 = subVecUpdated(formPtO2new, formBtPt3)
-        var forceMSptC_BtPt3_ACDO2 = new THREE.Vector3(
-            forceMSptC_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt3_ACDO2.x,
-            forceMSptC_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt3_ACDO2.y,
-            forceMSptC_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempC_BtPt3_ACDO2.z
-        );
-        const forceMSedgeCC__BtPt3_ACDO2 = createCylinderMesh(forceMSptC_ACDO2, forceMSptC_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCC__BtPt3_ACDO2)
 
         // project from Pt D
-        var formMSedgetempD_BtPt3_ACDO2 = subVecUpdated(formPtO2new, formBtPt3)
-        var forceMSptD_BtPt3_ACDO2 = new THREE.Vector3(
-            forceMSptD_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt3_ACDO2.x,
-            forceMSptD_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt3_ACDO2.y,
-            forceMSptD_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempD_BtPt3_ACDO2.z
-        );
-        const forceMSedgeDD__BtPt3_ACDO2 = createCylinderMesh(forceMSptD_ACDO2, forceMSptD_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeDD__BtPt3_ACDO2)
 
         // project from Pt O2
-        var formMSedgetempO2_BtPt3_ACDO2 = subVecUpdated(formPtO2new, formBtPt3)
-        var forceMSptO2_BtPt3_ACDO2 = new THREE.Vector3(
-            forceMSptO2_ACDO2.x + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt3_ACDO2.x,
-            forceMSptO2_ACDO2.y + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt3_ACDO2.y,
-            forceMSptO2_ACDO2.z + (1.7 * minkS * minkscale.l) * formMSedgetempO2_BtPt3_ACDO2.z
-        );
-        const forceMSedgeO2O2__BtPt3_ACDO2 = createCylinderMesh(forceMSptO2_ACDO2, forceMSptO2_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeO2O2__BtPt3_ACDO2)
 
         // connect rest edges
-        const forceMSedgeDO2__BtPt3_ACDO2 = createCylinderMesh(forceMSptD_BtPt3_ACDO2, forceMSptO2_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeDO2__BtPt3_ACDO2)
-        const forceMSedgeCO2__BtPt3_ACDO2 = createCylinderMesh(forceMSptC_BtPt3_ACDO2, forceMSptO2_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO2__BtPt3_ACDO2)
-        const forceMSedgeCD__BtPt3_ACDO2 = createCylinderMesh(forceMSptC_BtPt3_ACDO2, forceMSptD_BtPt3_ACDO2, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCD__BtPt3_ACDO2)
 
         // add faces to the force diagram
 
@@ -2973,28 +3613,7 @@
 
         // 1. cell ABCO1
         // ABCO1 to BtPt1
-        drawMinkForceSurf(forceMSptA_ABCO1, forceMSptB_ABCO1, forceMSptO1_ABCO1, forceMSptA_BtPt1_ABCO1, forceMSptB_BtPt1_ABCO1, forceMSptO1_BtPt1_ABCO1, formedgeColor1)
-        drawMinkForceSurf(forceMSptB_ABCO1, forceMSptC_ABCO1, forceMSptO1_ABCO1, forceMSptB_BtPt2_ABCO1, forceMSptC_BtPt2_ABCO1, forceMSptO1_BtPt2_ABCO1, formedgeColor2)
-        drawMinkForceSurf(forceMSptC_ABCO1, forceMSptA_ABCO1, forceMSptO1_ABCO1, forceMSptC_ACO1O2, forceMSptA_ACO1O2, forceMSptO1_ACO1O2, formedgeColor4)
-        drawMinkForceSurf(forceMSptO1_ACO1O2, forceMSptC_ACO1O2, forceMSptO2_ACO1O2, forceMSptO1_BtPt2_ACO1O2, forceMSptC_BtPt2_ACO1O2, forceMSptO2_BtPt2_ACO1O2, formedgeColor3)
-        drawMinkForceSurf(forceMSptO2_ACO1O2, forceMSptA_ACO1O2, forceMSptO1_ACO1O2, forceMSptO2_BtPt4_ACO1O2, forceMSptA_BtPt4_ACO1O2, forceMSptO1_BtPt4_ACO1O2, formedgeColor5)
-
-        drawMinkForceSurf(forceMSptC_ACO1O2, forceMSptA_ACO1O2, forceMSptO2_ACO1O2, forceMSptC_ACDO2, forceMSptA_ACDO2, forceMSptO2_ACDO2, formedgeColor6)
-        drawMinkForceSurf(forceMSptD_ACDO2, forceMSptA_ACDO2, forceMSptO2_ACDO2, forceMSptD_BtPt4_ACDO2, forceMSptA_BtPt4_ACDO2, forceMSptO2_BtPt4_ACDO2, formedgeColor7)
-        drawMinkForceSurf(forceMSptC_ACDO2, forceMSptD_ACDO2, forceMSptO2_ACDO2, forceMSptC_BtPt3_ACDO2, forceMSptD_BtPt3_ACDO2, forceMSptO2_BtPt3_ACDO2, formedgeColor8)
-
         // draw green face
-        const forceMinkFace_ABC = minkFace3pt(forceMSptA_ABCO1, forceMSptB_ABCO1, forceMSptC_ABCO1, 0x014F06)
-        force_group_mink.add(forceMinkFace_ABC)
-        const forceMinkFace_ACD = minkFace3pt(forceMSptA_ACDO2, forceMSptC_ACDO2, forceMSptD_ACDO2, 0x014F06)
-        force_group_mink.add(forceMinkFace_ACD)
-
-        var formMSline1 = createdashline(formPtO3new, formPtO2new, "grey")
-        form_group_mink.add(formMSline1)
-        var formMSline2 = createdashline(formPtO2new, formBtPt4, "grey")
-        form_group_mink.add(formMSline2)
-        var formMSline3 = createdashline(formPtO2new, formBtPt3, "grey")
-        form_group_mink.add(formMSline3)
 
 //   //******************* 1. - Cell ABCO1 *******************
 //   var forceCenterPt_ABCO1 = new THREE.Vector3(
@@ -3434,59 +4053,6 @@
         // const formMSedgeADO2_3 = createCylinderMesh(formMSptO1_ACO1O2,formMSptADO2_3,formMSedgeMaterial,minkedgeSize,minkedgeSize);
         // form_group_mink.add(formMSedgeADO2_3)
 
-
-        function drawMinkSurf(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1) {
-            const formMinkFace_ABO1 = minkFace3pt(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formedgeColor1)
-            form_group_mink.add(formMinkFace_ABO1)
-
-            const formMinkFace_ABO1_1 = minkFace4pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formMSptB_ABCO1, formMSptA_ABCO1, formedgeColor1)
-            form_group_mink.add(formMinkFace_ABO1_1)
-            const formMinkFace_ABO1_2 = minkFace4pt(formMSptAO1_BtPt1, formMSptA_ABCO1, formPtO1new, formBtPt1, formedgeColor1)
-            form_group_mink.add(formMinkFace_ABO1_2)
-            const formMinkFace_ABO1_3 = minkFace4pt(formMSptBO1_BtPt1, formBtPt1, formPtO1new, formMSptB_ABCO1, formedgeColor1)
-            form_group_mink.add(formMinkFace_ABO1_3)
-
-            const formMinkFace_ABO1_BtPt1 = minkFace3pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1)
-            form_group_mink.add(formMinkFace_ABO1_BtPt1)
-        }
-
-        function drawMinkForceSurf(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1) {
-            const formMinkFace_ABO1 = minkFace3pt(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formedgeColor1)
-            force_group_mink.add(formMinkFace_ABO1)
-
-            const formMinkFace_ABO1_1 = minkFace4pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formMSptB_ABCO1, formMSptA_ABCO1, formedgeColor1)
-            force_group_mink.add(formMinkFace_ABO1_1)
-            const formMinkFace_ABO1_2 = minkFace4pt(formMSptAO1_BtPt1, formMSptA_ABCO1, formPtO1new, formBtPt1, formedgeColor1)
-            force_group_mink.add(formMinkFace_ABO1_2)
-            const formMinkFace_ABO1_3 = minkFace4pt(formMSptBO1_BtPt1, formBtPt1, formPtO1new, formMSptB_ABCO1, formedgeColor1)
-            force_group_mink.add(formMinkFace_ABO1_3)
-
-            const formMinkFace_ABO1_BtPt1 = minkFace3pt(formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1)
-            force_group_mink.add(formMinkFace_ABO1_BtPt1)
-        }
-
-        drawMinkSurf(formMSptA_ABCO1, formMSptB_ABCO1, formPtO1new, formMSptAO1_BtPt1, formMSptBO1_BtPt1, formBtPt1, formedgeColor1)
-
-        drawMinkSurf(formMSptB_ABCO1, formMSptC_ABCO1, formPtO1new, formMSptBO1_BtPt2, formMSptCO1_BtPt2, formBtPt2, formedgeColor2)
-
-        drawMinkSurf(formMSptC_ABCO1, formMSptA_ABCO1, formPtO1new, formMSptC_ACO1O2, formMSptA_ACO1O2, formPtO3new, formedgeColor4)
-
-        drawMinkSurf(formPtO3new, formMSptC_ACO1O2, formMSptO2_ACO1O2, formBtPt2, formMSptCO1_BtPt2, formMSptO2_BtPt2, formedgeColor3)
-
-        drawMinkSurf(formMSptO2_ACO1O2, formMSptA_ACO1O2, formPtO3new, formBtPt4_mink, formMSptAO2_BtPt4, formMSptO1O2_BtPt4, formedgeColor5)
-
-        drawMinkSurf(formMSptC_ACO1O2, formMSptA_ACO1O2, formMSptO2_ACO1O2, formMSptC_ACDO2, formMSptA_ACDO2, formPtO2new_mink, formedgeColor6)
-
-        drawMinkSurf(formMSptD_ACDO2, formMSptA_ACDO2, formPtO2new_mink, formMSptDO2_BtPt4, formMSptAO2_BtPt4, formBtPt4_mink, formedgeColor7)
-
-        drawMinkSurf(formMSptC_ACDO2, formMSptD_ACDO2, formPtO2new_mink, formMSptCO2_BtPt3, formMSptDO2_BtPt3, formBtPt3_mink, formedgeColor8)
-
-        // draw green face
-        const formMinkFace_ABC = minkFace3pt(formMSptA_ABCO1, formMSptB_ABCO1, formMSptC_ABCO1, 0x014F06)
-        form_group_mink.add(formMinkFace_ABC)
-        const formMinkFace_ACD = minkFace3pt(formMSptA_ACDO2, formMSptC_ACDO2, formMSptD_ACDO2, 0x014F06)
-        form_group_mink.add(formMinkFace_ACD)
-
         // ********************************* force cell construction *********************************
 
         // cell A B C O1
@@ -3557,39 +4123,12 @@
         scene.add(form_group_e);
         scene.add(form_group_c);
         scene.add(form_general);
-        scene.add(form_group_mink);
 
         scene2.add(force_group_v);
         scene2.add(force_group_f);
         scene2.add(force_group_e);
         scene2.add(force_group_c);
         scene2.add(force_general);
-
-        scene2.add(force_group_mink);
-
-        force_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
-        form_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
 
         force_group_c.traverse(function (obj) {
             if (obj.type === "Mesh") {
@@ -3603,9 +4142,10 @@
             }
         });
 
-
+        if (minkVisibilityCheckboxParams.show) {
+            redrawMink();
+        }
     }
-
 
     function initModel() {
         Redraw();
