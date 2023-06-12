@@ -355,11 +355,11 @@
         });
     });
 
-    const trailHeightSliderParams = {
+    const trialHeightSliderParams = {
         height: 0.7, //starts as double the size of the box's params
     };
     //make the plane size slider
-    const trailHeightSlider = tab.pages[1].addInput(trailHeightSliderParams, 'height', {
+    const trialHeightSlider = tab.pages[1].addInput(trialHeightSliderParams, 'height', {
         min: 0.5, //min = double the size of the box's params
         max: 1, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -410,11 +410,11 @@
             }
         });
     });
-    trailHeightSlider.hidden = true
+    trialHeightSlider.hidden = true
     primeHeightSlider.hidden = true
 
     trialVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
-        trailHeightSlider.hidden = !trailHeightSlider.hidden
+        trialHeightSlider.hidden = !trialHeightSlider.hidden
         primeHeightSlider.hidden = !primeHeightSlider.hidden
     });
 
