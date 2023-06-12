@@ -236,6 +236,7 @@
 
     // faces - checkbox
     const faceVisibilityCheckbox = tab.pages[0].addInput(faceVisibilityCheckboxParams, 'face').on('change', (ev) => { //on change, dispose old plane geometry and create new
+        redrawFace();
         form_group_f.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
@@ -738,13 +739,120 @@
         this.l = 2;
     }
 
+    // apply loads locations o1 and o2
+    var formPtO1 = new THREE.Vector3(-0.5, -0.5, 1);
+    var formPtO2 = new THREE.Vector3(0.38, 0.31, 1);
+
+    var formPtO1b = new THREE.Vector3(-0.5, -0.5, -1.5);
+    var formPtO2b = new THREE.Vector3(0.38, 0.31, -1.5);
+
+    var applyline_dash_form_f = new THREE.LineDashedMaterial({
+        color: 0x009600,//color
+        dashSize: 0.05,
+        gapSize: 0.03,
+        linewidth: 1
+    });
+
+    function redrawFace() {
+        scene.remove(form_group_f);
+        form_group_f = new THREE.Group()
+
+        // ***********************            form faces                **************************
+
+        // green faces : o1 o2
+        var greenface_O1O2 = FormFace4ptGN(formPtO1, formPtO1b, formPtO2b, formPtO2)
+        form_group_f.add(greenface_O1O2);
+
+        // green faces : o1 o1b point1
+        var greenface_p1 = FormFace4ptGN(
+            new THREE.Vector3(formBtPt1.x, formBtPt1.y, -1.5),
+            new THREE.Vector3(formBtPt1.x, formBtPt1.y, formPtO1.z),
+            formPtO1,
+            formPtO1b
+        )
+        form_group_f.add(greenface_p1);
+
+        var green_p1 = [];
+        green_p1.push(new THREE.Vector3(formBtPt1.x, formBtPt1.y, -1.5));
+        green_p1.push(new THREE.Vector3(formBtPt1.x, formBtPt1.y, formPtO1.z));
+        var green_p1_geo = new THREE.BufferGeometry().setFromPoints(green_p1);
+        var dashline_p1 = new THREE.LineSegments(green_p1_geo, applyline_dash_form_f);
+        dashline_p1.computeLineDistances();//compute
+        form_group_f.add(dashline_p1);
+
+        // green faces : o1 o1b point2
+        var greenface_p2 = FormFace4ptGN(
+            new THREE.Vector3(formBtPt2.x, formBtPt2.y, -1.5),
+            new THREE.Vector3(formBtPt2.x, formBtPt2.y, formPtO1.z),
+            formPtO1,
+            formPtO1b
+        )
+        form_group_f.add(greenface_p2);
+
+        var green_p2 = [];
+        green_p2.push(new THREE.Vector3(formBtPt2.x, formBtPt2.y, -1.5));
+        green_p2.push(new THREE.Vector3(formBtPt2.x, formBtPt2.y, formPtO1.z));
+        var green_p2_geo = new THREE.BufferGeometry().setFromPoints(green_p2);
+        var dashline_p2 = new THREE.LineSegments(green_p2_geo, applyline_dash_form_f);
+        dashline_p2.computeLineDistances();//compute
+        form_group_f.add(dashline_p2);
+
+        // green faces : o2 o2b point3
+        var greenface_p3 = FormFace4ptGN(
+            new THREE.Vector3(formBtPt3.x, formBtPt3.y, -1.5),
+            new THREE.Vector3(formBtPt3.x, formBtPt3.y, formPtO2.z),
+            formPtO2,
+            formPtO2b
+        )
+        form_group_f.add(greenface_p3);
+
+        var green_p3 = [];
+        green_p3.push(new THREE.Vector3(formBtPt3.x, formBtPt3.y, -1.5));
+        green_p3.push(new THREE.Vector3(formBtPt3.x, formBtPt3.y, formPtO1.z));
+        var green_p3_geo = new THREE.BufferGeometry().setFromPoints(green_p3);
+        var dashline_p3 = new THREE.LineSegments(green_p3_geo, applyline_dash_form_f);
+        dashline_p3.computeLineDistances();//compute
+        form_group_f.add(dashline_p3);
+
+        // green faces : o2 o2b point4
+        var greenface_p4 = FormFace4ptGN(
+            new THREE.Vector3(formBtPt4.x, formBtPt4.y, -1.5),
+            new THREE.Vector3(formBtPt4.x, formBtPt4.y, formPtO2.z),
+            formPtO2,
+            formPtO2b
+        )
+        form_group_f.add(greenface_p4);
+
+        var green_p4 = [];
+        green_p4.push(new THREE.Vector3(formBtPt4.x, formBtPt4.y, -1.5));
+        green_p4.push(new THREE.Vector3(formBtPt4.x, formBtPt4.y, formPtO1.z));
+        var green_p4_geo = new THREE.BufferGeometry().setFromPoints(green_p4);
+        var dashline_p4 = new THREE.LineSegments(green_p4_geo, applyline_dash_form_f);
+        dashline_p4.computeLineDistances();//compute
+        form_group_f.add(dashline_p4);
+
+        scene.add(form_group_f);
+
+        form_group_f.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = faceVisibilityCheckboxParams.face;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = faceVisibilityCheckboxParams.face;
+            }
+        });
+    }
+
 
     // *********************** redraw the form and force diagram when parametrer is changing ****************
     function Redraw() {
 
+        if (faceVisibilityCheckboxParams.face) {
+            redrawFace();
+        }
+
         //form groups
         scene.remove(form_group_v);
-        scene.remove(form_group_f);
         scene.remove(form_group_e);
         scene.remove(form_group_c);
         scene.remove(form_general);
@@ -754,7 +862,6 @@
 
 
         form_group_v = new THREE.Group();
-        form_group_f = new THREE.Group();
         form_group_e = new THREE.Group();
         form_group_c = new THREE.Group();
         form_general = new THREE.Group();
@@ -831,13 +938,6 @@
         var TXformNode4 = createSpriteText('4', "", new THREE.Vector3(formBtPt4.x, formBtPt4.y, formBtPt4.z - 0.3));
         form_general.add(TXformNode4);
 
-        // apply loads locations o1 and o2
-        var formPtO1 = new THREE.Vector3(-0.5, -0.5, 1);
-        var formPtO2 = new THREE.Vector3(0.38, 0.31, 1);
-
-        var formPtO1b = new THREE.Vector3(-0.5, -0.5, -1.5);
-        var formPtO2b = new THREE.Vector3(0.38, 0.31, -1.5);
-
         // add apply loads arrows
 
         var arrow_apply = new THREE.MeshPhongMaterial({color: 0x009600});
@@ -867,13 +967,6 @@
             linewidth: 1
         });
 
-        var applyline_dash_form_f = new THREE.LineDashedMaterial({
-            color: 0x009600,//color
-            dashSize: 0.05,
-            gapSize: 0.03,
-            linewidth: 1
-        });
-
         var apply_o1o1B = [];
         apply_o1o1B.push(formPtO1);
         apply_o1o1B.push(formPtO1b);
@@ -891,78 +984,6 @@
         form_general.add(applyline_o2B);
 
         // ***********************            form faces                **************************
-
-        // green faces : o1 o2
-        var greenface_O1O2 = FormFace4ptGN(formPtO1, formPtO1b, formPtO2b, formPtO2)
-        form_group_f.add(greenface_O1O2);
-
-        // green faces : o1 o1b point1
-        var greenface_p1 = FormFace4ptGN(
-            new THREE.Vector3(formBtPt1.x, formBtPt1.y, -1.5),
-            new THREE.Vector3(formBtPt1.x, formBtPt1.y, formPtO1.z),
-            formPtO1,
-            formPtO1b
-        )
-        form_group_f.add(greenface_p1);
-
-        var green_p1 = [];
-        green_p1.push(new THREE.Vector3(formBtPt1.x, formBtPt1.y, -1.5));
-        green_p1.push(new THREE.Vector3(formBtPt1.x, formBtPt1.y, formPtO1.z));
-        var green_p1_geo = new THREE.BufferGeometry().setFromPoints(green_p1);
-        var dashline_p1 = new THREE.LineSegments(green_p1_geo, applyline_dash_form_f);
-        dashline_p1.computeLineDistances();//compute
-        form_group_f.add(dashline_p1);
-
-        // green faces : o1 o1b point2
-        var greenface_p2 = FormFace4ptGN(
-            new THREE.Vector3(formBtPt2.x, formBtPt2.y, -1.5),
-            new THREE.Vector3(formBtPt2.x, formBtPt2.y, formPtO1.z),
-            formPtO1,
-            formPtO1b
-        )
-        form_group_f.add(greenface_p2);
-
-        var green_p2 = [];
-        green_p2.push(new THREE.Vector3(formBtPt2.x, formBtPt2.y, -1.5));
-        green_p2.push(new THREE.Vector3(formBtPt2.x, formBtPt2.y, formPtO1.z));
-        var green_p2_geo = new THREE.BufferGeometry().setFromPoints(green_p2);
-        var dashline_p2 = new THREE.LineSegments(green_p2_geo, applyline_dash_form_f);
-        dashline_p2.computeLineDistances();//compute
-        form_group_f.add(dashline_p2);
-
-        // green faces : o2 o2b point3
-        var greenface_p3 = FormFace4ptGN(
-            new THREE.Vector3(formBtPt3.x, formBtPt3.y, -1.5),
-            new THREE.Vector3(formBtPt3.x, formBtPt3.y, formPtO2.z),
-            formPtO2,
-            formPtO2b
-        )
-        form_group_f.add(greenface_p3);
-
-        var green_p3 = [];
-        green_p3.push(new THREE.Vector3(formBtPt3.x, formBtPt3.y, -1.5));
-        green_p3.push(new THREE.Vector3(formBtPt3.x, formBtPt3.y, formPtO1.z));
-        var green_p3_geo = new THREE.BufferGeometry().setFromPoints(green_p3);
-        var dashline_p3 = new THREE.LineSegments(green_p3_geo, applyline_dash_form_f);
-        dashline_p3.computeLineDistances();//compute
-        form_group_f.add(dashline_p3);
-
-        // green faces : o2 o2b point4
-        var greenface_p4 = FormFace4ptGN(
-            new THREE.Vector3(formBtPt4.x, formBtPt4.y, -1.5),
-            new THREE.Vector3(formBtPt4.x, formBtPt4.y, formPtO2.z),
-            formPtO2,
-            formPtO2b
-        )
-        form_group_f.add(greenface_p4);
-
-        var green_p4 = [];
-        green_p4.push(new THREE.Vector3(formBtPt4.x, formBtPt4.y, -1.5));
-        green_p4.push(new THREE.Vector3(formBtPt4.x, formBtPt4.y, formPtO1.z));
-        var green_p4_geo = new THREE.BufferGeometry().setFromPoints(green_p4);
-        var dashline_p4 = new THREE.LineSegments(green_p4_geo, applyline_dash_form_f);
-        dashline_p4.computeLineDistances();//compute
-        form_group_f.add(dashline_p4);
 
         //form closing plane
         //plane mesh
@@ -3482,7 +3503,6 @@
 
 
         scene.add(form_group_v);
-        scene.add(form_group_f);
         scene.add(form_group_e);
         scene.add(form_group_c);
         scene.add(form_general);
@@ -3500,16 +3520,6 @@
         scene2.add(force_group_f_trial);
         scene2.add(force_general_trial);
         scene2.add(force_group_mink);
-
-
-        form_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-        });
 
         form_group_e_trial.traverse(function (obj) {
             if (obj.type === "Mesh") {
