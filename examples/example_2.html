@@ -1298,20 +1298,11 @@
         // *********************** force trial point O **************************
 
         var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
-        var TXforceO = createSpriteTextPrime('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z - 0.3));
-
-
-        const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
-        const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
-
-        const TrialFaces = ForceTrialFace(forcePtA, forcePtB, forcePtC, forcePtD, TrialP_O)
 
         // ***********************           trial form                **************************
         var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
 
         var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
-
-        var TXtrial_P1 = createSpriteTextPrime('1', "'", new THREE.Vector3(trial_P1.x, trial_P1.y, trial_P1.z - 0.3));
 
         var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
         var trial_P2 = create_trial_intec(trial_o1, forcePtB, TrialP_O, forcePtC, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
@@ -1319,55 +1310,11 @@
         var trial_P3 = create_trial_intec(trial_o2, forcePtC, TrialP_O, forcePtD, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
         var trial_P4 = create_trial_intec(trial_o2, forcePtA, TrialP_O, forcePtD, formBtPt4, new THREE.Vector3(formBtPt4.x, formBtPt4.y, formBtPt4.z - 1));
 
-
-        var TXtrial_P2 = createSpriteTextPrime('2', "'", new THREE.Vector3(trial_P2.x, trial_P2.y, trial_P2.z - 0.3));
-        var TXtrial_P3 = createSpriteTextPrime('3', "'", new THREE.Vector3(trial_P3.x, trial_P3.y, trial_P3.z - 0.3));
-        var TXtrial_P4 = createSpriteTextPrime('4', "'", new THREE.Vector3(trial_P4.x, trial_P4.y, trial_P4.z - 0.3));
-
-        var trial_mesh_p1o1 = createCylinderMesh(trial_o1, trial_P1, DragPointMat, 0.02, 0.02);
-        var trial_mesh_p2o1 = createCylinderMesh(trial_o1, trial_P2, DragPointMat, 0.02, 0.02);
-        var trial_mesh_o1o2 = createCylinderMesh(trial_o1, trial_o2, DragPointMat, 0.02, 0.02);
-        var trial_mesh_p3o2 = createCylinderMesh(trial_P3, trial_o2, DragPointMat, 0.02, 0.02);
-        var trial_mesh_p4o2 = createCylinderMesh(trial_P4, trial_o2, DragPointMat, 0.02, 0.02);
-
         //trial form closing plane
         //plane mesh
-        var trial_closingplane = FormPlane(trial_P2, trial_P1, trial_P4, trial_P3)
-
-        var trialline_dash = new THREE.LineDashedMaterial({
-            color: "black",//color
-            dashSize: 0.1,
-            gapSize: 0.03,
-            linewidth: 1
-
-        });
-
-        var trial_linep1p2 = createdashline(trial_P1, trial_P2, trialline_dash)
-        var trial_linep2p4 = createdashline(trial_P2, trial_P4, trialline_dash)
-        var trial_linep1p4 = createdashline(trial_P1, trial_P4, trialline_dash)
-        var trial_linep2p3 = createdashline(trial_P2, trial_P3, trialline_dash)
-        var trial_linep3p4 = createdashline(trial_P3, trial_P4, trialline_dash)
-
 
         //trial plane face nromals
-
-        var trialmid_p1p2p4 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P4.x) / 3, (trial_P1.y + trial_P2.y + trial_P4.y) / 3, (trial_P1.z + trial_P2.z + trial_P4.z) / 3)
-        var vec_p1p2p4_temp = CalNormalVectorUpdated(trial_P4, trial_P2, trial_P1, 1.2)
-        var trialnormal_p1p2p4 = new THREE.Vector3(trialmid_p1p2p4.x - 0.2 * vec_p1p2p4_temp.x, trialmid_p1p2p4.y - 0.2 * vec_p1p2p4_temp.y, trialmid_p1p2p4.z - 0.2 * vec_p1p2p4_temp.z)
-
-        var trial_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-        var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
         var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-
-        var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p4, trialnormal_p1p2p4, trial_normal_material, 0.015, 0.035, 0.55);
-        var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p4, trialnormal_p1p2p4, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
-
-        var trialmid_p2p3p4 = new THREE.Vector3((trial_P2.x + trial_P3.x + trial_P4.x) / 3, (trial_P2.y + trial_P3.y + trial_P4.y) / 3, (trial_P2.z + trial_P3.z + trial_P4.z) / 3)
-        var vec_p2p3p4_temp = CalNormalVectorUpdated(trial_P4, trial_P3, trial_P2, 1.2)
-        var trialnormal_p2p3p4 = new THREE.Vector3(trialmid_p2p3p4.x - 0.2 * vec_p2p3p4_temp.x, trialmid_p2p3p4.y - 0.2 * vec_p2p3p4_temp.y, trialmid_p2p3p4.z - 0.2 * vec_p2p3p4_temp.z)
-
-        var trial_normal_2 = createCylinderArrowMesh(trialmid_p2p3p4, trialnormal_p2p3p4, trial_normal_material, 0.015, 0.035, 0.55);
-        var trial_normal_2_outline = createCylinderArrowMesh(trialmid_p2p3p4, trialnormal_p2p3p4, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
 
         // ***********************          find trial force point x1 and x2              **************************
 
@@ -1412,17 +1359,6 @@
 
         //add x1 x2 arrow
 
-        var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
-        var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
-
-        var x1_arrow = createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
-
-        var x2_closeP1 = addVectorAlongDir(TrialP_O, ForceX2, -1);
-
-        var x2_closeP2 = addVectorAlongDir(TrialP_O, ForceX2, -0.8);
-
-        var x2_arrow = createCylinderArrowMesh(x2_closeP1, x2_closeP2, force_normal_material, 0.012, 0.025, 0.55);
-
         //add x1 x2 sphere
         var materialpointx = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
 
@@ -1436,8 +1372,6 @@
         outlineMeshnewx1.position.copy(ForceX1);
         outlineMeshnewx1.scale.multiplyScalar(1.55);
 
-        var TXforcex1 = createSpriteText('x', "1", new THREE.Vector3(ForceX1.x, ForceX1.y, ForceX1.z + 0.1));
-
         var new_forcePointx2 = new THREE.Mesh(spforcePointx, materialpointx);
 
         new_forcePointx2.position.copy(ForceX2);
@@ -1446,8 +1380,6 @@
         var outlineMeshnewx2 = new THREE.Mesh(spforcePointx, outlineMaterialx);
         outlineMeshnewx2.position.copy(ForceX2);
         outlineMeshnewx2.scale.multiplyScalar(1.55);
-
-        var TXforcex2 = createSpriteText('x', "2", new THREE.Vector3(ForceX2.x, ForceX2.y, ForceX2.z + 0.1));
 
         //draw x1o1, x2o2
         //find constrain point o1
