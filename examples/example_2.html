@@ -260,22 +260,20 @@
         trialHeight: -2,
     };
     primeheightParams.hidden = true;
-    //make the plane size slider
     const primeHeightSlider = tab.pages[1].addInput(primeheightParams, 'trialHeight', {
-        min: -4, //min = double the size of the box's params
-        max: 1, //max = quadruple the size of the box's params
+        min: -4,
+        max: 1,
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         fo.z = ev.value;
         redrawTrial();
     });
 
     const trialHeightSliderParams = {
-        height: 0.7, //starts as double the size of the box's params
+        height: 0.7,
     };
-    //make the plane size slider
     const trialHeightSlider = tab.pages[1].addInput(trialHeightSliderParams, 'height', {
-        min: 0.5, //min = double the size of the box's params
-        max: 1, //max = quadruple the size of the box's params
+        min: 0.5,
+        max: 1,
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         triP1.z = ev.value;
         redrawTrial();
@@ -316,7 +314,6 @@
         minkSlider.hidden = !minkSlider.hidden;
     });
 
-
     /************************* Right Panel *************************/
 
     const rightPane = new Tweakpane.Pane({
@@ -324,84 +321,47 @@
     });
 
     const o1SizeSliderParams = {
-        O1len: 2, //starts as double the size of the box's params
+        O1len: 2,
     };
-    //make the plane size slider
+
     const forceO1Slider = rightPane.addInput(o1SizeSliderParams, 'O1len', {
-        min: -1, //min = double the size of the box's params
-        max: 3, //max = quadruple the size of the box's params
+        min: -1,
+        max: 3,
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         o1.l = ev.value;
         Redraw();
     });
 
     const o2SizeSliderParams = {
-        O2len: 2, //starts as double the size of the box's params
+        O2len: 2,
     };
     //make the plane size slider
     const forceO2Slider = rightPane.addInput(o2SizeSliderParams, 'O2len', {
-        min: -1, //min = double the size of the box's params
-        max: 3, //max = quadruple the size of the box's params
+        min: -1,
+        max: 3,
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         o2.l = ev.value;
         Redraw();
     });
 
-    const planeVisibilityCheckboxParams = {
+    const forceCheckboxParams = {
         'force cell': false, //at first, box is unchecked so value is "false"
     };
 
     //make the checkbox
-    const planeVisibilityCheckbox = rightPane.addInput(planeVisibilityCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
-        force_group_c.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = true
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = true
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = true
-            }
-        });
-        force_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-        });
+    const forceCheckbox = rightPane.addInput(forceCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
+        paneLeft.disabled = !paneLeft.disabled;
+        Redraw();
     });
 
     const planeSizeSliderParams = {
-        size: 0.7, //starts as double the size of the box's params
+        size: 0.7,
     };
     var forceCellScale = 0.7
-    //make the plane size slider
     const forceCellSlider = rightPane.addInput(planeSizeSliderParams, 'size', {
-        min: 0.5, //min = double the size of the box's params
-        max: 1, //max = quadruple the size of the box's params
-    }).on('change', (ev) => { //on change, dispose old plane geometry and create new
+        min: 0.5,
+        max: 1,
+    }).on('change', (ev) => {
         forceCellScale = ev.value;
         Redraw();
         force_group_c.traverse(function (obj) {
@@ -444,7 +404,7 @@
         });
     });
     forceCellSlider.hidden = true
-    planeVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
+    forceCheckbox.on('change', () => { //on change, change the hidden and visibility values set
         forceCellSlider.hidden = !forceCellSlider.hidden;
     });
 
@@ -2402,7 +2362,7 @@
         form_general.add(form_linep3p4);
         form_general.add(form_linep1p4);
 
-        //plane face nromals
+        //plane face normals
         var normal_material = new THREE.MeshPhongMaterial({color: "red"})
         var normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
         var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
@@ -3496,6 +3456,35 @@
         if (minkVisibilityCheckboxParams.show) {
             redrawMink();
         }
+        if (forceCheckboxParams["force cell"]) {
+            force_group_c.traverse(function (obj) {
+                if (obj.type === "Mesh") {
+                    obj.material.visible = forceCheckboxParams["force cell"];
+                }
+            });
+            force_group_f.traverse(function (obj) {
+                if (obj.type === "Mesh") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
+                if (obj.type === "Sprite") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
+                if (obj.type === "Line") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
+            });
+            force_general.traverse(function (obj) {
+                if (obj.type === "Mesh") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
+                if (obj.type === "Sprite") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
+                if (obj.type === "Line") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
+            });
+        }
     }
 
     function initModel() {
@@ -4563,7 +4552,7 @@
     }
 
     function createSpriteText(text, text2, pos) {
-        //canva
+        //canvas
         var canvas = document.createElement("canvas");
         canvas.width = 440;
         canvas.height = 340;
@@ -4689,7 +4678,7 @@
     }
 
     function createSpriteTextApply(text, text2, pos) {
-        //canva
+        //canvas
         var canvas = document.createElement("canvas");
         canvas.width = 440;
         canvas.height = 340;
