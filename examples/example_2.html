@@ -250,9 +250,9 @@
     /************************* Left Panel second tab *************************/
 
     const trialVisibilityCheckboxParams = {
-        'show': false, //at first, box is unchecked so value is "false"
+        'on': false, //at first, box is unchecked so value is "false"
     };
-    const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxParams, 'show').on
+    const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxParams, 'on').on
     ('change', (ev) => { //on change, dispose old plane geometry and create new
         redrawTrial();
     });
@@ -295,6 +295,9 @@
         tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
         tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
         rightPane.disabled = !rightPane.disabled;
+        if(ev.value) {
+            paneLeft.importPreset(disableFaceTrial);
+        }
         redrawMink();
     });
 
@@ -313,6 +316,10 @@
     minkVisibilityCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
         minkSlider.hidden = !minkSlider.hidden;
     });
+
+    const disableFaceTrial = paneLeft.exportPreset();
+    disableFaceTrial.show = true;
+    const disableLeftPane = paneLeft.exportPreset();
 
     /************************* Right Panel *************************/
 
@@ -351,6 +358,9 @@
     //make the checkbox
     const forceCheckbox = rightPane.addInput(forceCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
         paneLeft.disabled = !paneLeft.disabled;
+        if(ev.value) {
+            paneLeft.importPreset(disableLeftPane);
+        }
         Redraw();
     });
 
@@ -825,48 +835,48 @@
 
         form_group_e_trial.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
         });
         form_general_trial.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
         });
 
         force_general_trial.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
         });
 
         force_group_f_trial.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = trialVisibilityCheckboxParams.show;
+                obj.material.visible = trialVisibilityCheckboxParams.on;
             }
         });
     }
@@ -2216,7 +2226,7 @@
             redrawFace();
         }
 
-        if (trialVisibilityCheckboxParams.show) {
+        if (trialVisibilityCheckboxParams.on) {
             redrawTrial();
         }
 
