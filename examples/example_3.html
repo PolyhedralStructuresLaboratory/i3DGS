@@ -300,7 +300,6 @@
     };
     const globalVisibilityCheckbox = tab.pages[2].addInput(globalVisibilityCheckboxParams, 'global').on
     ('change', (ev) => { //on change, dispose old plane geometry and create new
-
         form_general_global.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = ev.value;
@@ -334,7 +333,6 @@
                 obj.material.visible = !ev.value;
             }
         });
-
         form_group_e.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = !ev.value;
@@ -2854,28 +2852,51 @@
 
         form_general_global.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = false;
+                obj.material.visible = globalVisibilityCheckboxParams.global;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = false;
+                obj.material.visible = globalVisibilityCheckboxParams.global;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = false;
+                obj.material.visible = globalVisibilityCheckboxParams.global;
             }
         });
 
         force_general_global.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = false;
+                obj.material.visible = globalVisibilityCheckboxParams.global;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = false;
+                obj.material.visible = globalVisibilityCheckboxParams.global;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = false;
+                obj.material.visible = globalVisibilityCheckboxParams.global;
             }
         });
 
+
+        force_group_f.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !globalVisibilityCheckboxParams.global;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = !globalVisibilityCheckboxParams.global;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = !globalVisibilityCheckboxParams.global;
+            }
+        });
+        form_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !globalVisibilityCheckboxParams.global;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = !globalVisibilityCheckboxParams.global;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = !globalVisibilityCheckboxParams.global;
+            }
+        });
 
         scene.add(form_group_v);
         scene.add(form_group_f);
