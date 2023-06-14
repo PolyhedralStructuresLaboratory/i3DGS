@@ -234,7 +234,7 @@
     const subdCheckbox = tab.pages[0].addInput(subdCheckboxParams, 'on').on
     ('change', () => { //on change, dispose old plane geometry and create new
         subdOn = !subdOn
-        Redraw()
+        Redraw();
     });
     const offsetscaleFolder = tab.pages[0].addFolder({
         title: 'GDoF'
@@ -265,171 +265,35 @@
     };
     const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxParams, 'show').on
     ('change', (ev) => { //on change, dispose old plane geometry and create new
-
-        // showTrial = !showTrial;
-        //  trialHeight = ev.value;
-        Redraw();
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawTrial();
     });
     const primeheightParams = {
         trialHeight: -2,
     };
-    const trailHeightFolder = tab.pages[1].addFolder({
+    const trialHeightFolder = tab.pages[1].addFolder({
         title: 'trial height'
     });
-    trailHeightFolder.hidden = true; //hide the plane folder b/c box is unchecked at first
+    trialHeightFolder.hidden = true; //hide the plane folder b/c box is unchecked at first
     //make the plane size slider
-    trailHeightFolder.addInput(primeheightParams, 'trialHeight', {
+    trialHeightFolder.addInput(primeheightParams, 'trialHeight', {
         min: -4, //min = double the size of the box's params
         max: 1, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         fo.z = ev.value;
-        Redraw();
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawTrial();
     });
 
-    const trailHeightSliderParams = {
+    const trialHeightSliderParams = {
         height: 0.7, //starts as double the size of the box's params
     };
     //make the plane size slider
-    trailHeightFolder.addInput(trailHeightSliderParams, 'height', {
+    trialHeightFolder.addInput(trialHeightSliderParams, 'height', {
         min: 0.5, //min = double the size of the box's params
         max: 1, //max = quadruple the size of the box's params
     }).on('change', (ev) => { //on change, dispose old plane geometry and create new
         triP1.z = ev.value;
-        Redraw();
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawTrial();
     });
-
 
     const globalVisibilityCheckboxParams = {
         'global': false, //at first, box is unchecked so value is "false"
@@ -504,7 +368,7 @@
     });
 
     trialVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-        trailHeightFolder.hidden = !trailHeightFolder.hidden;
+        trialHeightFolder.hidden = !trialHeightFolder.hidden;
         oSlider.disabled = !oSlider.disabled;
     });
     globalVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
@@ -575,9 +439,405 @@
         this.l = 1;
     }
 
+    // ***********************            foce diagram            **************************
+    var edgescale = 2; // size of the force diagram
+
+    //PtA
+    var forcePtA = new THREE.Vector3(0.5, -0.5, 0);
+
+    function redrawTrial() {
+        scene.remove(form_group_e_trial);
+        scene.remove(form_general_trial);
+        scene2.remove(force_group_f_trial);
+        scene2.remove(force_group_e_trial);
+        scene2.remove(force_general_trial);
+
+        form_group_e_trial = new THREE.Group();
+        form_general_trial = new THREE.Group();
+        force_group_f_trial = new THREE.Group();
+        force_group_e_trial = new THREE.Group();
+        force_general_trial = new THREE.Group();
+
+        if (!subdOn) {
+
+            // apply loads locations o1
+            var formPtO1 = new THREE.Vector3((formBtPt1.x + formBtPt2.x + formBtPt3.x) / 3, (formBtPt1.y + formBtPt2.y + formBtPt3.y) / 3, (formBtPt1.z + formBtPt2.z + formBtPt3.z) / 3 + 2);
+            var formPtO1b = new THREE.Vector3((formBtPt1.x + formBtPt2.x + formBtPt3.x) / 3, (formBtPt1.y + formBtPt2.y + formBtPt3.y) / 3, (formBtPt1.z + formBtPt2.z + formBtPt3.z) / 3 - 0.5);
+
+            // ***********************            force diagram            **************************
+            //PtB
+            var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale);
+            var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+
+            //PtC
+
+            var forcePtC1temp = CalNormalVectorUpdated(formBtPt2, formPtO1, formPtO1b, edgescale);
+            var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
+
+            var forcePtC2temp = CalNormalVectorUpdated(formBtPt3, formPtO1, formPtO1b, edgescale);
+            var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
+
+            var dirBC = new THREE.Vector3(); // create once an reuse it
+
+            dirBC.subVectors(forcePtB, forcePtC1).normalize();
+
+            var dirAC = new THREE.Vector3(); // create once an reuse it
+
+            dirAC.subVectors(forcePtC2, forcePtA).normalize();
+            var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
+
+            // *********************** force trial point O **************************
+
+            var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
+
+            const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
+            const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
+            force_general_trial.add(TrialP_0Sp);
+            force_general_trial.add(TrialP_0Sp_out);
+
+            const TrialFaces = ForceTrialFace3Pt(forcePtA, forcePtB, forcePtC, TrialP_O)
+            force_group_f_trial.add(TrialFaces)
+
+            var TXformNodeTrialO = createSpriteTextPrime('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z + 0.1));
+            force_general_trial.add(TXformNodeTrialO);
+
+            // ***********************           trial form                **************************
+            var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
+
+            var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
+
+            var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
+            var trial_P2 = create_trial_intec(trial_o1, forcePtB, TrialP_O, forcePtC, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
+            var trial_P3 = create_trial_intec(trial_o1, forcePtA, TrialP_O, forcePtC, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
+
+            var trial_mesh_p1o1 = createCylinderMesh(trial_o1, trial_P1, DragPointMat, 0.02, 0.02);
+            var trial_mesh_p2o1 = createCylinderMesh(trial_o1, trial_P2, DragPointMat, 0.02, 0.02);
+            var trial_mesh_p3o1 = createCylinderMesh(trial_P3, trial_o1, DragPointMat, 0.02, 0.02);
+
+            form_group_e_trial.add(trial_mesh_p1o1);
+            form_group_e_trial.add(trial_mesh_p2o1);
+            form_group_e_trial.add(trial_mesh_p3o1);
+
+            //trial form closing plane
+            //plane mesh
+            var trial_closingplane = FormPlane3Pt(trial_P2, trial_P1, trial_P3)
+            form_general_trial.add(trial_closingplane);
+
+            var trialline_dash = new THREE.LineDashedMaterial({
+                color: "black",//color
+                dashSize: 0.1,
+                gapSize: 0.03,
+                linewidth: 1
+
+            });
+
+            var trial_linep1p2 = createdashline(trial_P1, trial_P2, trialline_dash)
+            var trial_linep2p3 = createdashline(trial_P2, trial_P3, trialline_dash)
+            var trial_linep1p3 = createdashline(trial_P1, trial_P3, trialline_dash)
+
+            var TXformNodeTrial1 = createSpriteTextPrime('1', "'", new THREE.Vector3(trial_P1.x, trial_P1.y, trial_P1.z + 0.1));
+            form_general_trial.add(TXformNodeTrial1);
+            var TXformNodeTrial2 = createSpriteTextPrime('2', "'", new THREE.Vector3(trial_P2.x, trial_P2.y, trial_P2.z + 0.1));
+            form_general_trial.add(TXformNodeTrial2);
+            var TXformNodeTrial3 = createSpriteTextPrime('3', "'", new THREE.Vector3(trial_P3.x, trial_P3.y, trial_P3.z + 0.1));
+            form_general_trial.add(TXformNodeTrial3);
+
+            form_general_trial.add(trial_linep1p2);
+            form_general_trial.add(trial_linep2p3);
+            form_general_trial.add(trial_linep1p3);
+
+            //trial plane face nromals
+            var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P3.x) / 3, (trial_P1.y + trial_P2.y + trial_P3.y) / 3, (trial_P1.z + trial_P2.z + trial_P3.z) / 3)
+            var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3, trial_P2, trial_P1, 1.2)
+            var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x - 0.2 * vec_p1p2p3_temp.x, trialmid_p1p2p3.y - 0.2 * vec_p1p2p3_temp.y, trialmid_p1p2p3.z - 0.2 * vec_p1p2p3_temp.z)
+
+            var trial_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+            var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
+            var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+
+            var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_material, 0.015, 0.035, 0.55);
+            var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
+
+            form_general_trial.add(trial_normal_1);
+            form_general_trial.add(trial_normal_1_outline);
+
+
+            var TXformPlaneNormalTrial = createSpriteTextNormal('n', "cp", "'", new THREE.Vector3(trialmid_p1p2p3.x, trialmid_p1p2p3.y, trialmid_p1p2p3.z + 0.3));
+            form_general_trial.add(TXformPlaneNormalTrial);
+
+
+            // ***********************          find trial force point x1              **************************
+
+            //location of x1
+            //find x1
+            var ForceX1_vec = CalNormalVectorUpdated(trial_P1, trial_P2, trial_P3, 0.5);
+            var ForceX1_temp = new THREE.Vector3(TrialP_O.x - 1.2 * ForceX1_vec.x, TrialP_O.y - 1.2 * ForceX1_vec.y, TrialP_O.z - 1.2 * ForceX1_vec.z);
+
+            //define intersection point x1
+            var intersect_x1_vec = new THREE.Vector3(ForceX1_temp.x - TrialP_O.x, ForceX1_temp.y - TrialP_O.y, ForceX1_temp.z - TrialP_O.z);
+            var applyplanevec = CalNormalVectorUpdated(forcePtA, forcePtB, forcePtC, 0.5);
+            var ForceX1 = Cal_Plane_Line_Intersect_Point(TrialP_O, intersect_x1_vec, forcePtB, applyplanevec);
+
+            var line_ox1 = [];
+            line_ox1.push(TrialP_O);
+            line_ox1.push(ForceX1);
+            var line_ox1_geo = new THREE.BufferGeometry().setFromPoints(line_ox1);
+            var applyline_1 = new THREE.LineDashedMaterial({
+                color: "black",//color
+                dashSize: 0.2,
+                gapSize: 0.03,
+                linewidth: 1
+            });
+            var applylineox1 = new THREE.LineSegments(line_ox1_geo, applyline_1);
+            applylineox1.computeLineDistances();//compute
+            force_general_trial.add(applylineox1);
+
+            var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
+            var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
+
+            var x1_arrow = createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
+
+            force_general_trial.add(x1_arrow);
+        } else {
+            // apply loads locations o1, o2, o3
+
+            var formPtO1a = create_offset_point(formBtPt1, formBtPt2, formBtPt3, offsetscale.l);
+            var formPtO1 = new THREE.Vector3(formPtO1a.x, formPtO1a.y, formPtO1a.z + 2)
+            var formPtO1b = new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 2.5);
+
+            var formPtO2a = create_offset_point(formBtPt2, formBtPt1, formBtPt3, offsetscale.l);
+            var formPtO2 = new THREE.Vector3(formPtO2a.x, formPtO2a.y, formPtO2a.z + 2)
+            var formPtO2b = new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z - 2.5);
+
+            var formPtO3a = create_offset_point(formBtPt3, formBtPt1, formBtPt2, offsetscale.l);
+            var formPtO3 = new THREE.Vector3(formPtO3a.x, formPtO3a.y, formPtO3a.z + 2)
+            var formPtO3b = new THREE.Vector3(formPtO3.x, formPtO3.y, formPtO3.z - 2.5);
+
+            //PtB
+            var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale);
+            var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+
+            //PtC
+
+            var forcePtC1temp = CalNormalVectorUpdated(formBtPt2, formPtO2, formPtO2b, edgescale);
+            var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
+
+            var forcePtC2temp = CalNormalVectorUpdated(formBtPt3, formPtO3, formPtO3b, edgescale);
+            var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
+
+            var dirBC = new THREE.Vector3(); // create once an reuse it
+
+            dirBC.subVectors(forcePtB, forcePtC1).normalize();
+
+            var dirAC = new THREE.Vector3(); // create once an reuse it
+
+            dirAC.subVectors(forcePtC2, forcePtA).normalize();
+            var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
+
+            //PtD
+
+            var forcePtD1temp = CalNormalVectorUpdated(formPtO1, formPtO3, formPtO3b, edgescale);
+            var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
+
+            var forcePtD2temp = CalNormalVectorUpdated(formPtO2, formPtO1, formPtO1b, edgescale);
+            var forcePtD2 = new THREE.Vector3(forcePtB.x - forcePtD2temp.x, forcePtB.y - forcePtD2temp.y, forcePtB.z - forcePtD2temp.z);
+
+            var dirBD = new THREE.Vector3(); // create once an reuse it
+
+            dirBD.subVectors(forcePtB, forcePtD2).normalize();
+
+            var dirAD = new THREE.Vector3(); // create once an reuse it
+
+            dirAD.subVectors(forcePtD1, forcePtA).normalize();
+            var forcePtD = LinesSectPt(dirBD, forcePtB, dirAD, forcePtA);
+
+            // *********************** force trial point O **************************
+
+            var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
+
+            const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
+            const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
+            force_general_trial.add(TrialP_0Sp);
+            force_general_trial.add(TrialP_0Sp_out);
+
+            const TrialFaces = ForceTrialFace3Pt(forcePtA, forcePtB, forcePtD, TrialP_O)
+            force_group_f_trial.add(TrialFaces)
+            const TrialFaces2 = ForceTrialFace3Pt(forcePtB, forcePtC, forcePtD, TrialP_O)
+            force_group_f_trial.add(TrialFaces2)
+            const TrialFaces3 = ForceTrialFace3Pt(forcePtA, forcePtC, forcePtD, TrialP_O)
+            force_group_f_trial.add(TrialFaces3)
+
+            var TXformNodeTrialO = createSpriteTextPrime('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z + 0.1));
+            force_general_trial.add(TXformNodeTrialO);
+
+            // ***********************           trial form                **************************
+            var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
+
+            var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
+
+            var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
+            var trial_o2 = create_trial_intec(trial_o1, forcePtD, TrialP_O, forcePtB, formPtO2, formPtO2b);
+            var trial_P2 = create_trial_intec(trial_o2, forcePtC, TrialP_O, forcePtB, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
+            var trial_o3 = create_trial_intec(trial_o1, forcePtD, TrialP_O, forcePtA, formPtO3, formPtO3b);
+            var trial_P3 = create_trial_intec(trial_o3, forcePtA, TrialP_O, forcePtC, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
+
+            var trial_mesh_p1o1 = createCylinderMesh(trial_o1, trial_P1, DragPointMat, 0.02, 0.02);
+            var trial_mesh_p2o2 = createCylinderMesh(trial_o2, trial_P2, DragPointMat, 0.02, 0.02);
+            var trial_mesh_p3o3 = createCylinderMesh(trial_P3, trial_o3, DragPointMat, 0.02, 0.02);
+            var trial_mesh_o1o2 = createCylinderMesh(trial_o1, trial_o2, DragPointMat, 0.02, 0.02);
+            var trial_mesh_o1o3 = createCylinderMesh(trial_o1, trial_o3, DragPointMat, 0.02, 0.02);
+            var trial_mesh_o3o2 = createCylinderMesh(trial_o3, trial_o2, DragPointMat, 0.02, 0.02);
+
+            form_group_e_trial.add(trial_mesh_p1o1);
+            form_group_e_trial.add(trial_mesh_p2o2);
+            form_group_e_trial.add(trial_mesh_p3o3);
+            form_group_e_trial.add(trial_mesh_o1o2);
+            form_group_e_trial.add(trial_mesh_o1o3);
+            form_group_e_trial.add(trial_mesh_o3o2);
+
+            //trial form closing plane
+            //plane mesh
+            var trial_closingplane = FormPlane3Pt(trial_P2, trial_P1, trial_P3)
+            form_general_trial.add(trial_closingplane);
+
+            var trialline_dash = new THREE.LineDashedMaterial({
+                color: "black",//color
+                dashSize: 0.1,
+                gapSize: 0.03,
+                linewidth: 1
+
+            });
+
+            var trial_linep1p2 = createdashline(trial_P1, trial_P2, trialline_dash)
+            var trial_linep2p3 = createdashline(trial_P2, trial_P3, trialline_dash)
+            var trial_linep1p3 = createdashline(trial_P1, trial_P3, trialline_dash)
+            var TXformNodeTrial1 = createSpriteTextPrime('1', "'", new THREE.Vector3(trial_P1.x, trial_P1.y, trial_P1.z + 0.1));
+            form_general_trial.add(TXformNodeTrial1);
+            var TXformNodeTrial2 = createSpriteTextPrime('2', "'", new THREE.Vector3(trial_P2.x, trial_P2.y, trial_P2.z + 0.1));
+            form_general_trial.add(TXformNodeTrial2);
+            var TXformNodeTrial3 = createSpriteTextPrime('3', "'", new THREE.Vector3(trial_P3.x, trial_P3.y, trial_P3.z + 0.1));
+            form_general_trial.add(TXformNodeTrial3);
+
+
+            form_general_trial.add(trial_linep1p2);
+            form_general_trial.add(trial_linep2p3);
+            form_general_trial.add(trial_linep1p3);
+
+            //trial plane face nromals
+            var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P3.x) / 3, (trial_P1.y + trial_P2.y + trial_P3.y) / 3, (trial_P1.z + trial_P2.z + trial_P3.z) / 3)
+            var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3, trial_P2, trial_P1, 1.2)
+            var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x - 0.2 * vec_p1p2p3_temp.x, trialmid_p1p2p3.y - 0.2 * vec_p1p2p3_temp.y, trialmid_p1p2p3.z - 0.2 * vec_p1p2p3_temp.z)
+
+            var trial_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+            var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
+            var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
+
+            var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_material, 0.015, 0.035, 0.55);
+            var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
+
+            form_general_trial.add(trial_normal_1);
+            form_general_trial.add(trial_normal_1_outline);
+
+            var TXformPlaneNormalTrial = createSpriteTextNormal('n', "cp", "'", new THREE.Vector3(trialmid_p1p2p3.x, trialmid_p1p2p3.y, trialmid_p1p2p3.z + 0.3));
+            form_general_trial.add(TXformPlaneNormalTrial);
+
+
+            // ***********************          find trial force point x1              **************************
+
+            //location of x1
+            //find x1
+            var ForceX1_vec = CalNormalVectorUpdated(trial_P1, trial_P2, trial_P3, 0.5);
+            var ForceX1_temp = new THREE.Vector3(TrialP_O.x - 1.2 * ForceX1_vec.x, TrialP_O.y - 1.2 * ForceX1_vec.y, TrialP_O.z - 1.2 * ForceX1_vec.z);
+
+            //define intersection point x1
+            var intersect_x1_vec = new THREE.Vector3(ForceX1_temp.x - TrialP_O.x, ForceX1_temp.y - TrialP_O.y, ForceX1_temp.z - TrialP_O.z);
+            var applyplanevec = CalNormalVectorUpdated(forcePtA, forcePtB, forcePtC, 0.5);
+            var ForceX1 = Cal_Plane_Line_Intersect_Point(TrialP_O, intersect_x1_vec, forcePtB, applyplanevec);
+
+            var line_ox1 = [];
+            line_ox1.push(TrialP_O);
+            line_ox1.push(ForceX1);
+            var line_ox1_geo = new THREE.BufferGeometry().setFromPoints(line_ox1);
+            var applyline_1 = new THREE.LineDashedMaterial({
+                color: "black",//color
+                dashSize: 0.2,
+                gapSize: 0.03,
+                linewidth: 1
+            });
+            var applylineox1 = new THREE.LineSegments(line_ox1_geo, applyline_1);
+            applylineox1.computeLineDistances();//compute
+            force_general_trial.add(applylineox1);
+
+            var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
+            var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
+
+            var x1_arrow = createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
+
+            force_general_trial.add(x1_arrow);
+        }
+
+        form_group_e_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+        form_general_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_general_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_group_f_trial.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = trialVisibilityCheckboxParams.show;
+            }
+        });
+
+        scene.add(form_group_e_trial);
+        scene.add(form_general_trial);
+
+        scene2.add(force_group_e_trial);
+        scene2.add(force_group_f_trial);
+        scene2.add(force_general_trial);
+    }
+
 
     // *********************** redraw the form and force diagram when parametrer is changing ****************
     function Redraw() {
+
+        if(trialVisibilityCheckboxParams.show) {
+            redrawTrial();
+        }
 
         //form groups
         scene.remove(form_group_v);
@@ -585,21 +845,16 @@
         scene.remove(form_group_e);
         scene.remove(form_group_c);
         scene.remove(form_general);
-        scene.remove(form_group_e_trial);
-        scene.remove(form_general_trial);
         scene.remove(form_general_global);
         scene.remove(form_group_mink);
-
 
         form_group_v = new THREE.Group();
         form_group_f = new THREE.Group();
         form_group_e = new THREE.Group();
         form_group_c = new THREE.Group();
         form_general = new THREE.Group();
-        form_general_trial = new THREE.Group();
         form_group_mink = new THREE.Group();
 
-        form_group_e_trial = new THREE.Group();
         form_general_global = new THREE.Group();
 
         //force groups
@@ -608,9 +863,6 @@
         scene2.remove(force_group_e);
         scene2.remove(force_group_c);
         scene2.remove(force_general);
-        scene2.remove(force_group_f_trial);
-        scene2.remove(force_group_e_trial);
-        scene2.remove(force_general_trial);
         scene2.remove(force_group_mink);
         scene2.remove(force_general_global);
 
@@ -623,9 +875,6 @@
         force_general = new THREE.Group();
         force_text = new THREE.Group();
 
-        force_group_f_trial = new THREE.Group();
-        force_group_e_trial = new THREE.Group();
-        force_general_trial = new THREE.Group();
         force_group_mink = new THREE.Group();
         force_general_global = new THREE.Group();
 
@@ -818,10 +1067,7 @@
             form_general.add(TXformPlaneNormal);
 
             // ***********************            foce diagram            **************************
-            var edgescale = 2; // size of the force diagram
-
             //PtA
-            var forcePtA = new THREE.Vector3(0.5, -0.5, 0);
             var TXforcePtA = createSpriteText('A', "", new THREE.Vector3(forcePtA.x, forcePtA.y, forcePtA.z + 0.05));
             force_general.add(TXforcePtA);
 
@@ -879,38 +1125,15 @@
 
             var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
 
-            const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
-            const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
-            force_general_trial.add(TrialP_0Sp);
-            force_general_trial.add(TrialP_0Sp_out);
-
-            const TrialFaces = ForceTrialFace3Pt(forcePtA, forcePtB, forcePtC, TrialP_O)
-            force_group_f_trial.add(TrialFaces)
-
-            var TXformNodeTrialO = createSpriteTextPrime('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z + 0.1));
-            force_general_trial.add(TXformNodeTrialO);
-
             // ***********************           trial form                **************************
-            var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
-
             var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
 
             var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
             var trial_P2 = create_trial_intec(trial_o1, forcePtB, TrialP_O, forcePtC, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
             var trial_P3 = create_trial_intec(trial_o1, forcePtA, TrialP_O, forcePtC, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
 
-            var trial_mesh_p1o1 = createCylinderMesh(trial_o1, trial_P1, DragPointMat, 0.02, 0.02);
-            var trial_mesh_p2o1 = createCylinderMesh(trial_o1, trial_P2, DragPointMat, 0.02, 0.02);
-            var trial_mesh_p3o1 = createCylinderMesh(trial_P3, trial_o1, DragPointMat, 0.02, 0.02);
-
-            form_group_e_trial.add(trial_mesh_p1o1);
-            form_group_e_trial.add(trial_mesh_p2o1);
-            form_group_e_trial.add(trial_mesh_p3o1);
-
             //trial form closing plane
             //plane mesh
-            var trial_closingplane = FormPlane3Pt(trial_P2, trial_P1, trial_P3)
-            form_general_trial.add(trial_closingplane);
 
             var trialline_dash = new THREE.LineDashedMaterial({
                 color: "black",//color
@@ -920,40 +1143,8 @@
 
             });
 
-            var trial_linep1p2 = createdashline(trial_P1, trial_P2, trialline_dash)
-            var trial_linep2p3 = createdashline(trial_P2, trial_P3, trialline_dash)
-            var trial_linep1p3 = createdashline(trial_P1, trial_P3, trialline_dash)
-
-            var TXformNodeTrial1 = createSpriteTextPrime('1', "'", new THREE.Vector3(trial_P1.x, trial_P1.y, trial_P1.z + 0.1));
-            form_general_trial.add(TXformNodeTrial1);
-            var TXformNodeTrial2 = createSpriteTextPrime('2', "'", new THREE.Vector3(trial_P2.x, trial_P2.y, trial_P2.z + 0.1));
-            form_general_trial.add(TXformNodeTrial2);
-            var TXformNodeTrial3 = createSpriteTextPrime('3', "'", new THREE.Vector3(trial_P3.x, trial_P3.y, trial_P3.z + 0.1));
-            form_general_trial.add(TXformNodeTrial3);
-
-            form_general_trial.add(trial_linep1p2);
-            form_general_trial.add(trial_linep2p3);
-            form_general_trial.add(trial_linep1p3);
-
             //trial plane face nromals
-            var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P3.x) / 3, (trial_P1.y + trial_P2.y + trial_P3.y) / 3, (trial_P1.z + trial_P2.z + trial_P3.z) / 3)
-            var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3, trial_P2, trial_P1, 1.2)
-            var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x - 0.2 * vec_p1p2p3_temp.x, trialmid_p1p2p3.y - 0.2 * vec_p1p2p3_temp.y, trialmid_p1p2p3.z - 0.2 * vec_p1p2p3_temp.z)
-
-            var trial_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-            var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
             var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-
-            var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_material, 0.015, 0.035, 0.55);
-            var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
-
-            form_general_trial.add(trial_normal_1);
-            form_general_trial.add(trial_normal_1_outline);
-
-
-            var TXformPlaneNormalTrial = createSpriteTextNormal('n', "cp", "'", new THREE.Vector3(trialmid_p1p2p3.x, trialmid_p1p2p3.y, trialmid_p1p2p3.z + 0.3));
-            form_general_trial.add(TXformPlaneNormalTrial);
-
 
             // ***********************          find trial force point x1              **************************
 
@@ -979,14 +1170,7 @@
             });
             var applylineox1 = new THREE.LineSegments(line_ox1_geo, applyline_1);
             applylineox1.computeLineDistances();//compute
-            force_general_trial.add(applylineox1);
 
-            var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
-            var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
-
-            var x1_arrow = createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
-
-            force_general_trial.add(x1_arrow);
             var materialpointx = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
 
             var spforcePointx = new THREE.SphereGeometry(0.01);
@@ -1740,13 +1924,9 @@
             form_general.add(TXformPlaneNormal);
 
             // ***********************            foce diagram            **************************
-            var edgescale = 2; // size of the force diagram
-
             //PtA
-            var forcePtA = new THREE.Vector3(0.5, -0.5, 0);
             var TXforcePtA = createSpriteText('A', "", new THREE.Vector3(forcePtA.x, forcePtA.y, forcePtA.z + 0.05));
             force_general.add(TXforcePtA);
-
 
             //PtB
             var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale);
@@ -1834,24 +2014,7 @@
 
             var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
 
-            const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
-            const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
-            force_general_trial.add(TrialP_0Sp);
-            force_general_trial.add(TrialP_0Sp_out);
-
-            const TrialFaces = ForceTrialFace3Pt(forcePtA, forcePtB, forcePtD, TrialP_O)
-            force_group_f_trial.add(TrialFaces)
-            const TrialFaces2 = ForceTrialFace3Pt(forcePtB, forcePtC, forcePtD, TrialP_O)
-            force_group_f_trial.add(TrialFaces2)
-            const TrialFaces3 = ForceTrialFace3Pt(forcePtA, forcePtC, forcePtD, TrialP_O)
-            force_group_f_trial.add(TrialFaces3)
-
-            var TXformNodeTrialO = createSpriteTextPrime('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z + 0.1));
-            force_general_trial.add(TXformNodeTrialO);
-
             // ***********************           trial form                **************************
-            var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
-
             var trial_P1 = new THREE.Vector3(formBtPt1.x, formBtPt1.y, triP1.z)
 
             var trial_o1 = create_trial_intec(trial_P1, forcePtA, TrialP_O, forcePtB, formPtO1, formPtO1b);
@@ -1860,24 +2023,8 @@
             var trial_o3 = create_trial_intec(trial_o1, forcePtD, TrialP_O, forcePtA, formPtO3, formPtO3b);
             var trial_P3 = create_trial_intec(trial_o3, forcePtA, TrialP_O, forcePtC, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
 
-            var trial_mesh_p1o1 = createCylinderMesh(trial_o1, trial_P1, DragPointMat, 0.02, 0.02);
-            var trial_mesh_p2o2 = createCylinderMesh(trial_o2, trial_P2, DragPointMat, 0.02, 0.02);
-            var trial_mesh_p3o3 = createCylinderMesh(trial_P3, trial_o3, DragPointMat, 0.02, 0.02);
-            var trial_mesh_o1o2 = createCylinderMesh(trial_o1, trial_o2, DragPointMat, 0.02, 0.02);
-            var trial_mesh_o1o3 = createCylinderMesh(trial_o1, trial_o3, DragPointMat, 0.02, 0.02);
-            var trial_mesh_o3o2 = createCylinderMesh(trial_o3, trial_o2, DragPointMat, 0.02, 0.02);
-
-            form_group_e_trial.add(trial_mesh_p1o1);
-            form_group_e_trial.add(trial_mesh_p2o2);
-            form_group_e_trial.add(trial_mesh_p3o3);
-            form_group_e_trial.add(trial_mesh_o1o2);
-            form_group_e_trial.add(trial_mesh_o1o3);
-            form_group_e_trial.add(trial_mesh_o3o2);
-
             //trial form closing plane
             //plane mesh
-            var trial_closingplane = FormPlane3Pt(trial_P2, trial_P1, trial_P3)
-            form_general_trial.add(trial_closingplane);
 
             var trialline_dash = new THREE.LineDashedMaterial({
                 color: "black",//color
@@ -1887,39 +2034,8 @@
 
             });
 
-            var trial_linep1p2 = createdashline(trial_P1, trial_P2, trialline_dash)
-            var trial_linep2p3 = createdashline(trial_P2, trial_P3, trialline_dash)
-            var trial_linep1p3 = createdashline(trial_P1, trial_P3, trialline_dash)
-            var TXformNodeTrial1 = createSpriteTextPrime('1', "'", new THREE.Vector3(trial_P1.x, trial_P1.y, trial_P1.z + 0.1));
-            form_general_trial.add(TXformNodeTrial1);
-            var TXformNodeTrial2 = createSpriteTextPrime('2', "'", new THREE.Vector3(trial_P2.x, trial_P2.y, trial_P2.z + 0.1));
-            form_general_trial.add(TXformNodeTrial2);
-            var TXformNodeTrial3 = createSpriteTextPrime('3', "'", new THREE.Vector3(trial_P3.x, trial_P3.y, trial_P3.z + 0.1));
-            form_general_trial.add(TXformNodeTrial3);
-
-
-            form_general_trial.add(trial_linep1p2);
-            form_general_trial.add(trial_linep2p3);
-            form_general_trial.add(trial_linep1p3);
-
             //trial plane face nromals
-            var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P3.x) / 3, (trial_P1.y + trial_P2.y + trial_P3.y) / 3, (trial_P1.z + trial_P2.z + trial_P3.z) / 3)
-            var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3, trial_P2, trial_P1, 1.2)
-            var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x - 0.2 * vec_p1p2p3_temp.x, trialmid_p1p2p3.y - 0.2 * vec_p1p2p3_temp.y, trialmid_p1p2p3.z - 0.2 * vec_p1p2p3_temp.z)
-
-            var trial_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-            var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
             var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
-
-            var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_material, 0.015, 0.035, 0.55);
-            var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p3, trialnormal_p1p2p3, trial_normal_outlinematerial, 0.018, 0.038, 0.54);
-
-            form_general_trial.add(trial_normal_1);
-            form_general_trial.add(trial_normal_1_outline);
-
-            var TXformPlaneNormalTrial = createSpriteTextNormal('n', "cp", "'", new THREE.Vector3(trialmid_p1p2p3.x, trialmid_p1p2p3.y, trialmid_p1p2p3.z + 0.3));
-            form_general_trial.add(TXformPlaneNormalTrial);
-
 
             // ***********************          find trial force point x1              **************************
 
@@ -1945,14 +2061,7 @@
             });
             var applylineox1 = new THREE.LineSegments(line_ox1_geo, applyline_1);
             applylineox1.computeLineDistances();//compute
-            force_general_trial.add(applylineox1);
 
-            var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
-            var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
-
-            var x1_arrow = createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
-
-            force_general_trial.add(x1_arrow);
             var materialpointx = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
 
             var spforcePointx = new THREE.SphereGeometry(0.01);
@@ -2743,53 +2852,6 @@
 
         }
 
-        form_group_e_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-        form_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
-        force_general_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
-        force_group_f_trial.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
         form_general_global.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = false;
@@ -2821,8 +2883,6 @@
         scene.add(form_group_c);
         scene.add(form_general);
         scene.add(form_general_global);
-        scene.add(form_group_e_trial);
-        scene.add(form_general_trial);
         scene.add(form_group_mink);
 
         scene2.add(force_group_v);
@@ -2831,10 +2891,6 @@
         scene2.add(force_group_c);
         scene2.add(force_general);
         scene2.add(force_general_global);
-
-        scene2.add(force_group_e_trial);
-        scene2.add(force_group_f_trial);
-        scene2.add(force_general_trial);
         scene2.add(force_group_mink);
 
 
@@ -2847,7 +2903,7 @@
 
         trfm_ctrl.addEventListener('change', render);
         trfm_ctrl.addEventListener('objectChange', function () {
-            switch(selectObj.name.charAt(2)) {
+            switch (selectObj.name.charAt(2)) {
                 case '1':
                     formBtPt1.x = selectObj.position.x;
                     formBtPt1.y = selectObj.position.y;
