@@ -316,9 +316,6 @@ const globalVisibilityCheckboxParams = {
 };
 const globalVisibilityCheckbox = tab.pages[1].addInput(globalVisibilityCheckboxParams, 'global').on
 ('change', (ev) => { //on change, dispose old plane geometry and create new
-
-   // showTrial = !showTrial;
-    //  trialHeight = ev.value;
   form_general_global.traverse(function(obj) {
     if (obj.type === "Mesh") {
       obj.material.visible = ev.value;
@@ -352,7 +349,6 @@ const globalVisibilityCheckbox = tab.pages[1].addInput(globalVisibilityCheckboxP
       obj.material.visible = !ev.value;
     }
   });
-
   form_group_e.traverse(function(obj) {
     if (obj.type === "Mesh") {
       obj.material.visible = !ev.value;
@@ -565,21 +561,7 @@ function Redraw(){
 
   // *********************** subdivision levels **************************
   // level 1 - only one apply loads
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-
-    // find the 
+    // find the
     // apply loads locations o1, o2, o3
     
     var formPtO1a = create_offset_point(formBtPt1, formBtPt2,formBtPt3,offsetscale.l);
@@ -1595,61 +1577,6 @@ function Redraw(){
     // form_group_e.add(formTestEdge_20)
     // var formTestEdge_21 = createCylinderMesh(formPtCAC,formPtCBC,forceEdgeMaterial,0.01,0.01)
     // form_group_e.add(formTestEdge_21)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     function addApplyarrow(formPtO2,formPtO2b){
       var arrowgroup = new THREE.Group();
       var arrow_apply =new THREE.MeshPhongMaterial( {color: 0x009600} );
@@ -1705,11 +1632,6 @@ function Redraw(){
       group.add(new_formPtO1); 
       group.add(outlineMeshnew1); 
     }
-   
-
-
-
-
     var formPt2 = create_trial_intec (formPtO2new,forcePtC,TrialP_O,forcePtB,formBtPt2,new THREE.Vector3(formBtPt2.x,formBtPt2.y,formBtPt2.z - 1));
     var trial_o3 = create_trial_intec (trial_o1,forcePtD,TrialP_O,forcePtA,formPtO3,formPtO3b);
     var trial_P3 = create_trial_intec (trial_o3,forcePtA,TrialP_O,forcePtC,formBtPt3,new THREE.Vector3(formBtPt3.x,formBtPt3.y,formBtPt3.z - 1));
@@ -1762,11 +1684,6 @@ function Redraw(){
     // form_general.add(TXformNode4);
     // var TXformNode4 = createSpriteText ('6', "", new THREE.Vector3(formPtO3new.x, formPtO3new.y, formPtO3new.z+0.1));
     // form_general.add(TXformNode4);
-
-
-
-
-
 
     // ****************************** Cal areas (old not use) ******************************
     //Cal areas
@@ -2058,11 +1975,7 @@ function Redraw(){
     var colorBmidB
     drawForceFaceFormEdge(forcePtBmid, forcePtB, ForceO1, formPtBBC, formPtBAB, 0.05, areaMax, colorBmidB, true)
 
-
-
-
-
-    // triangle ABO1 - 1 
+// triangle ABO1 - 1
     var normalABO1_a = subVec(forcePtB, forcePtA)
     var normalABO1_b = subVec(forcePtA, ForceO1)
     var normalABO1 = cross(normalABO1_a, normalABO1_b)
@@ -2626,79 +2539,6 @@ function Redraw(){
     // form_group_e.add(endPtVertice6Sp2)
     // form_group_e.add(formEdge6)
 
-  
-
-  // form_group_e_trial.traverse(function(obj) {
-  //   if (obj.type === "Mesh") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "LineSegments") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "Sprite") {
-  //     obj.material.visible = false;
-  //   }
-  // });
-  // form_general_trial.traverse(function(obj) {
-  //   if (obj.type === "Mesh") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "LineSegments") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "Sprite") {
-  //     obj.material.visible = false;
-  //   }
-  // });
-
-  // force_general_trial.traverse(function(obj) {
-  //   if (obj.type === "Mesh") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "LineSegments") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "Sprite") {
-  //     obj.material.visible = false;
-  //   }
-  // });
-
-  // force_group_f_trial.traverse(function(obj) {
-  //   if (obj.type === "Mesh") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "LineSegments") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "Sprite") {
-  //     obj.material.visible = false;
-  //   }
-  // });
-
-  // form_general_global.traverse(function(obj) {
-  //   if (obj.type === "Mesh") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "LineSegments") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "Sprite") {
-  //     obj.material.visible = false;
-  //   }
-  // });
-
-  // force_general_global.traverse(function(obj) {
-  //   if (obj.type === "Mesh") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "LineSegments") {
-  //     obj.material.visible = false;
-  //   }
-  //   if (obj.type === "Sprite") {
-  //     obj.material.visible = false;
-  //   }
-  // });
-
   form_group_f.traverse(function(obj) {
     if (obj.type === "Mesh") {
       obj.material.visible = false;
@@ -2708,6 +2548,51 @@ function Redraw(){
     }
     if (obj.type === "Sprite") {
       obj.material.visible = false;
+    }
+  });
+
+  form_general_global.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = globalVisibilityCheckboxParams.global;
+    }
+  });
+  force_general_global.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = globalVisibilityCheckboxParams.global;
+    }
+  });
+  force_group_f.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = !globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = !globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = !globalVisibilityCheckboxParams.global;
+    }
+  });
+  form_group_e.traverse(function(obj) {
+    if (obj.type === "Mesh") {
+      obj.material.visible = !globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "LineSegments") {
+      obj.material.visible = !globalVisibilityCheckboxParams.global;
+    }
+    if (obj.type === "Sprite") {
+      obj.material.visible = !globalVisibilityCheckboxParams.global;
     }
   });
 
@@ -3004,34 +2889,6 @@ initCamera();
 orbit_ctrl = new THREE.OrbitControls(camera, renderer.domElement);
 initModel();
 animate();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // *************** support functions *******************
 function create_offset_point(point1,point2,point3,scale){
