@@ -257,11 +257,7 @@
 
     // faces - checkbox
     const faceVisibilityCheckbox = tab.pages[0].addInput(faceVisibilityCheckboxParams, 'face').on('change', (ev) => { //on change, dispose old plane geometry and create new
-        form_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawFace();
     });
 
     // cells
@@ -419,34 +415,7 @@
             rightPane.importPreset(resetSizeTo1Off);
         }
         paneLeft.disabled = !paneLeft.disabled;
-        form_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-
-        });
-
+        redrawStep();
     });
 
     //make the plane size slider
@@ -459,44 +428,13 @@
         Redraw();
         switch (ev.value) {
             case 1:
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 form_group_step.traverse(function (obj) {
                     if (obj.type === "Mesh") {
                         obj.material.visible = true;
                     }
                 });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 break;
             case 2:
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 form_group_step.traverse(function (obj) {
                     if (obj.type === "Mesh") {
                         obj.material.visible = true;
@@ -510,40 +448,8 @@
                         obj.material.visible = true;
                     }
                 });
-
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                form_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 break;
             case 3:
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 form_group_step.traverse(function (obj) {
                     if (obj.type === "Mesh") {
                         obj.material.visible = true;
@@ -571,39 +477,8 @@
                         obj.material.visible = true;
                     }
                 });
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                form_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 break;
             case 4:
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 form_group_step.traverse(function (obj) {
                     if (obj.type === "Mesh") {
                         obj.material.visible = true;
@@ -647,39 +522,8 @@
                         obj.material.visible = true;
                     }
                 });
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                form_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 break;
             case 5:
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 form_group_step.traverse(function (obj) {
                     if (obj.type === "Mesh") {
                         obj.material.visible = true;
@@ -717,39 +561,8 @@
                         obj.material.visible = true;
                     }
                 });
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                form_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 break;
             case 6:
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
                 form_group_step.traverse(function (obj) {
                     if (obj.type === "Mesh") {
                         obj.material.visible = true;
@@ -796,32 +609,6 @@
                 force_group_step_4.traverse(function (obj) {
                     if (obj.type === "Sprite") {
                         obj.material.visible = true;
-                    }
-                });
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                form_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = !ev.value;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = !ev.value;
                     }
                 });
                 break;
@@ -903,13 +690,98 @@
     var force_group_step_6
     var force_group_step_7
 
+    function redrawFace() {
+        scene.remove(form_group_f);
+        form_group_f = new THREE.Group();
+
+        // *********************** form faces **************************
+
+        //face 1, 2, 3 - green color
+        const formFace_1 = FormFace3ptGN(formTpPt[0], formTpPt[1], formBtPt1[1]);
+        const formFace_2 = FormFace3ptGN(formTpPt[0], formTpPt[1], formBtPt2[1]);
+        const formFace_3 = FormFace3ptGN(formTpPt[0], formTpPt[1], formBtPt3[1]);
+
+        //face 4, 5, 6 - grey color
+        const formFace_4 = FormFace3ptGR(formTpPt[0], formBtPt1[1], formBtPt2[1]);
+        const formFace_5 = FormFace3ptGR(formTpPt[0], formBtPt2[1], formBtPt3[1]);
+        const formFace_6 = FormFace3ptGR(formTpPt[0], formBtPt3[1], formBtPt1[1]);
+
+        form_group_f.add(formFace_1);
+        form_group_f.add(formFace_2);
+        form_group_f.add(formFace_3);
+
+        form_group_f.add(formFace_4);
+        form_group_f.add(formFace_5);
+        form_group_f.add(formFace_6);
+
+        form_group_f.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = faceVisibilityCheckboxParams.face;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = faceVisibilityCheckboxParams.face;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = faceVisibilityCheckboxParams.face;
+            }
+        });
+
+        scene.add(form_group_f);
+    }
+
+    function redrawStep() {
+        form_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !stepVisibilityCheckboxParams.steps;
+            }
+        });
+        force_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !stepVisibilityCheckboxParams.steps;
+            }
+        });
+        force_group_f.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !stepVisibilityCheckboxParams.steps;
+            }
+        });
+        force_general.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !stepVisibilityCheckboxParams.steps;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = !stepVisibilityCheckboxParams.steps;
+            }
+            if (obj.type === "Line") {
+                obj.material.visible = !stepVisibilityCheckboxParams.steps;
+            }
+        });
+        form_group_step.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = stepVisibilityCheckboxParams.steps;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = stepVisibilityCheckboxParams.steps;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = stepVisibilityCheckboxParams.steps;
+            }
+            if (obj.type === "Line") {
+                obj.material.visible = stepVisibilityCheckboxParams.steps;
+            }
+        });
+    }
+
 
     // *********************** redraw the form and force diagram when parametrer is changing ****************
     function Redraw() {
 
+        if (faceVisibilityCheckboxParams.face) {
+            redrawFace();
+        }
+
         //form groups
         scene.remove(form_group_v);
-        scene.remove(form_group_f);
         scene.remove(form_group_e);
         scene.remove(form_group_c);
         scene.remove(form_general);
@@ -925,7 +797,6 @@
         scene.remove(form_group_step_7);
 
         form_group_v = new THREE.Group();
-        form_group_f = new THREE.Group();
         form_group_e = new THREE.Group();
         form_group_c = new THREE.Group();
         form_general = new THREE.Group();
@@ -1021,27 +892,6 @@
         //add text
         var TXapplyForce = createSpriteTextApply('f', "1", new THREE.Vector3(formTpPt[1].x, formTpPt[1].y, formTpPt[1].z + 0.35));
         form_general.add(TXapplyForce);
-
-
-        // *********************** form faces **************************
-
-        //face 1, 2, 3 - green color
-        const formFace_1 = FormFace3ptGN(formTpPt[0], formTpPt[1], formBtPt1[1]);
-        const formFace_2 = FormFace3ptGN(formTpPt[0], formTpPt[1], formBtPt2[1]);
-        const formFace_3 = FormFace3ptGN(formTpPt[0], formTpPt[1], formBtPt3[1]);
-
-        //face 4, 5, 6 - grey color
-        const formFace_4 = FormFace3ptGR(formTpPt[0], formBtPt1[1], formBtPt2[1]);
-        const formFace_5 = FormFace3ptGR(formTpPt[0], formBtPt2[1], formBtPt3[1]);
-        const formFace_6 = FormFace3ptGR(formTpPt[0], formBtPt3[1], formBtPt1[1]);
-
-        form_group_f.add(formFace_1);
-        form_group_f.add(formFace_2);
-        form_group_f.add(formFace_3);
-
-        form_group_f.add(formFace_4);
-        form_group_f.add(formFace_5);
-        form_group_f.add(formFace_6);
 
 
         // *********************** form cells **************************
@@ -3409,18 +3259,6 @@
             }
         });
 
-        form_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
         form_group_c.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = false;
@@ -3473,22 +3311,6 @@
                 obj.material.visible = false;
             }
         });
-
-        form_group_step.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = false;
-            }
-        });
-
 
         // hide the steps - start from step 3
 
@@ -3618,18 +3440,13 @@
             }
         });
 
+        redrawStep();
+
         scene.add(form_group_v);
-        scene.add(form_group_f);
         scene.add(form_group_e);
         scene.add(form_group_c);
         scene.add(form_general);
 
-
-        scene.add(form_group_v);
-        scene.add(form_group_f);
-        scene.add(form_group_e);
-        scene.add(form_group_c);
-        scene.add(form_general);
         scene.add(form_general_global);
         scene.add(form_group_e_trial);
         scene.add(form_general_trial);
@@ -3693,64 +3510,6 @@
                     console.log("error in selecting object");
             }
             Redraw();
-            if (faceVisibilityCheckboxParams.face) {
-                form_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = true;
-                    }
-                });
-            }
-            if (cellVisibilityCheckboxParams.cell) {
-                form_group_c.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = true;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = true;
-                    }
-                });
-            }
-            if (minkVisibilityCheckboxParams.show) {
-                form_group_mink.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = true;
-                    }
-                    if (obj.type === "LineSegments") {
-                        obj.material.visible = true;
-                    }
-                });
-                force_group_mink.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = true;
-                    }
-                });
-                form_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = false;
-                    }
-                });
-                force_group_e.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = false;
-                    }
-                });
-                force_group_f.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = false;
-                    }
-                });
-                force_general.traverse(function (obj) {
-                    if (obj.type === "Mesh") {
-                        obj.material.visible = false;
-                    }
-                    if (obj.type === "Sprite") {
-                        obj.material.visible = false;
-                    }
-                    if (obj.type === "Line") {
-                        obj.material.visible = false;
-                    }
-                });
-            }
         })
 
         trfm_ctrl.addEventListener('mouseDown', () => {
