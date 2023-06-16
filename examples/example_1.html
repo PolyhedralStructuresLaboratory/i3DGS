@@ -278,7 +278,7 @@
     const minkVisibilityCheckbox = tab.pages[1].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
         tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
         tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
-        rightPane.disabled = !rightPane.disabled;
+        rightPane.children[0].disabled = !rightPane.children[0].disabled;
         if (ev.value) {
             paneLeft.importPreset(minkPreset);
         }
@@ -322,13 +322,15 @@
     };
     //make the checkbox
     const stepVisibilityCheckbox = rightPane.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
+        tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
+        tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
+        tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
         if (ev.value) {
             rightPane.importPreset(resetSizeTo1On);
             paneLeft.importPreset(disableLeftPane);
         } else {
             rightPane.importPreset(resetSizeTo1Off);
         }
-        paneLeft.disabled = !paneLeft.disabled;
         redrawStep();
     });
 
