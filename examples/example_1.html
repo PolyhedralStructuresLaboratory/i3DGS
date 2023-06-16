@@ -284,45 +284,7 @@
         }
         tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
         tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
-        form_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-        });
+        redrawMink();
     });
 
     const minkParams = {
@@ -335,45 +297,7 @@
     }).on('change', (ev) => { //on change, dispose old geometry and create new
         Redraw();
         minkscale.l = ev.value;
-        form_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-        });
-        force_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-        });
-        form_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_e.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-        });
-        force_general.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = !ev.value;
-            }
-            if (obj.type === "Line") {
-                obj.material.visible = !ev.value;
-            }
-        });
+        redrawMink();
     });
     minkSlider.hidden = true;
     minkVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
@@ -663,15 +587,10 @@
 
     // *********************** force diagram inital data ***********************
 
-    var force_group_v
     var force_group_f
     var force_group_e
     var force_group_c
     var force_general
-
-    var force_group_f_trial
-    var force_group_e_trial
-    var force_general_trial
 
     var force_group_mink
     var force_general_global
@@ -796,25 +715,1038 @@
 
         form_group_c.traverse(function (obj) {
             if (obj.type === "Mesh") {
-                obj.material.visible = cellVisibilityCheckboxParams.cell;
+                obj.material.visible = cellVisibilityCheckboxParams.cell || stepSliderParams.size == 2;
             }
             if (obj.type === "LineSegments") {
-                obj.material.visible = cellVisibilityCheckboxParams.cell;
+                obj.material.visible = cellVisibilityCheckboxParams.cell || stepSliderParams.size == 2;
             }
             if (obj.type === "Sprite") {
-                obj.material.visible = cellVisibilityCheckboxParams.cell;
+                obj.material.visible = cellVisibilityCheckboxParams.cell || stepSliderParams.size == 2;
             }
         });
 
         scene.add(form_group_c);
     }
 
+    function redrawMink() {
+        scene.remove(form_group_mink);
+        form_group_mink = new THREE.Group();
+        scene2.remove(force_group_mink);
+        force_group_mink = new THREE.Group();
+
+        // *********************** force points ***********************
+        var edgescale = 2; // size of the force diagram
+
+        //PtA and PtB
+        var forcePtA = new THREE.Vector3(1, 0.2, 0)
+
+        var forcePtBtemp = CalNormalVectorUpdated(formBtPt1[1], formTpPt[1], formTpPt[0], edgescale);
+        var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+
+        //PtC
+
+        var forcePtC1temp = CalNormalVectorUpdated(formBtPt2[1], formTpPt[1], formTpPt[0], edgescale);
+        var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
+
+        var forcePtC2temp = CalNormalVectorUpdated(formBtPt3[1], formTpPt[1], formTpPt[0], edgescale);
+        var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
+
+        var dirBC = new THREE.Vector3(); // create once an reuse it
+
+        dirBC.subVectors(forcePtB, forcePtC1).normalize();
+
+        var dirAC = new THREE.Vector3(); // create once an reuse it
+
+        dirAC.subVectors(forcePtC2, forcePtA).normalize();
+        var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
+
+        // *********************** caculating the normals for apply loads ***********************
+        // triangle ABC
+        var normalABC_a = subVec(forcePtA, forcePtB)
+        var normalABC_b = subVec(forcePtB, forcePtC)
+        var normalABC = cross(normalABC_a, normalABC_b)
+
+        var edgeVector0 = subVec(formTpPt[0], formTpPt[1]);
+        var resultapply = normalABC.dot(edgeVector0)
+
+        // redefine the force points PtB, PtC ( one condition is that the force diagram flipped)
+
+        if (resultapply < 0) {
+
+            var lenAC = forcePtA.distanceTo(forcePtC);
+            var forcePtBnew = addVectorAlongDir(forcePtC, forcePtA, lenAC)
+
+            var lenAB = forcePtA.distanceTo(forcePtB);
+            var forcePtCnew = addVectorAlongDir(forcePtB, forcePtA, lenAB)
+            forcePtC = forcePtCnew
+            forcePtB = forcePtBnew
+
+        }
+
+        // redefine the force point PtD ( one condition is that the force diagram flipped)
+
+        //PtD
+
+        if (resultapply > 0) {
+            var forcePtD1temp = CalNormalVectorUpdated(formBtPt1[1], formTpPt[0], formBtPt3[1], edgescale);
+            var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
+
+            var forcePtD2temp = CalNormalVectorUpdated(formBtPt2[1], formTpPt[0], formBtPt1[1], edgescale);
+            var forcePtD2 = new THREE.Vector3(forcePtB.x - forcePtD2temp.x, forcePtB.y - forcePtD2temp.y, forcePtB.z - forcePtD2temp.z);
+
+            var dirAD = new THREE.Vector3(); // create once an reuse it
+
+            dirAD.subVectors(forcePtA, forcePtD1).normalize();
+
+            var dirBD = new THREE.Vector3(); // create once an reuse it
+
+            dirBD.subVectors(forcePtD2, forcePtB).normalize();
+            var forcePtD = LinesSectPt(dirAD, forcePtA, dirBD, forcePtB);
+        } else {
+            var forcePtD1temp = CalNormalVectorUpdated(formBtPt1[1], formTpPt[0], formBtPt3[1], edgescale);
+            var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
+
+            var forcePtD2temp = CalNormalVectorUpdated(formBtPt3[1], formTpPt[0], formBtPt2[1], edgescale);
+            var forcePtD2 = new THREE.Vector3(forcePtB.x - forcePtD2temp.x, forcePtB.y - forcePtD2temp.y, forcePtB.z - forcePtD2temp.z);
+
+            var dirAD = new THREE.Vector3(); // create once an reuse it
+
+            dirAD.subVectors(forcePtA, forcePtD1).normalize();
+
+            var dirBD = new THREE.Vector3(); // create once an reuse it
+
+            dirBD.subVectors(forcePtD2, forcePtB).normalize();
+            var forcePtD = LinesSectPt(dirAD, forcePtA, dirBD, forcePtB);
+        }
+
+        // *********************** caculating the areas of triangles (from the four points) ***********************
+
+        var areaABD = create_force_face_area(forcePtA, forcePtB, forcePtD);
+        var areaBCD = create_force_face_area(forcePtB, forcePtC, forcePtD);
+        var areaACD = create_force_face_area(forcePtA, forcePtC, forcePtD);
+
+        var areaMax = Math.max(areaABD, areaBCD, areaACD);
+
+        // *********************** caculating the normals for each triangle ***********************
+
+        // ****** caculating normals *******
+        // A = p2 - p1, B = p3 - p1
+        // Nx = Ay * Bz - Az * By
+        // Ny = Az * Bx - Ax * Bz
+        // Nz = Ax * By - Ay * Bx
+        // ******
+
+        // triangle ABD
+        var normalABD_a = subVec(forcePtB, forcePtA)
+        var normalABD_b = subVec(forcePtA, forcePtD)
+        var normalABD = cross(normalABD_a, normalABD_b)
+
+        var edgeVector1 = subVec(formTpPt[0], formBtPt1[1]);
+
+        // triangle BCD
+        var normalBCD_a = subVec(forcePtC, forcePtB)
+        var normalBCD_b = subVec(forcePtB, forcePtD)
+        var normalBCD = cross(normalBCD_a, normalBCD_b)
+
+        var edgeVector2 = subVec(formTpPt[0], formBtPt2[1]);
+
+        // triangle ACD
+        var normalCAD_a = subVec(forcePtA, forcePtC)
+        var normalCAD_b = subVec(forcePtC, forcePtD)
+        var normalCAD = cross(normalCAD_a, normalCAD_b)
+
+        var edgeVector3 = subVec(formTpPt[0], formBtPt3[1]);
+
+        // ********************************** Minkowski Sum Generation ************************************
+
+        //Minkowski Test
+        var formMSedgeMaterial = new THREE.MeshPhongMaterial({
+            color: "lightgrey"
+        });
+
+        var minkedgeSize = 0.005
+        // chose the start point - formPtO1new (z - 0.5)
+        var minkStPt = formTpPt[0]
+        var forceCenterPt = new THREE.Vector3(
+            (forcePtA.x + forcePtB.x + forcePtC.x + forcePtD.x) / 4,
+            (forcePtA.y + forcePtB.y + forcePtC.y + forcePtD.y) / 4,
+            (forcePtA.z + forcePtB.z + forcePtC.z + forcePtD.z) / 4
+        )
+
+        var formMSline1 = createdashline(formBtPt1[1], formTpPt[0], "grey")
+        form_group_mink.add(formMSline1)
+        var formMSline2 = createdashline(formBtPt2[1], formTpPt[0], "grey")
+        form_group_mink.add(formMSline2)
+        var formMSline3 = createdashline(formBtPt3[1], formTpPt[0], "grey")
+        form_group_mink.add(formMSline3)
+
+        // 1 - force cell ABCO1
+        var formMSedgetempA = subVecUpdated(forcePtA, forceCenterPt)
+        var formMSptA = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgetempA.x,
+            minkStPt.y - minkscale.l * formMSedgetempA.y,
+            minkStPt.z - minkscale.l * formMSedgetempA.z
+        );
+
+        var formMSedgetempB = subVecUpdated(forcePtB, forceCenterPt)
+        var formMSptB = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgetempB.x,
+            minkStPt.y - minkscale.l * formMSedgetempB.y,
+            minkStPt.z - minkscale.l * formMSedgetempB.z
+        );
+
+        var formMSedgetempC = subVecUpdated(forcePtC, forceCenterPt)
+        var formMSptC = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgetempC.x,
+            minkStPt.y - minkscale.l * formMSedgetempC.y,
+            minkStPt.z - minkscale.l * formMSedgetempC.z
+        );
+
+        var formMSedgetempD = subVecUpdated(forcePtD, forceCenterPt)
+        var formMSptD = new THREE.Vector3(
+            minkStPt.x - minkscale.l * formMSedgetempD.x,
+            minkStPt.y - minkscale.l * formMSedgetempD.y,
+            minkStPt.z - minkscale.l * formMSedgetempD.z
+        );
+
+        const formMSedgeAB = createCylinderMesh(formMSptA, formMSptB, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAB)
+        const formMSedgeAC = createCylinderMesh(formMSptA, formMSptC, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAC)
+        const formMSedgeBC = createCylinderMesh(formMSptC, formMSptB, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBC)
+
+        const formMSedgeBD = createCylinderMesh(formMSptB, formMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBD)
+        const formMSedgeAD = createCylinderMesh(formMSptA, formMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAD)
+        const formMSedgeCD = createCylinderMesh(formMSptC, formMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCD)
+
+        //construct minkowski cell in the force diagram
+        var formMSptARef = new THREE.Vector3(
+            minkStPt.x - 0.95 * formMSedgetempA.x,
+            minkStPt.y - 0.95 * formMSedgetempA.y,
+            minkStPt.z - 0.95 * formMSedgetempA.z
+        );
+
+        var formMSptBRef = new THREE.Vector3(
+            minkStPt.x - 0.95 * formMSedgetempB.x,
+            minkStPt.y - 0.95 * formMSedgetempB.y,
+            minkStPt.z - 0.95 * formMSedgetempB.z
+        );
+
+        var formMSptCRef = new THREE.Vector3(
+            minkStPt.x - 0.95 * formMSedgetempC.x,
+            minkStPt.y - 0.95 * formMSedgetempC.y,
+            minkStPt.z - 0.95 * formMSedgetempC.z
+        );
+
+        var formMSptDRef = new THREE.Vector3(
+            minkStPt.x - 0.95 * formMSedgetempD.x,
+            minkStPt.y - 0.95 * formMSedgetempD.y,
+            minkStPt.z - 0.95 * formMSedgetempD.z
+        );
+
+        var forceMSedgetempA = subVecUpdated(formMSptARef, minkStPt)
+        var forceMSptA = new THREE.Vector3(
+            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempA.x,
+            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempA.y,
+            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempA.z
+        );
+        var forceMSedgetempB = subVecUpdated(formMSptBRef, minkStPt)
+        var forceMSptB = new THREE.Vector3(
+            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempB.x,
+            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempB.y,
+            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempB.z
+        );
+        var forceMSedgetempC = subVecUpdated(formMSptCRef, minkStPt)
+        var forceMSptC = new THREE.Vector3(
+            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempC.x,
+            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempC.y,
+            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempC.z
+        );
+        var forceMSedgetempD = subVecUpdated(formMSptDRef, minkStPt)
+        var forceMSptD = new THREE.Vector3(
+            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempD.x,
+            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempD.y,
+            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempD.z
+        );
+
+        const forceMSedgeAB = createCylinderMesh(forceMSptA, forceMSptB, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAB)
+        const forceMSedgeAC = createCylinderMesh(forceMSptA, forceMSptC, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAC)
+        const forceMSedgeBC = createCylinderMesh(forceMSptB, forceMSptC, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBC)
+
+        const forceMSedgeAD = createCylinderMesh(forceMSptA, forceMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeAD)
+        const forceMSedgeBD = createCylinderMesh(forceMSptB, forceMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBD)
+        const forceMSedgeCD = createCylinderMesh(forceMSptC, forceMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCD)
+
+        //project the mink in the force side
+        function drawMinkForceExpandEdge(startPt, scale, dirVec1, dirVec2, formMSedgeMaterial, minkedgeSize) {
+            var directionVec = subVecUpdated(dirVec1, dirVec2);
+            var endPt = new THREE.Vector3(
+                startPt.x + (scale) * directionVec.x,
+                startPt.y + (scale) * directionVec.y,
+                startPt.z + (scale) * directionVec.z
+            );
+            const finalEdge = createCylinderMesh(startPt, endPt, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+            return finalEdge
+        }
+
+        function drawMinkForceExpandPt(startPt, scale, dirVec1, dirVec2) {
+            var directionVec = subVecUpdated(dirVec1, dirVec2);
+            var endPt = new THREE.Vector3(
+                startPt.x + (scale) * directionVec.x,
+                startPt.y + (scale) * directionVec.y,
+                startPt.z + (scale) * directionVec.z
+            );
+            return endPt
+        }
+
+        const forceMSedgeBO1_Pt1O1 = drawMinkForceExpandEdge(
+            forceMSptB, minkscale.l, formTpPt[0], formBtPt1[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeBO1_Pt1O1)
+
+        const forceMSedgeAO1_Pt1O1 = drawMinkForceExpandEdge(
+            forceMSptA, minkscale.l, formTpPt[0], formBtPt1[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO1_Pt1O1)
+
+        const forceMSedgeDO1_Pt1O1 = drawMinkForceExpandEdge(
+            forceMSptD, minkscale.l, formTpPt[0], formBtPt1[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeDO1_Pt1O1)
+
+        var forceMSedgeAend_Pt1O1 = drawMinkForceExpandPt(forceMSptA, minkscale.l, formTpPt[0], formBtPt1[1])
+        var forceMSedgeBend_Pt1O1 = drawMinkForceExpandPt(forceMSptB, minkscale.l, formTpPt[0], formBtPt1[1])
+        var forceMSedgeDend_Pt1O1 = drawMinkForceExpandPt(forceMSptD, minkscale.l, formTpPt[0], formBtPt1[1])
+
+        const forceMSedgeABend_Pt1O1 = createCylinderMesh(forceMSedgeAend_Pt1O1, forceMSedgeBend_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeABend_Pt1O1)
+        const forceMSedgeADend_Pt1O1 = createCylinderMesh(forceMSedgeAend_Pt1O1, forceMSedgeDend_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeADend_Pt1O1)
+        const forceMSedgeBDend_Pt1O1 = createCylinderMesh(forceMSedgeBend_Pt1O1, forceMSedgeDend_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBDend_Pt1O1)
+
+        //o to Btpt2
+        const forceMSedgeBO1_Pt2O1 = drawMinkForceExpandEdge(
+            forceMSptB, minkscale.l, formTpPt[0], formBtPt2[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeBO1_Pt2O1)
+
+        const forceMSedgeCO1_Pt2O1 = drawMinkForceExpandEdge(
+            forceMSptC, minkscale.l, formTpPt[0], formBtPt2[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO1_Pt2O1)
+
+        const forceMSedgeDO1_Pt2O1 = drawMinkForceExpandEdge(
+            forceMSptD, minkscale.l, formTpPt[0], formBtPt2[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeDO1_Pt2O1)
+
+        var forceMSedgeCend_Pt2O1 = drawMinkForceExpandPt(forceMSptC, minkscale.l, formTpPt[0], formBtPt2[1])
+        var forceMSedgeBend_Pt2O1 = drawMinkForceExpandPt(forceMSptB, minkscale.l, formTpPt[0], formBtPt2[1])
+        var forceMSedgeDend_Pt2O1 = drawMinkForceExpandPt(forceMSptD, minkscale.l, formTpPt[0], formBtPt2[1])
+
+        const forceMSedgeCBend_Pt2O1 = createCylinderMesh(forceMSedgeCend_Pt2O1, forceMSedgeBend_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCBend_Pt2O1)
+        const forceMSedgeCDend_Pt2O1 = createCylinderMesh(forceMSedgeCend_Pt2O1, forceMSedgeDend_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCDend_Pt2O1)
+        const forceMSedgeBDend_Pt2O1 = createCylinderMesh(forceMSedgeBend_Pt2O1, forceMSedgeDend_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeBDend_Pt2O1)
+
+        //o to Btpt3
+        const forceMSedgeAO1_Pt3O1 = drawMinkForceExpandEdge(
+            forceMSptA, minkscale.l, formTpPt[0], formBtPt3[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeAO1_Pt3O1)
+
+        const forceMSedgeCO1_Pt3O1 = drawMinkForceExpandEdge(
+            forceMSptC, minkscale.l, formTpPt[0], formBtPt3[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeCO1_Pt3O1)
+
+        const forceMSedgeDO1_Pt3O1 = drawMinkForceExpandEdge(
+            forceMSptD, minkscale.l, formTpPt[0], formBtPt3[1], formMSedgeMaterial, minkedgeSize);
+        force_group_mink.add(forceMSedgeDO1_Pt3O1)
+
+        var forceMSedgeCend_Pt3O1 = drawMinkForceExpandPt(forceMSptC, minkscale.l, formTpPt[0], formBtPt3[1])
+        var forceMSedgeAend_Pt3O1 = drawMinkForceExpandPt(forceMSptA, minkscale.l, formTpPt[0], formBtPt3[1])
+        var forceMSedgeDend_Pt3O1 = drawMinkForceExpandPt(forceMSptD, minkscale.l, formTpPt[0], formBtPt3[1])
+
+        const forceMSedgeCAend_Pt3O1 = createCylinderMesh(forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCAend_Pt3O1)
+        const forceMSedgeCDend_Pt3O1 = createCylinderMesh(forceMSedgeCend_Pt3O1, forceMSedgeDend_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeCDend_Pt3O1)
+        const forceMSedgeADend_Pt3O1 = createCylinderMesh(forceMSedgeAend_Pt3O1, forceMSedgeDend_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        force_group_mink.add(forceMSedgeADend_Pt3O1)
+
+
+        // 1.1 - project to formBtPt1
+        // a. from formMSptBO1 (0.8 is the max number of minkscale.l)
+        var formMSptPt1O1temp = subVecUpdated(formTpPt[0], formBtPt1[1]);
+        var formMSptBO1_Pt1O1 = new THREE.Vector3(
+            formMSptB.x + (0.95 - minkscale.l) * formMSptPt1O1temp.x,
+            formMSptB.y + (0.95 - minkscale.l) * formMSptPt1O1temp.y,
+            formMSptB.z + (0.95 - minkscale.l) * formMSptPt1O1temp.z
+        );
+        const formMSedgeBO1_Pt1O1 = createCylinderMesh(formMSptB, formMSptBO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1_Pt1O1)
+
+        var formMSptAO1_Pt1O1 = new THREE.Vector3(
+            formMSptA.x + (0.95 - minkscale.l) * formMSptPt1O1temp.x,
+            formMSptA.y + (0.95 - minkscale.l) * formMSptPt1O1temp.y,
+            formMSptA.z + (0.95 - minkscale.l) * formMSptPt1O1temp.z
+        );
+        const formMSedgeAO1_Pt1O1 = createCylinderMesh(formMSptA, formMSptAO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1_Pt1O1)
+
+        var formMSptDO1_Pt1O1 = new THREE.Vector3(
+            formMSptD.x + (0.95 - minkscale.l) * formMSptPt1O1temp.x,
+            formMSptD.y + (0.95 - minkscale.l) * formMSptPt1O1temp.y,
+            formMSptD.z + (0.95 - minkscale.l) * formMSptPt1O1temp.z
+        );
+        const formMSedgeDO1_Pt1O1 = createCylinderMesh(formMSptD, formMSptDO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDO1_Pt1O1)
+
+        // *********************** form edges **************************
+        var formedgeColor1, formedgeColor2, formedgeColor3
+
+        // condition 1
+        if (result1 < 0) {
+            if (resultapply > 0) {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x80002F
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor1 = 0x940041
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor1 = 0xCC0549
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor1 = 0xD72F62
+                }
+            } else {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x80002F
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor1 = 0x940041
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor1 = 0xCC0549
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor1 = 0xD72F62
+                }
+            }
+        } else {
+            if (resultapply > 0) {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x0F3150
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor1 = 0x05416D
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor1 = 0x376D9B
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor1 = 0x5B84AE
+                }
+            } else {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x0F3150
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor1 = 0x05416D
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor1 = 0x376D9B
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor1 = 0x5B84AE
+                }
+            }
+        }
+
+        if (result2 < 0) {
+            if (resultapply > 0) {
+                if (areaBCD / areaMax >= 0.75) {
+                    formedgeColor2 = 0x80002F
+                }
+                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                    formedgeColor2 = 0x940041
+                }
+                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                    formedgeColor2 = 0xCC0549
+                }
+                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                    formedgeColor2 = 0xD72F62
+                }
+            } else {
+                if (areaBCD / areaMax >= 0.75) {
+                    formedgeColor2 = 0x80002F
+                }
+                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                    formedgeColor2 = 0x940041
+                }
+                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                    formedgeColor2 = 0xCC0549
+                }
+                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                    formedgeColor2 = 0xD72F62
+                }
+            }
+        } else {
+            if (resultapply > 0) {
+                if (areaBCD / areaMax >= 0.75) {
+                    formedgeColor2 = 0x0F3150
+                }
+                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                    formedgeColor2 = 0x05416D
+                }
+                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                    formedgeColor2 = 0x376D9B
+                }
+                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                    formedgeColor2 = 0x5B84AE
+                }
+
+            } else {
+                if (areaBCD / areaMax >= 0.75) {
+                    formedgeColor2 = 0x0F3150
+                }
+                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                    formedgeColor2 = 0x05416D
+                }
+                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                    formedgeColor2 = 0x376D9B
+                }
+                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                    formedgeColor2 = 0x5B84AE
+                }
+            }
+        }
+
+        if (result3 < 0) {
+            if (resultapply > 0) {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x80002F
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor3 = 0x940041
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor3 = 0xCC0549
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor3 = 0xD72F62
+                }
+            } else {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x80002F
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor3 = 0x940041
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor3 = 0xCC0549
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor3 = 0xD72F62
+                }
+            }
+
+        } else {
+            if (resultapply > 0) {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x0F3150
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor3 = 0x05416D
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor3 = 0x376D9B
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor3 = 0x5B84AE
+                }
+            } else {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x0F3150
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor3 = 0x05416D
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor3 = 0x376D9B
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor3 = 0x5B84AE
+                }
+            }
+        }
+
+        //minkowski faces
+        //a. edge 1 - 0
+        const formMinkFacePt1Oa = minkFace4pt(formMSptBO1_Pt1O1, formMSptB, formMSptA, formMSptAO1_Pt1O1, formedgeColor1)
+        form_group_mink.add(formMinkFacePt1Oa)
+        const formMinkFacePt1Ob = minkFace4pt(formMSptAO1_Pt1O1, formMSptA, formMSptD, formMSptDO1_Pt1O1, formedgeColor1)
+        form_group_mink.add(formMinkFacePt1Ob)
+        const formMinkFacePt1Oc = minkFace4pt(formMSptDO1_Pt1O1, formMSptD, formMSptB, formMSptBO1_Pt1O1, formedgeColor1)
+        form_group_mink.add(formMinkFacePt1Oc)
+        const formMinkFacePt1Od = minkFace3pt(formMSptDO1_Pt1O1, formMSptBO1_Pt1O1, formMSptAO1_Pt1O1, formedgeColor1)
+        form_group_mink.add(formMinkFacePt1Od)
+
+        const formMSedgeBtPt1 = createCylinderMesh(formMSptAO1_Pt1O1, formMSptDO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt1)
+        const formMSedgeBtPt12 = createCylinderMesh(formMSptAO1_Pt1O1, formMSptBO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt12)
+        const formMSedgeBtPt13 = createCylinderMesh(formMSptBO1_Pt1O1, formMSptDO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt13)
+
+        // b. from formMSptBO2 (0.8 is the max number of minkscale.l)
+        var formMSptPt2O1temp = subVecUpdated(formTpPt[0], formBtPt2[1]);
+        var formMSptBO1_Pt2O1 = new THREE.Vector3(
+            formMSptB.x + (0.95 - minkscale.l) * formMSptPt2O1temp.x,
+            formMSptB.y + (0.95 - minkscale.l) * formMSptPt2O1temp.y,
+            formMSptB.z + (0.95 - minkscale.l) * formMSptPt2O1temp.z
+        );
+        const formMSedgeBO1_Pt2O1 = createCylinderMesh(formMSptB, formMSptBO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBO1_Pt2O1)
+
+        var formMSptCO1_Pt2O1 = new THREE.Vector3(
+            formMSptC.x + (0.95 - minkscale.l) * formMSptPt2O1temp.x,
+            formMSptC.y + (0.95 - minkscale.l) * formMSptPt2O1temp.y,
+            formMSptC.z + (0.95 - minkscale.l) * formMSptPt2O1temp.z
+        );
+        const formMSedgeCO1_Pt2O1 = createCylinderMesh(formMSptC, formMSptCO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO1_Pt2O1)
+
+        var formMSptDO1_Pt2O1 = new THREE.Vector3(
+            formMSptD.x + (0.95 - minkscale.l) * formMSptPt2O1temp.x,
+            formMSptD.y + (0.95 - minkscale.l) * formMSptPt2O1temp.y,
+            formMSptD.z + (0.95 - minkscale.l) * formMSptPt2O1temp.z
+        );
+        const formMSedgeDO1_Pt2O1 = createCylinderMesh(formMSptD, formMSptDO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDO1_Pt2O1)
+
+        //a. edge 2 - 0
+        const formMinkFacePt2Oa = minkFace4pt(formMSptCO1_Pt2O1, formMSptC, formMSptB, formMSptBO1_Pt2O1, formedgeColor2)
+        form_group_mink.add(formMinkFacePt2Oa)
+        const formMinkFacePt2Ob = minkFace4pt(formMSptBO1_Pt2O1, formMSptB, formMSptD, formMSptDO1_Pt2O1, formedgeColor2)
+        form_group_mink.add(formMinkFacePt2Ob)
+        const formMinkFacePt2Oc = minkFace4pt(formMSptDO1_Pt2O1, formMSptD, formMSptC, formMSptCO1_Pt2O1, formedgeColor2)
+        form_group_mink.add(formMinkFacePt2Oc)
+        const formMinkFacePt2Od = minkFace3pt(formMSptCO1_Pt2O1, formMSptDO1_Pt2O1, formMSptBO1_Pt2O1, formedgeColor2)
+        form_group_mink.add(formMinkFacePt2Od)
+
+        const formMSedgeBtPt2 = createCylinderMesh(formMSptBO1_Pt2O1, formMSptCO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt2)
+        const formMSedgeBtPt22 = createCylinderMesh(formMSptBO1_Pt2O1, formMSptDO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt22)
+        const formMSedgeBtPt23 = createCylinderMesh(formMSptCO1_Pt2O1, formMSptDO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt23)
+
+        // c. from formMSptBO2 (0.8 is the max number of minkscale.l)
+        var formMSptPt3O1temp = subVecUpdated(formTpPt[0], formBtPt3[1]);
+        var formMSptAO1_Pt3O1 = new THREE.Vector3(
+            formMSptA.x + (0.95 - minkscale.l) * formMSptPt3O1temp.x,
+            formMSptA.y + (0.95 - minkscale.l) * formMSptPt3O1temp.y,
+            formMSptA.z + (0.95 - minkscale.l) * formMSptPt3O1temp.z
+        );
+        const formMSedgeAO1_Pt3O1 = createCylinderMesh(formMSptA, formMSptAO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeAO1_Pt3O1)
+
+        var formMSptCO1_Pt3O1 = new THREE.Vector3(
+            formMSptC.x + (0.95 - minkscale.l) * formMSptPt3O1temp.x,
+            formMSptC.y + (0.95 - minkscale.l) * formMSptPt3O1temp.y,
+            formMSptC.z + (0.95 - minkscale.l) * formMSptPt3O1temp.z
+        );
+        const formMSedgeCO1_Pt3O1 = createCylinderMesh(formMSptC, formMSptCO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeCO1_Pt3O1)
+
+        var formMSptDO1_Pt3O1 = new THREE.Vector3(
+            formMSptD.x + (0.95 - minkscale.l) * formMSptPt3O1temp.x,
+            formMSptD.y + (0.95 - minkscale.l) * formMSptPt3O1temp.y,
+            formMSptD.z + (0.95 - minkscale.l) * formMSptPt3O1temp.z
+        );
+        const formMSedgeDO1_Pt3O1 = createCylinderMesh(formMSptD, formMSptDO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeDO1_Pt3O1)
+
+        const formMSedgeBtPt3 = createCylinderMesh(formMSptAO1_Pt3O1, formMSptCO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt3)
+        const formMSedgeBtPt32 = createCylinderMesh(formMSptAO1_Pt3O1, formMSptDO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt32)
+        const formMSedgeBtPt33 = createCylinderMesh(formMSptCO1_Pt3O1, formMSptDO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
+        form_group_mink.add(formMSedgeBtPt33)
+
+        //a. edge 3 - 0
+        const formMinkFacePt3Oa = minkFace4pt(formMSptAO1_Pt3O1, formMSptA, formMSptC, formMSptCO1_Pt3O1, formedgeColor3)
+        form_group_mink.add(formMinkFacePt3Oa)
+        const formMinkFacePt3Ob = minkFace4pt(formMSptDO1_Pt3O1, formMSptD, formMSptC, formMSptCO1_Pt3O1, formedgeColor3)
+        form_group_mink.add(formMinkFacePt3Ob)
+        const formMinkFacePt3Oc = minkFace4pt(formMSptDO1_Pt3O1, formMSptD, formMSptA, formMSptAO1_Pt3O1, formedgeColor3)
+        form_group_mink.add(formMinkFacePt3Oc)
+        const formMinkFacePt3Od = minkFace3pt(formMSptDO1_Pt3O1, formMSptAO1_Pt3O1, formMSptCO1_Pt3O1, formedgeColor3)
+        form_group_mink.add(formMinkFacePt3Od)
+
+        //add green apply face and center cell
+        var formMinkFacePtABC = minkFace3pt(formMSptA, formMSptB, formMSptC, 0x009600)
+        form_group_mink.add(formMinkFacePtABC)
+        var formMinkFacePtABD = minkFace3pt(formMSptA, formMSptB, formMSptD, formedgeColor1)
+        form_group_mink.add(formMinkFacePtABD)
+        var formMinkFacePtBCD = minkFace3pt(formMSptB, formMSptC, formMSptD, formedgeColor2)
+        form_group_mink.add(formMinkFacePtBCD)
+        var formMinkFacePtACD = minkFace3pt(formMSptC, formMSptA, formMSptD, formedgeColor3)
+        form_group_mink.add(formMinkFacePtACD)
+
+        // ******************************************* mink force faces - 1
+
+        if (resultapply > 0) {
+
+            var result1 = normalABD.dot(edgeVector1)
+            var result2 = normalBCD.dot(edgeVector2)
+            var result3 = normalCAD.dot(edgeVector3)
+
+        } else {
+
+            var result1 = normalCAD.dot(edgeVector1)
+            var result2 = normalBCD.dot(edgeVector2)
+            var result3 = normalABD.dot(edgeVector3)
+
+        }
+
+        if (result1 < 0) {
+            if (resultapply > 0) {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x80002F
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor1 = 0x940041
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor1 = 0xCC0549
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor1 = 0xD72F62
+                }
+                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
+
+                force_group_mink.add(forceMinkFaceABD)
+                force_group_mink.add(forceMinkFaceExpandABD1)
+                force_group_mink.add(forceMinkFaceExpandABD2)
+                force_group_mink.add(forceMinkFaceExpandABD3)
+                force_group_mink.add(forceMinkFaceExpandABD4)
+
+
+            } else {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x80002F
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor1 = 0x940041
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor1 = 0xCC0549
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor1 = 0xD72F62
+                }
+                // force_group_mink.add( forceMinkFaceACD )
+                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
+
+                force_group_mink.add(forceMinkFaceABD)
+                force_group_mink.add(forceMinkFaceExpandABD1)
+                force_group_mink.add(forceMinkFaceExpandABD2)
+                force_group_mink.add(forceMinkFaceExpandABD3)
+                force_group_mink.add(forceMinkFaceExpandABD4)
+            }
+        } else {
+            if (resultapply > 0) {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x0F3150
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor1 = 0x05416D
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor1 = 0x376D9B
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor1 = 0x5B84AE
+                }
+                // var forceMinkFaceABD =  minkFace3pt(forceMSptA, forceMSptB, forceMSptD,formedgeColor1)
+                // force_group_mink.add( forceMinkFaceABD )
+                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
+
+                force_group_mink.add(forceMinkFaceABD)
+                force_group_mink.add(forceMinkFaceExpandABD1)
+                force_group_mink.add(forceMinkFaceExpandABD2)
+                force_group_mink.add(forceMinkFaceExpandABD3)
+                force_group_mink.add(forceMinkFaceExpandABD4)
+
+            } else {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor1 = 0x0F3150
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor1 = 0x05416D
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor1 = 0x376D9B
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor1 = 0x5B84AE
+                }
+                //  var forceMinkFaceACD = ForceFace3pt(forceMSptC, forceMSptA, forceMSptD, formedgeColor1);
+                // force_group_mink.add( forceMinkFaceACD )
+                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
+                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
+
+                force_group_mink.add(forceMinkFaceABD)
+                force_group_mink.add(forceMinkFaceExpandABD1)
+                force_group_mink.add(forceMinkFaceExpandABD2)
+                force_group_mink.add(forceMinkFaceExpandABD3)
+                force_group_mink.add(forceMinkFaceExpandABD4)
+            }
+        }
+
+        // ******************************************* mink force faces - 2
+        if (result2 < 0) {
+
+            if (areaBCD / areaMax >= 0.75) {
+                formedgeColor2 = 0x80002F
+            }
+            if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                formedgeColor2 = 0x940041
+            }
+            if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                formedgeColor2 = 0xCC0549
+            }
+            if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                formedgeColor2 = 0xD72F62
+            }
+            var forceMinkFaceBCD = minkFace3pt(forceMSptB, forceMSptC, forceMSptD, formedgeColor1)
+            var forceMinkFaceExpandBCD1 = minkFace4pt(forceMSedgeBend_Pt2O1, forceMSptB, forceMSptD, forceMSedgeDend_Pt2O1, formedgeColor2)
+            var forceMinkFaceExpandBCD2 = minkFace4pt(forceMSedgeCend_Pt2O1, forceMSptC, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
+            var forceMinkFaceExpandBCD3 = minkFace4pt(forceMSedgeDend_Pt2O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
+            var forceMinkFaceExpandBCD4 = minkFace3pt(forceMSedgeDend_Pt2O1, forceMSedgeCend_Pt2O1, forceMSedgeBend_Pt2O1, formedgeColor2)
+
+            force_group_mink.add(forceMinkFaceBCD)
+            force_group_mink.add(forceMinkFaceExpandBCD1)
+            force_group_mink.add(forceMinkFaceExpandBCD2)
+            force_group_mink.add(forceMinkFaceExpandBCD3)
+            force_group_mink.add(forceMinkFaceExpandBCD4)
+        } else {
+
+            if (areaBCD / areaMax >= 0.75) {
+                formedgeColor2 = 0x0F3150
+            }
+            if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                formedgeColor2 = 0x05416D
+            }
+            if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                formedgeColor2 = 0x376D9B
+            }
+            if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                formedgeColor2 = 0x5B84AE
+            }
+            var forceMinkFaceBCD = minkFace3pt(forceMSptB, forceMSptC, forceMSptD, formedgeColor1)
+            var forceMinkFaceExpandBCD1 = minkFace4pt(forceMSedgeBend_Pt2O1, forceMSptB, forceMSptD, forceMSedgeDend_Pt2O1, formedgeColor2)
+            var forceMinkFaceExpandBCD2 = minkFace4pt(forceMSedgeCend_Pt2O1, forceMSptC, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
+            var forceMinkFaceExpandBCD3 = minkFace4pt(forceMSedgeDend_Pt2O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
+            var forceMinkFaceExpandBCD4 = minkFace3pt(forceMSedgeDend_Pt2O1, forceMSedgeCend_Pt2O1, forceMSedgeBend_Pt2O1, formedgeColor2)
+
+            force_group_mink.add(forceMinkFaceBCD)
+            force_group_mink.add(forceMinkFaceExpandBCD1)
+            force_group_mink.add(forceMinkFaceExpandBCD2)
+            force_group_mink.add(forceMinkFaceExpandBCD3)
+            force_group_mink.add(forceMinkFaceExpandBCD4)
+        }
+
+// ******************************************* mink force faces - 3
+
+        if (result3 < 0) {
+            if (resultapply > 0) {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x80002F
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor3 = 0x940041
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor3 = 0xCC0549
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor3 = 0xD72F62
+                }
+                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
+
+                force_group_mink.add(forceMinkFaceACD)
+                force_group_mink.add(forceMinkFaceExpandACD1)
+                force_group_mink.add(forceMinkFaceExpandACD2)
+                force_group_mink.add(forceMinkFaceExpandACD3)
+                force_group_mink.add(forceMinkFaceExpandACD4)
+            } else {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x80002F
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor3 = 0x940041
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor3 = 0xCC0549
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor3 = 0xD72F62
+                }
+                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
+
+                force_group_mink.add(forceMinkFaceACD)
+                force_group_mink.add(forceMinkFaceExpandACD1)
+                force_group_mink.add(forceMinkFaceExpandACD2)
+                force_group_mink.add(forceMinkFaceExpandACD3)
+                force_group_mink.add(forceMinkFaceExpandACD4)
+            }
+
+        } else {
+            if (resultapply > 0) {
+                if (areaACD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x0F3150
+                }
+                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                    formedgeColor3 = 0x05416D
+                }
+                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                    formedgeColor3 = 0x376D9B
+                }
+                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                    formedgeColor3 = 0x5B84AE
+                }
+                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
+
+                force_group_mink.add(forceMinkFaceACD)
+                force_group_mink.add(forceMinkFaceExpandACD1)
+                force_group_mink.add(forceMinkFaceExpandACD2)
+                force_group_mink.add(forceMinkFaceExpandACD3)
+                force_group_mink.add(forceMinkFaceExpandACD4)
+
+            } else {
+                if (areaABD / areaMax >= 0.75) {
+                    formedgeColor3 = 0x0F3150
+                }
+                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                    formedgeColor3 = 0x05416D
+                }
+                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                    formedgeColor3 = 0x376D9B
+                }
+                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                    formedgeColor3 = 0x5B84AE
+                }
+                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
+                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
+                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
+
+                force_group_mink.add(forceMinkFaceACD)
+                force_group_mink.add(forceMinkFaceExpandACD1)
+                force_group_mink.add(forceMinkFaceExpandACD2)
+                force_group_mink.add(forceMinkFaceExpandACD3)
+                force_group_mink.add(forceMinkFaceExpandACD4)
+            }
+
+        }
+        var forceMinkFaceABC = minkFace3pt(forceMSptA, forceMSptB, forceMSptC, 0x009600)
+        force_group_mink.add(forceMinkFaceABC)
+
+        form_group_mink.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_group_mink.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        form_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_group_e.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_group_f.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        force_general.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
+        });
+
+        scene.add(form_group_mink);
+        scene2.add(force_group_mink);
+    }
 
     // *********************** redraw the form and force diagram when parametrer is changing ****************
     function Redraw() {
 
         if (faceVisibilityCheckboxParams.face) {
             redrawFace();
+        }
+        if (cellVisibilityCheckboxParams.cell) {
+            redrawCell();
         }
 
         //form groups
@@ -824,7 +1756,6 @@
         scene.remove(form_group_e_trial);
         scene.remove(form_general_trial);
         scene.remove(form_general_global);
-        scene.remove(form_group_mink);
         scene.remove(form_group_step);
         scene.remove(form_group_step_3);
         scene.remove(form_group_step_4);
@@ -836,7 +1767,6 @@
         form_group_e = new THREE.Group();
         form_general = new THREE.Group();
         form_general_trial = new THREE.Group();
-        form_group_mink = new THREE.Group();
 
         form_group_e_trial = new THREE.Group();
         form_general_global = new THREE.Group();
@@ -848,15 +1778,10 @@
         form_group_step_7 = new THREE.Group();
 
         //force groups
-        scene2.remove(force_group_v);
         scene2.remove(force_group_f);
         scene2.remove(force_group_e);
         scene2.remove(force_group_c);
         scene2.remove(force_general);
-        scene2.remove(force_group_f_trial);
-        scene2.remove(force_group_e_trial);
-        scene2.remove(force_general_trial);
-        scene2.remove(force_group_mink);
         scene2.remove(force_general_global);
 
         scene2.remove(force_group_step);
@@ -866,16 +1791,11 @@
         scene2.remove(force_group_step_6);
         scene2.remove(force_group_step_7);
 
-        force_group_v = new THREE.Group();
         force_group_f = new THREE.Group();
         force_group_e = new THREE.Group();
         force_group_c = new THREE.Group();
         force_general = new THREE.Group();
 
-        force_group_f_trial = new THREE.Group();
-        force_group_e_trial = new THREE.Group();
-        force_general_trial = new THREE.Group();
-        force_group_mink = new THREE.Group();
         force_general_global = new THREE.Group();
         force_group_step = new THREE.Group();
         force_group_step_3 = new THREE.Group();
@@ -1827,653 +2747,6 @@
 
         // ********************************** Minkowski Sum Generation ************************************
 
-        //Minkowski Test
-        var formMSedgeMaterial = new THREE.MeshPhongMaterial({
-            color: "lightgrey"
-        });
-
-        var minkedgeSize = 0.005
-        // chose the start point - formPtO1new (z - 0.5)
-        var minkStPt = formTpPt[0]
-        var forceCenterPt = new THREE.Vector3(
-            (forcePtA.x + forcePtB.x + forcePtC.x + forcePtD.x) / 4,
-            (forcePtA.y + forcePtB.y + forcePtC.y + forcePtD.y) / 4,
-            (forcePtA.z + forcePtB.z + forcePtC.z + forcePtD.z) / 4
-        )
-
-        var formMSline1 = createdashline(formBtPt1[1], formTpPt[0], "grey")
-        form_group_mink.add(formMSline1)
-        var formMSline2 = createdashline(formBtPt2[1], formTpPt[0], "grey")
-        form_group_mink.add(formMSline2)
-        var formMSline3 = createdashline(formBtPt3[1], formTpPt[0], "grey")
-        form_group_mink.add(formMSline3)
-
-        // 1 - force cell ABCO1
-        var formMSedgetempA = subVecUpdated(forcePtA, forceCenterPt)
-        var formMSptA = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgetempA.x,
-            minkStPt.y - minkscale.l * formMSedgetempA.y,
-            minkStPt.z - minkscale.l * formMSedgetempA.z
-        );
-
-        var formMSedgetempB = subVecUpdated(forcePtB, forceCenterPt)
-        var formMSptB = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgetempB.x,
-            minkStPt.y - minkscale.l * formMSedgetempB.y,
-            minkStPt.z - minkscale.l * formMSedgetempB.z
-        );
-
-        var formMSedgetempC = subVecUpdated(forcePtC, forceCenterPt)
-        var formMSptC = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgetempC.x,
-            minkStPt.y - minkscale.l * formMSedgetempC.y,
-            minkStPt.z - minkscale.l * formMSedgetempC.z
-        );
-
-        var formMSedgetempD = subVecUpdated(forcePtD, forceCenterPt)
-        var formMSptD = new THREE.Vector3(
-            minkStPt.x - minkscale.l * formMSedgetempD.x,
-            minkStPt.y - minkscale.l * formMSedgetempD.y,
-            minkStPt.z - minkscale.l * formMSedgetempD.z
-        );
-
-        const formMSedgeAB = createCylinderMesh(formMSptA, formMSptB, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAB)
-        const formMSedgeAC = createCylinderMesh(formMSptA, formMSptC, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAC)
-        const formMSedgeBC = createCylinderMesh(formMSptC, formMSptB, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBC)
-
-        const formMSedgeBD = createCylinderMesh(formMSptB, formMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBD)
-        const formMSedgeAD = createCylinderMesh(formMSptA, formMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAD)
-        const formMSedgeCD = createCylinderMesh(formMSptC, formMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCD)
-
-        //construct minkowski cell in the force diagram
-        var formMSptARef = new THREE.Vector3(
-            minkStPt.x - 0.95 * formMSedgetempA.x,
-            minkStPt.y - 0.95 * formMSedgetempA.y,
-            minkStPt.z - 0.95 * formMSedgetempA.z
-        );
-
-        var formMSptBRef = new THREE.Vector3(
-            minkStPt.x - 0.95 * formMSedgetempB.x,
-            minkStPt.y - 0.95 * formMSedgetempB.y,
-            minkStPt.z - 0.95 * formMSedgetempB.z
-        );
-
-        var formMSptCRef = new THREE.Vector3(
-            minkStPt.x - 0.95 * formMSedgetempC.x,
-            minkStPt.y - 0.95 * formMSedgetempC.y,
-            minkStPt.z - 0.95 * formMSedgetempC.z
-        );
-
-        var formMSptDRef = new THREE.Vector3(
-            minkStPt.x - 0.95 * formMSedgetempD.x,
-            minkStPt.y - 0.95 * formMSedgetempD.y,
-            minkStPt.z - 0.95 * formMSedgetempD.z
-        );
-
-        var forceMSedgetempA = subVecUpdated(formMSptARef, minkStPt)
-        var forceMSptA = new THREE.Vector3(
-            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempA.x,
-            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempA.y,
-            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempA.z
-        );
-        var forceMSedgetempB = subVecUpdated(formMSptBRef, minkStPt)
-        var forceMSptB = new THREE.Vector3(
-            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempB.x,
-            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempB.y,
-            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempB.z
-        );
-        var forceMSedgetempC = subVecUpdated(formMSptCRef, minkStPt)
-        var forceMSptC = new THREE.Vector3(
-            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempC.x,
-            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempC.y,
-            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempC.z
-        );
-        var forceMSedgetempD = subVecUpdated(formMSptDRef, minkStPt)
-        var forceMSptD = new THREE.Vector3(
-            forceCenterPt.x - (0.95 - minkscale.l) * forceMSedgetempD.x,
-            forceCenterPt.y - (0.95 - minkscale.l) * forceMSedgetempD.y,
-            forceCenterPt.z - (0.95 - minkscale.l) * forceMSedgetempD.z
-        );
-
-        const forceMSedgeAB = createCylinderMesh(forceMSptA, forceMSptB, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAB)
-        const forceMSedgeAC = createCylinderMesh(forceMSptA, forceMSptC, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAC)
-        const forceMSedgeBC = createCylinderMesh(forceMSptB, forceMSptC, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBC)
-
-        const forceMSedgeAD = createCylinderMesh(forceMSptA, forceMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeAD)
-        const forceMSedgeBD = createCylinderMesh(forceMSptB, forceMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBD)
-        const forceMSedgeCD = createCylinderMesh(forceMSptC, forceMSptD, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCD)
-
-        //project the mink in the force side
-        function drawMinkForceExpandEdge(startPt, scale, dirVec1, dirVec2, formMSedgeMaterial, minkedgeSize) {
-            var directionVec = subVecUpdated(dirVec1, dirVec2);
-            var endPt = new THREE.Vector3(
-                startPt.x + (scale) * directionVec.x,
-                startPt.y + (scale) * directionVec.y,
-                startPt.z + (scale) * directionVec.z
-            );
-            const finalEdge = createCylinderMesh(startPt, endPt, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-            return finalEdge
-        }
-
-        function drawMinkForceExpandPt(startPt, scale, dirVec1, dirVec2) {
-            var directionVec = subVecUpdated(dirVec1, dirVec2);
-            var endPt = new THREE.Vector3(
-                startPt.x + (scale) * directionVec.x,
-                startPt.y + (scale) * directionVec.y,
-                startPt.z + (scale) * directionVec.z
-            );
-            return endPt
-        }
-
-        const forceMSedgeBO1_Pt1O1 = drawMinkForceExpandEdge(
-            forceMSptB, minkscale.l, formTpPt[0], formBtPt1[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeBO1_Pt1O1)
-
-        const forceMSedgeAO1_Pt1O1 = drawMinkForceExpandEdge(
-            forceMSptA, minkscale.l, formTpPt[0], formBtPt1[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO1_Pt1O1)
-
-        const forceMSedgeDO1_Pt1O1 = drawMinkForceExpandEdge(
-            forceMSptD, minkscale.l, formTpPt[0], formBtPt1[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeDO1_Pt1O1)
-
-        var forceMSedgeAend_Pt1O1 = drawMinkForceExpandPt(forceMSptA, minkscale.l, formTpPt[0], formBtPt1[1])
-        var forceMSedgeBend_Pt1O1 = drawMinkForceExpandPt(forceMSptB, minkscale.l, formTpPt[0], formBtPt1[1])
-        var forceMSedgeDend_Pt1O1 = drawMinkForceExpandPt(forceMSptD, minkscale.l, formTpPt[0], formBtPt1[1])
-
-        const forceMSedgeABend_Pt1O1 = createCylinderMesh(forceMSedgeAend_Pt1O1, forceMSedgeBend_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeABend_Pt1O1)
-        const forceMSedgeADend_Pt1O1 = createCylinderMesh(forceMSedgeAend_Pt1O1, forceMSedgeDend_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeADend_Pt1O1)
-        const forceMSedgeBDend_Pt1O1 = createCylinderMesh(forceMSedgeBend_Pt1O1, forceMSedgeDend_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBDend_Pt1O1)
-
-        //o to Btpt2
-        const forceMSedgeBO1_Pt2O1 = drawMinkForceExpandEdge(
-            forceMSptB, minkscale.l, formTpPt[0], formBtPt2[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeBO1_Pt2O1)
-
-        const forceMSedgeCO1_Pt2O1 = drawMinkForceExpandEdge(
-            forceMSptC, minkscale.l, formTpPt[0], formBtPt2[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO1_Pt2O1)
-
-        const forceMSedgeDO1_Pt2O1 = drawMinkForceExpandEdge(
-            forceMSptD, minkscale.l, formTpPt[0], formBtPt2[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeDO1_Pt2O1)
-
-        var forceMSedgeCend_Pt2O1 = drawMinkForceExpandPt(forceMSptC, minkscale.l, formTpPt[0], formBtPt2[1])
-        var forceMSedgeBend_Pt2O1 = drawMinkForceExpandPt(forceMSptB, minkscale.l, formTpPt[0], formBtPt2[1])
-        var forceMSedgeDend_Pt2O1 = drawMinkForceExpandPt(forceMSptD, minkscale.l, formTpPt[0], formBtPt2[1])
-
-        const forceMSedgeCBend_Pt2O1 = createCylinderMesh(forceMSedgeCend_Pt2O1, forceMSedgeBend_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCBend_Pt2O1)
-        const forceMSedgeCDend_Pt2O1 = createCylinderMesh(forceMSedgeCend_Pt2O1, forceMSedgeDend_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCDend_Pt2O1)
-        const forceMSedgeBDend_Pt2O1 = createCylinderMesh(forceMSedgeBend_Pt2O1, forceMSedgeDend_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeBDend_Pt2O1)
-
-        //o to Btpt3
-        const forceMSedgeAO1_Pt3O1 = drawMinkForceExpandEdge(
-            forceMSptA, minkscale.l, formTpPt[0], formBtPt3[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeAO1_Pt3O1)
-
-        const forceMSedgeCO1_Pt3O1 = drawMinkForceExpandEdge(
-            forceMSptC, minkscale.l, formTpPt[0], formBtPt3[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeCO1_Pt3O1)
-
-        const forceMSedgeDO1_Pt3O1 = drawMinkForceExpandEdge(
-            forceMSptD, minkscale.l, formTpPt[0], formBtPt3[1], formMSedgeMaterial, minkedgeSize);
-        force_group_mink.add(forceMSedgeDO1_Pt3O1)
-
-        var forceMSedgeCend_Pt3O1 = drawMinkForceExpandPt(forceMSptC, minkscale.l, formTpPt[0], formBtPt3[1])
-        var forceMSedgeAend_Pt3O1 = drawMinkForceExpandPt(forceMSptA, minkscale.l, formTpPt[0], formBtPt3[1])
-        var forceMSedgeDend_Pt3O1 = drawMinkForceExpandPt(forceMSptD, minkscale.l, formTpPt[0], formBtPt3[1])
-
-        const forceMSedgeCAend_Pt3O1 = createCylinderMesh(forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCAend_Pt3O1)
-        const forceMSedgeCDend_Pt3O1 = createCylinderMesh(forceMSedgeCend_Pt3O1, forceMSedgeDend_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeCDend_Pt3O1)
-        const forceMSedgeADend_Pt3O1 = createCylinderMesh(forceMSedgeAend_Pt3O1, forceMSedgeDend_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        force_group_mink.add(forceMSedgeADend_Pt3O1)
-
-
-        // 1.1 - project to formBtPt1
-        // a. from formMSptBO1 (0.8 is the max number of minkscale.l)
-        var formMSptPt1O1temp = subVecUpdated(formTpPt[0], formBtPt1[1]);
-        var formMSptBO1_Pt1O1 = new THREE.Vector3(
-            formMSptB.x + (0.95 - minkscale.l) * formMSptPt1O1temp.x,
-            formMSptB.y + (0.95 - minkscale.l) * formMSptPt1O1temp.y,
-            formMSptB.z + (0.95 - minkscale.l) * formMSptPt1O1temp.z
-        );
-        const formMSedgeBO1_Pt1O1 = createCylinderMesh(formMSptB, formMSptBO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1_Pt1O1)
-
-        var formMSptAO1_Pt1O1 = new THREE.Vector3(
-            formMSptA.x + (0.95 - minkscale.l) * formMSptPt1O1temp.x,
-            formMSptA.y + (0.95 - minkscale.l) * formMSptPt1O1temp.y,
-            formMSptA.z + (0.95 - minkscale.l) * formMSptPt1O1temp.z
-        );
-        const formMSedgeAO1_Pt1O1 = createCylinderMesh(formMSptA, formMSptAO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1_Pt1O1)
-
-        var formMSptDO1_Pt1O1 = new THREE.Vector3(
-            formMSptD.x + (0.95 - minkscale.l) * formMSptPt1O1temp.x,
-            formMSptD.y + (0.95 - minkscale.l) * formMSptPt1O1temp.y,
-            formMSptD.z + (0.95 - minkscale.l) * formMSptPt1O1temp.z
-        );
-        const formMSedgeDO1_Pt1O1 = createCylinderMesh(formMSptD, formMSptDO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDO1_Pt1O1)
-
-        //minkowski faces
-        //a. edge 1 - 0
-        const formMinkFacePt1Oa = minkFace4pt(formMSptBO1_Pt1O1, formMSptB, formMSptA, formMSptAO1_Pt1O1, formedgeColor1)
-        form_group_mink.add(formMinkFacePt1Oa)
-        const formMinkFacePt1Ob = minkFace4pt(formMSptAO1_Pt1O1, formMSptA, formMSptD, formMSptDO1_Pt1O1, formedgeColor1)
-        form_group_mink.add(formMinkFacePt1Ob)
-        const formMinkFacePt1Oc = minkFace4pt(formMSptDO1_Pt1O1, formMSptD, formMSptB, formMSptBO1_Pt1O1, formedgeColor1)
-        form_group_mink.add(formMinkFacePt1Oc)
-        const formMinkFacePt1Od = minkFace3pt(formMSptDO1_Pt1O1, formMSptBO1_Pt1O1, formMSptAO1_Pt1O1, formedgeColor1)
-        form_group_mink.add(formMinkFacePt1Od)
-
-        const formMSedgeBtPt1 = createCylinderMesh(formMSptAO1_Pt1O1, formMSptDO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt1)
-        const formMSedgeBtPt12 = createCylinderMesh(formMSptAO1_Pt1O1, formMSptBO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt12)
-        const formMSedgeBtPt13 = createCylinderMesh(formMSptBO1_Pt1O1, formMSptDO1_Pt1O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt13)
-
-        // b. from formMSptBO2 (0.8 is the max number of minkscale.l)
-        var formMSptPt2O1temp = subVecUpdated(formTpPt[0], formBtPt2[1]);
-        var formMSptBO1_Pt2O1 = new THREE.Vector3(
-            formMSptB.x + (0.95 - minkscale.l) * formMSptPt2O1temp.x,
-            formMSptB.y + (0.95 - minkscale.l) * formMSptPt2O1temp.y,
-            formMSptB.z + (0.95 - minkscale.l) * formMSptPt2O1temp.z
-        );
-        const formMSedgeBO1_Pt2O1 = createCylinderMesh(formMSptB, formMSptBO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBO1_Pt2O1)
-
-        var formMSptCO1_Pt2O1 = new THREE.Vector3(
-            formMSptC.x + (0.95 - minkscale.l) * formMSptPt2O1temp.x,
-            formMSptC.y + (0.95 - minkscale.l) * formMSptPt2O1temp.y,
-            formMSptC.z + (0.95 - minkscale.l) * formMSptPt2O1temp.z
-        );
-        const formMSedgeCO1_Pt2O1 = createCylinderMesh(formMSptC, formMSptCO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO1_Pt2O1)
-
-        var formMSptDO1_Pt2O1 = new THREE.Vector3(
-            formMSptD.x + (0.95 - minkscale.l) * formMSptPt2O1temp.x,
-            formMSptD.y + (0.95 - minkscale.l) * formMSptPt2O1temp.y,
-            formMSptD.z + (0.95 - minkscale.l) * formMSptPt2O1temp.z
-        );
-        const formMSedgeDO1_Pt2O1 = createCylinderMesh(formMSptD, formMSptDO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDO1_Pt2O1)
-
-        //a. edge 2 - 0
-        const formMinkFacePt2Oa = minkFace4pt(formMSptCO1_Pt2O1, formMSptC, formMSptB, formMSptBO1_Pt2O1, formedgeColor2)
-        form_group_mink.add(formMinkFacePt2Oa)
-        const formMinkFacePt2Ob = minkFace4pt(formMSptBO1_Pt2O1, formMSptB, formMSptD, formMSptDO1_Pt2O1, formedgeColor2)
-        form_group_mink.add(formMinkFacePt2Ob)
-        const formMinkFacePt2Oc = minkFace4pt(formMSptDO1_Pt2O1, formMSptD, formMSptC, formMSptCO1_Pt2O1, formedgeColor2)
-        form_group_mink.add(formMinkFacePt2Oc)
-        const formMinkFacePt2Od = minkFace3pt(formMSptCO1_Pt2O1, formMSptDO1_Pt2O1, formMSptBO1_Pt2O1, formedgeColor2)
-        form_group_mink.add(formMinkFacePt2Od)
-
-        const formMSedgeBtPt2 = createCylinderMesh(formMSptBO1_Pt2O1, formMSptCO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt2)
-        const formMSedgeBtPt22 = createCylinderMesh(formMSptBO1_Pt2O1, formMSptDO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt22)
-        const formMSedgeBtPt23 = createCylinderMesh(formMSptCO1_Pt2O1, formMSptDO1_Pt2O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt23)
-
-        // c. from formMSptBO2 (0.8 is the max number of minkscale.l)
-        var formMSptPt3O1temp = subVecUpdated(formTpPt[0], formBtPt3[1]);
-        var formMSptAO1_Pt3O1 = new THREE.Vector3(
-            formMSptA.x + (0.95 - minkscale.l) * formMSptPt3O1temp.x,
-            formMSptA.y + (0.95 - minkscale.l) * formMSptPt3O1temp.y,
-            formMSptA.z + (0.95 - minkscale.l) * formMSptPt3O1temp.z
-        );
-        const formMSedgeAO1_Pt3O1 = createCylinderMesh(formMSptA, formMSptAO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeAO1_Pt3O1)
-
-        var formMSptCO1_Pt3O1 = new THREE.Vector3(
-            formMSptC.x + (0.95 - minkscale.l) * formMSptPt3O1temp.x,
-            formMSptC.y + (0.95 - minkscale.l) * formMSptPt3O1temp.y,
-            formMSptC.z + (0.95 - minkscale.l) * formMSptPt3O1temp.z
-        );
-        const formMSedgeCO1_Pt3O1 = createCylinderMesh(formMSptC, formMSptCO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeCO1_Pt3O1)
-
-        var formMSptDO1_Pt3O1 = new THREE.Vector3(
-            formMSptD.x + (0.95 - minkscale.l) * formMSptPt3O1temp.x,
-            formMSptD.y + (0.95 - minkscale.l) * formMSptPt3O1temp.y,
-            formMSptD.z + (0.95 - minkscale.l) * formMSptPt3O1temp.z
-        );
-        const formMSedgeDO1_Pt3O1 = createCylinderMesh(formMSptD, formMSptDO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeDO1_Pt3O1)
-
-        const formMSedgeBtPt3 = createCylinderMesh(formMSptAO1_Pt3O1, formMSptCO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt3)
-        const formMSedgeBtPt32 = createCylinderMesh(formMSptAO1_Pt3O1, formMSptDO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt32)
-        const formMSedgeBtPt33 = createCylinderMesh(formMSptCO1_Pt3O1, formMSptDO1_Pt3O1, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-        form_group_mink.add(formMSedgeBtPt33)
-
-        //a. edge 3 - 0
-        const formMinkFacePt3Oa = minkFace4pt(formMSptAO1_Pt3O1, formMSptA, formMSptC, formMSptCO1_Pt3O1, formedgeColor3)
-        form_group_mink.add(formMinkFacePt3Oa)
-        const formMinkFacePt3Ob = minkFace4pt(formMSptDO1_Pt3O1, formMSptD, formMSptC, formMSptCO1_Pt3O1, formedgeColor3)
-        form_group_mink.add(formMinkFacePt3Ob)
-        const formMinkFacePt3Oc = minkFace4pt(formMSptDO1_Pt3O1, formMSptD, formMSptA, formMSptAO1_Pt3O1, formedgeColor3)
-        form_group_mink.add(formMinkFacePt3Oc)
-        const formMinkFacePt3Od = minkFace3pt(formMSptDO1_Pt3O1, formMSptAO1_Pt3O1, formMSptCO1_Pt3O1, formedgeColor3)
-        form_group_mink.add(formMinkFacePt3Od)
-
-        //add green apply face and center cell
-        var formMinkFacePtABC = minkFace3pt(formMSptA, formMSptB, formMSptC, 0x009600)
-        form_group_mink.add(formMinkFacePtABC)
-        var formMinkFacePtABD = minkFace3pt(formMSptA, formMSptB, formMSptD, formedgeColor1)
-        form_group_mink.add(formMinkFacePtABD)
-        var formMinkFacePtBCD = minkFace3pt(formMSptB, formMSptC, formMSptD, formedgeColor2)
-        form_group_mink.add(formMinkFacePtBCD)
-        var formMinkFacePtACD = minkFace3pt(formMSptC, formMSptA, formMSptD, formedgeColor3)
-        form_group_mink.add(formMinkFacePtACD)
-
-        // ******************************************* mink force faces - 1
-        if (result1 < 0) {
-            if (resultapply > 0) {
-                if (areaABD / areaMax >= 0.75) {
-                    formedgeColor1 = 0x80002F
-                }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
-                    formedgeColor1 = 0x940041
-                }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
-                    formedgeColor1 = 0xCC0549
-                }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
-                    formedgeColor1 = 0xD72F62
-                }
-                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
-
-                force_group_mink.add(forceMinkFaceABD)
-                force_group_mink.add(forceMinkFaceExpandABD1)
-                force_group_mink.add(forceMinkFaceExpandABD2)
-                force_group_mink.add(forceMinkFaceExpandABD3)
-                force_group_mink.add(forceMinkFaceExpandABD4)
-
-
-            } else {
-                if (areaACD / areaMax >= 0.75) {
-                    formedgeColor1 = 0x80002F
-                }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
-                    formedgeColor1 = 0x940041
-                }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
-                    formedgeColor1 = 0xCC0549
-                }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
-                    formedgeColor1 = 0xD72F62
-                }
-                // var forceMinkFaceACD = ForceFace3pt(forceMSptC, forceMSptA, forceMSptD, formedgeColor1);
-                // var forceMinkFaceExpandACD1 =  minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptC,forceMSedgeCend_Pt1O1, formedgeColor1)
-                // var forceMinkFaceExpandACD2 =  minkFace4pt(forceMSedgeCend_Pt1O1, forceMSptC, forceMSptD,forceMSedgeDend_Pt1O1, formedgeColor1)
-                // var forceMinkFaceExpandACD3 =  minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB,forceMSedgeBend_Pt1O1, formedgeColor1)
-                // var forceMinkFaceExpandACD4 =  minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
-
-                // force_group_mink.add( forceMinkFaceACD )
-                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
-
-                force_group_mink.add(forceMinkFaceABD)
-                force_group_mink.add(forceMinkFaceExpandABD1)
-                force_group_mink.add(forceMinkFaceExpandABD2)
-                force_group_mink.add(forceMinkFaceExpandABD3)
-                force_group_mink.add(forceMinkFaceExpandABD4)
-            }
-        } else {
-            if (resultapply > 0) {
-                if (areaABD / areaMax >= 0.75) {
-                    formedgeColor1 = 0x0F3150
-                }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
-                    formedgeColor1 = 0x05416D
-                }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
-                    formedgeColor1 = 0x376D9B
-                }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
-                    formedgeColor1 = 0x5B84AE
-                }
-                // var forceMinkFaceABD =  minkFace3pt(forceMSptA, forceMSptB, forceMSptD,formedgeColor1)
-                // force_group_mink.add( forceMinkFaceABD )
-                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
-
-                force_group_mink.add(forceMinkFaceABD)
-                force_group_mink.add(forceMinkFaceExpandABD1)
-                force_group_mink.add(forceMinkFaceExpandABD2)
-                force_group_mink.add(forceMinkFaceExpandABD3)
-                force_group_mink.add(forceMinkFaceExpandABD4)
-
-            } else {
-                if (areaACD / areaMax >= 0.75) {
-                    formedgeColor1 = 0x0F3150
-                }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
-                    formedgeColor1 = 0x05416D
-                }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
-                    formedgeColor1 = 0x376D9B
-                }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
-                    formedgeColor1 = 0x5B84AE
-                }
-                //  var forceMinkFaceACD = ForceFace3pt(forceMSptC, forceMSptA, forceMSptD, formedgeColor1);
-                // force_group_mink.add( forceMinkFaceACD )
-                var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandABD1 = minkFace4pt(forceMSedgeBend_Pt1O1, forceMSptB, forceMSptA, forceMSedgeAend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD2 = minkFace4pt(forceMSedgeAend_Pt1O1, forceMSptA, forceMSptD, forceMSedgeDend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD3 = minkFace4pt(forceMSedgeDend_Pt1O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt1O1, formedgeColor1)
-                var forceMinkFaceExpandABD4 = minkFace3pt(forceMSedgeDend_Pt1O1, forceMSedgeBend_Pt1O1, forceMSedgeAend_Pt1O1, formedgeColor1)
-
-                force_group_mink.add(forceMinkFaceABD)
-                force_group_mink.add(forceMinkFaceExpandABD1)
-                force_group_mink.add(forceMinkFaceExpandABD2)
-                force_group_mink.add(forceMinkFaceExpandABD3)
-                force_group_mink.add(forceMinkFaceExpandABD4)
-            }
-        }
-        var formEdge1Material = new THREE.MeshPhongMaterial({
-            color: formedgeColor1
-        });
-
-        // ******************************************* mink force faces - 2
-        if (result2 < 0) {
-
-            if (areaBCD / areaMax >= 0.75) {
-                formedgeColor2 = 0x80002F
-            }
-            if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
-                formedgeColor2 = 0x940041
-            }
-            if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
-                formedgeColor2 = 0xCC0549
-            }
-            if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
-                formedgeColor2 = 0xD72F62
-            }
-            var forceMinkFaceBCD = minkFace3pt(forceMSptB, forceMSptC, forceMSptD, formedgeColor1)
-            var forceMinkFaceExpandBCD1 = minkFace4pt(forceMSedgeBend_Pt2O1, forceMSptB, forceMSptD, forceMSedgeDend_Pt2O1, formedgeColor2)
-            var forceMinkFaceExpandBCD2 = minkFace4pt(forceMSedgeCend_Pt2O1, forceMSptC, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
-            var forceMinkFaceExpandBCD3 = minkFace4pt(forceMSedgeDend_Pt2O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
-            var forceMinkFaceExpandBCD4 = minkFace3pt(forceMSedgeDend_Pt2O1, forceMSedgeCend_Pt2O1, forceMSedgeBend_Pt2O1, formedgeColor2)
-
-            force_group_mink.add(forceMinkFaceBCD)
-            force_group_mink.add(forceMinkFaceExpandBCD1)
-            force_group_mink.add(forceMinkFaceExpandBCD2)
-            force_group_mink.add(forceMinkFaceExpandBCD3)
-            force_group_mink.add(forceMinkFaceExpandBCD4)
-        } else {
-
-            if (areaBCD / areaMax >= 0.75) {
-                formedgeColor2 = 0x0F3150
-            }
-            if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
-                formedgeColor2 = 0x05416D
-            }
-            if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
-                formedgeColor2 = 0x376D9B
-            }
-            if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
-                formedgeColor2 = 0x5B84AE
-            }
-            var forceMinkFaceBCD = minkFace3pt(forceMSptB, forceMSptC, forceMSptD, formedgeColor1)
-            var forceMinkFaceExpandBCD1 = minkFace4pt(forceMSedgeBend_Pt2O1, forceMSptB, forceMSptD, forceMSedgeDend_Pt2O1, formedgeColor2)
-            var forceMinkFaceExpandBCD2 = minkFace4pt(forceMSedgeCend_Pt2O1, forceMSptC, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
-            var forceMinkFaceExpandBCD3 = minkFace4pt(forceMSedgeDend_Pt2O1, forceMSptD, forceMSptB, forceMSedgeBend_Pt2O1, formedgeColor2)
-            var forceMinkFaceExpandBCD4 = minkFace3pt(forceMSedgeDend_Pt2O1, forceMSedgeCend_Pt2O1, forceMSedgeBend_Pt2O1, formedgeColor2)
-
-            force_group_mink.add(forceMinkFaceBCD)
-            force_group_mink.add(forceMinkFaceExpandBCD1)
-            force_group_mink.add(forceMinkFaceExpandBCD2)
-            force_group_mink.add(forceMinkFaceExpandBCD3)
-            force_group_mink.add(forceMinkFaceExpandBCD4)
-        }
-        var formEdge2Material = new THREE.MeshPhongMaterial({
-            color: formedgeColor2
-        });
-
-// ******************************************* mink force faces - 3
-
-        if (result3 < 0) {
-            if (resultapply > 0) {
-                if (areaACD / areaMax >= 0.75) {
-                    formedgeColor3 = 0x80002F
-                }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
-                    formedgeColor3 = 0x940041
-                }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
-                    formedgeColor3 = 0xCC0549
-                }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
-                    formedgeColor3 = 0xD72F62
-                }
-                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
-
-                force_group_mink.add(forceMinkFaceACD)
-                force_group_mink.add(forceMinkFaceExpandACD1)
-                force_group_mink.add(forceMinkFaceExpandACD2)
-                force_group_mink.add(forceMinkFaceExpandACD3)
-                force_group_mink.add(forceMinkFaceExpandACD4)
-            } else {
-                if (areaABD / areaMax >= 0.75) {
-                    formedgeColor3 = 0x80002F
-                }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
-                    formedgeColor3 = 0x940041
-                }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
-                    formedgeColor3 = 0xCC0549
-                }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
-                    formedgeColor3 = 0xD72F62
-                }
-                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
-
-                force_group_mink.add(forceMinkFaceACD)
-                force_group_mink.add(forceMinkFaceExpandACD1)
-                force_group_mink.add(forceMinkFaceExpandACD2)
-                force_group_mink.add(forceMinkFaceExpandACD3)
-                force_group_mink.add(forceMinkFaceExpandACD4)
-            }
-
-        } else {
-            if (resultapply > 0) {
-                if (areaACD / areaMax >= 0.75) {
-                    formedgeColor3 = 0x0F3150
-                }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
-                    formedgeColor3 = 0x05416D
-                }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
-                    formedgeColor3 = 0x376D9B
-                }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
-                    formedgeColor3 = 0x5B84AE
-                }
-                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
-
-                force_group_mink.add(forceMinkFaceACD)
-                force_group_mink.add(forceMinkFaceExpandACD1)
-                force_group_mink.add(forceMinkFaceExpandACD2)
-                force_group_mink.add(forceMinkFaceExpandACD3)
-                force_group_mink.add(forceMinkFaceExpandACD4)
-
-            } else {
-                if (areaABD / areaMax >= 0.75) {
-                    formedgeColor3 = 0x0F3150
-                }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
-                    formedgeColor3 = 0x05416D
-                }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
-                    formedgeColor3 = 0x376D9B
-                }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
-                    formedgeColor3 = 0x5B84AE
-                }
-                var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
-                var forceMinkFaceExpandACD1 = minkFace4pt(forceMSedgeCend_Pt3O1, forceMSptC, forceMSptD, forceMSedgeDend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD2 = minkFace4pt(forceMSedgeAend_Pt3O1, forceMSptA, forceMSptC, forceMSedgeCend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD3 = minkFace4pt(forceMSedgeDend_Pt3O1, forceMSptD, forceMSptA, forceMSedgeAend_Pt3O1, formedgeColor3)
-                var forceMinkFaceExpandACD4 = minkFace3pt(forceMSedgeDend_Pt3O1, forceMSedgeCend_Pt3O1, forceMSedgeAend_Pt3O1, formedgeColor3)
-
-                force_group_mink.add(forceMinkFaceACD)
-                force_group_mink.add(forceMinkFaceExpandACD1)
-                force_group_mink.add(forceMinkFaceExpandACD2)
-                force_group_mink.add(forceMinkFaceExpandACD3)
-                force_group_mink.add(forceMinkFaceExpandACD4)
-            }
-
-        }
-        var forceMinkFaceABC = minkFace3pt(forceMSptA, forceMSptB, forceMSptC, 0x009600)
-        force_group_mink.add(forceMinkFaceABC)
 
 
 // ****************************************************** Steps Generation ********************************************************
@@ -3268,30 +3541,6 @@
             }
         });
 
-        form_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
-        force_group_mink.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
         // hide the steps - start from step general
 
         force_group_step.traverse(function (obj) {
@@ -3446,7 +3695,6 @@
         scene.add(form_general_global);
         scene.add(form_group_e_trial);
         scene.add(form_general_trial);
-        scene.add(form_group_mink);
 
         scene.add(form_group_step);
         scene.add(form_group_step_3);
@@ -3455,17 +3703,11 @@
         scene.add(form_group_step_6);
         scene.add(form_group_step_7);
 
-        scene2.add(force_group_v);
         scene2.add(force_group_f);
         scene2.add(force_group_e);
         scene2.add(force_group_c);
         scene2.add(force_general);
         scene2.add(force_general_global);
-
-        scene2.add(force_group_e_trial);
-        scene2.add(force_group_f_trial);
-        scene2.add(force_general_trial);
-        scene2.add(force_group_mink);
 
         scene2.add(force_group_step);
         scene2.add(force_group_step_3);
@@ -4811,7 +5053,7 @@
         //var line2 = new THREE.Line( geometrySpacedPoints, material);
         var arcMaterial = new THREE.LineDashedMaterial({
             color: 0x00ff00,
-            dashSize: 0.1,
+            dashSize: 0.0, // temp fix
             gapSize: 0.05
         });
         var CircleMesh = new THREE.Line(geometrySpacedPoints, arcMaterial);
