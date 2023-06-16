@@ -276,14 +276,12 @@
         'show': false, //at first, box is unchecked so value is "false"
     };
     const minkVisibilityCheckbox = tab.pages[1].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
-        if (ev.value) {
-            paneLeft.importPreset(minkPreset);
-        } else {
-            paneLeft.importPreset(disableLeftPane);
-            Redraw();
-        }
         tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
         tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
+        rightPane.disabled = !rightPane.disabled;
+        if (ev.value) {
+            paneLeft.importPreset(minkPreset);
+        }
         redrawMink();
     });
 
@@ -295,7 +293,6 @@
         max: 0.95,
         step: 0.001
     }).on('change', (ev) => { //on change, dispose old geometry and create new
-        Redraw();
         minkscale.l = ev.value;
         redrawMink();
     });
@@ -3615,6 +3612,10 @@
 
         redrawStep();
 
+        if (minkVisibilityCheckboxParams.show) {
+            redrawMink();
+        }
+
         scene.add(form_group_v);
         scene.add(form_group_e);
         scene.add(form_general);
@@ -5026,7 +5027,7 @@
         //var line2 = new THREE.Line( geometrySpacedPoints, material);
         var arcMaterial = new THREE.LineDashedMaterial({
             color: 0x00ff00,
-            dashSize: 0.1,
+            dashSize: 0.0, // temp fix
             gapSize: 0.05
         });
         var CircleMesh = new THREE.Line(geometrySpacedPoints, arcMaterial);
