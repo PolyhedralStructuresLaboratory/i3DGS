@@ -2213,6 +2213,9 @@
             if (obj.type === "Sprite") {
                 obj.material.visible = !minkVisibilityCheckboxParams.show;
             }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = !minkVisibilityCheckboxParams.show;
+            }
             if (obj.type === "Line") {
                 obj.material.visible = !minkVisibilityCheckboxParams.show;
             }
@@ -2535,7 +2538,8 @@
         line_ox1.push(ForceX1);
         var line_ox1_geo = new THREE.BufferGeometry().setFromPoints(line_ox1);
         var applyline_1 = new THREE.LineDashedMaterial({
-            dashSize: 0.0, //temp fix
+            color: "black",//color
+            dashSize: 0.2,
             gapSize: 0.03,
             linewidth: 1
         });
@@ -2595,7 +2599,7 @@
         var line_o1x1_geo = new THREE.BufferGeometry().setFromPoints(line_o1x1_temp);
         var line_o1x1 = new THREE.LineSegments(line_o1x1_geo, applyline_1);
         line_o1x1.computeLineDistances();//compute
-        force_general.add(line_o1x1);
+        force_general.add(line_o1x1); //shinee
 
         //add o1 arrow
         var ForceO1_closeP1 = addVectorAlongDir(ForceO1, ForceX1, -0.6);
