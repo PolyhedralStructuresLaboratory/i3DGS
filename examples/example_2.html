@@ -237,14 +237,6 @@
     // faces - checkbox
     const faceVisibilityCheckbox = tab.pages[0].addInput(faceVisibilityCheckboxParams, 'face').on('change', (ev) => { //on change, dispose old plane geometry and create new
         redrawFace();
-        form_group_f.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = ev.value;
-            }
-        });
     });
 
     /************************* Left Panel second tab *************************/
@@ -294,7 +286,9 @@
     const minkVisibilityCheckbox = tab.pages[2].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
         tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
         tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
-        rightPane.disabled = !rightPane.disabled;
+        rightPane.children[0].disabled = !rightPane.children[0].disabled;
+        rightPane.children[1].disabled = !rightPane.children[1].disabled;
+        rightPane.children[2].disabled = !rightPane.children[2].disabled;
         if(ev.value) {
             paneLeft.importPreset(disableFaceTrial);
         }
@@ -357,7 +351,9 @@
 
     //make the checkbox
     const forceCheckbox = rightPane.addInput(forceCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
-        paneLeft.disabled = !paneLeft.disabled;
+        tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
+        tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
+        tab.pages[2].children[0].disabled = !tab.pages[2].children[0].disabled;
         if(ev.value) {
             paneLeft.importPreset(disableLeftPane);
         }
