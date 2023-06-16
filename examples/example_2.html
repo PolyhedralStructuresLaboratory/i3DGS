@@ -3493,6 +3493,9 @@
                 if (obj.type === "Sprite") {
                     obj.material.visible = !forceCheckboxParams["force cell"];
                 }
+                if (obj.type === "LineSegments") {
+                    obj.material.visible = !forceCheckboxParams["force cell"];
+                }
                 if (obj.type === "Line") {
                     obj.material.visible = !forceCheckboxParams["force cell"];
                 }
