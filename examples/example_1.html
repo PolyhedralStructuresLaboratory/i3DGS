@@ -267,14 +267,7 @@
 
     // faces - checkbox
     const cellVisibilityCheckbox = tab.pages[0].addInput(cellVisibilityCheckboxParams, 'cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
-        form_group_c.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = ev.value;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = ev.value;
-            }
-        });
+        redrawCell();
     });
 
     /************************* Left Panel second tab *************************/
@@ -772,6 +765,50 @@
         });
     }
 
+    function redrawCell() {
+        scene.remove(form_group_c);
+        form_group_c = new THREE.Group();
+
+        // *********************** form cells **************************
+        const formCell1 = addCell3Face(formTpPt[0], formTpPt[1], formBtPt1[1], formBtPt2[1], 0.8)
+        form_group_c.add(formCell1);
+
+        const formCell2 = addCell3Face(formTpPt[0], formTpPt[1], formBtPt2[1], formBtPt3[1], 0.8)
+        form_group_c.add(formCell2);
+
+        const formCell3 = addCell3Face(formTpPt[0], formTpPt[1], formBtPt1[1], formBtPt3[1], 0.8)
+        form_group_c.add(formCell3);
+
+        const formCell4 = addCell3Face(formTpPt[0], formBtPt1[1], formBtPt2[1], formBtPt3[1], 0.8)
+        form_group_c.add(formCell4);
+
+        var formCell_textA = createSpriteText('A', "", face_center(formTpPt[1], formBtPt1[1], formBtPt3[1]))
+        form_group_c.add(formCell_textA);
+
+        var formCell_textB = createSpriteText('B', "", face_center(formTpPt[1], formBtPt1[1], formBtPt2[1]))
+        form_group_c.add(formCell_textB);
+
+        var formCell_textC = createSpriteText('C', "", face_center(formTpPt[1], formBtPt2[1], formBtPt3[1]))
+        form_group_c.add(formCell_textC);
+
+        var formCell_textD = createSpriteText('D', "", face_center(formBtPt1[1], formBtPt2[1], formBtPt3[1]))
+        form_group_c.add(formCell_textD);
+
+        form_group_c.traverse(function (obj) {
+            if (obj.type === "Mesh") {
+                obj.material.visible = cellVisibilityCheckboxParams.cell;
+            }
+            if (obj.type === "LineSegments") {
+                obj.material.visible = cellVisibilityCheckboxParams.cell;
+            }
+            if (obj.type === "Sprite") {
+                obj.material.visible = cellVisibilityCheckboxParams.cell;
+            }
+        });
+
+        scene.add(form_group_c);
+    }
+
 
     // *********************** redraw the form and force diagram when parametrer is changing ****************
     function Redraw() {
@@ -783,7 +820,6 @@
         //form groups
         scene.remove(form_group_v);
         scene.remove(form_group_e);
-        scene.remove(form_group_c);
         scene.remove(form_general);
         scene.remove(form_group_e_trial);
         scene.remove(form_general_trial);
@@ -798,7 +834,6 @@
 
         form_group_v = new THREE.Group();
         form_group_e = new THREE.Group();
-        form_group_c = new THREE.Group();
         form_general = new THREE.Group();
         form_general_trial = new THREE.Group();
         form_group_mink = new THREE.Group();
@@ -892,32 +927,6 @@
         //add text
         var TXapplyForce = createSpriteTextApply('f', "1", new THREE.Vector3(formTpPt[1].x, formTpPt[1].y, formTpPt[1].z + 0.35));
         form_general.add(TXapplyForce);
-
-
-        // *********************** form cells **************************
-        const formCell1 = addCell3Face(formTpPt[0], formTpPt[1], formBtPt1[1], formBtPt2[1], 0.8)
-        form_group_c.add(formCell1);
-
-        const formCell2 = addCell3Face(formTpPt[0], formTpPt[1], formBtPt2[1], formBtPt3[1], 0.8)
-        form_group_c.add(formCell2);
-
-        const formCell3 = addCell3Face(formTpPt[0], formTpPt[1], formBtPt1[1], formBtPt3[1], 0.8)
-        form_group_c.add(formCell3);
-
-        const formCell4 = addCell3Face(formTpPt[0], formBtPt1[1], formBtPt2[1], formBtPt3[1], 0.8)
-        form_group_c.add(formCell4);
-
-        var formCell_textA = createSpriteText('A', "", face_center(formTpPt[1], formBtPt1[1], formBtPt3[1]))
-        form_group_c.add(formCell_textA);
-
-        var formCell_textB = createSpriteText('B', "", face_center(formTpPt[1], formBtPt1[1], formBtPt2[1]))
-        form_group_c.add(formCell_textB);
-
-        var formCell_textC = createSpriteText('C', "", face_center(formTpPt[1], formBtPt2[1], formBtPt3[1]))
-        form_group_c.add(formCell_textC);
-
-        var formCell_textD = createSpriteText('D', "", face_center(formBtPt1[1], formBtPt2[1], formBtPt3[1]))
-        form_group_c.add(formCell_textD);
 
 
         var normal_apply = new THREE.MeshPhongMaterial({color: 0x009600});
@@ -3259,18 +3268,6 @@
             }
         });
 
-        form_group_c.traverse(function (obj) {
-            if (obj.type === "Mesh") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "LineSegments") {
-                obj.material.visible = false;
-            }
-            if (obj.type === "Sprite") {
-                obj.material.visible = false;
-            }
-        });
-
         form_group_mink.traverse(function (obj) {
             if (obj.type === "Mesh") {
                 obj.material.visible = false;
@@ -3444,7 +3441,6 @@
 
         scene.add(form_group_v);
         scene.add(form_group_e);
-        scene.add(form_group_c);
         scene.add(form_general);
 
         scene.add(form_general_global);
