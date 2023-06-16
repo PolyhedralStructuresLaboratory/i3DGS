@@ -2535,8 +2535,7 @@
         line_ox1.push(ForceX1);
         var line_ox1_geo = new THREE.BufferGeometry().setFromPoints(line_ox1);
         var applyline_1 = new THREE.LineDashedMaterial({
-            color: "black",//color
-            dashSize: 0.2,
+            dashSize: 0.0, //temp fix
             gapSize: 0.03,
             linewidth: 1
         });
