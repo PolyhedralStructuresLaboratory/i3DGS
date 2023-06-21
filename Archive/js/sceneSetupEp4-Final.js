@@ -1,7 +1,7 @@
-import '/style.css'; //setup basic visual factors for the overall web
+import '/Users/chenwx/college coding/i3dgs/style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from 'three';
-import * as Geo from '/js/functions.js';
+import * as Geo from '/Archive/js/functions.js';
 import { createMultiMaterialObject } from 'three/examples/jsm/utils/SceneUtils';
 
 
@@ -117,16 +117,53 @@ const offsetscaleFolder = tab.pages[0].addFolder({
 offsetscaleFolder.hidden = true; //hide the plane folder b/c box is unchecked at first
 
 const offsetSliderParams = {
-    length: 0.4, //starts as double the size of the box's params
+    GDoF1: 0.4, //starts as double the size of the box's params
 };
 //make the plane size slider
-offsetscaleFolder.addInput(offsetSliderParams, 'length', {
+offsetscaleFolder.addInput(offsetSliderParams, 'GDoF1', {
     min: 0.2, //min = double the size of the box's params
     max: 0.8, //max = quadruple the size of the box's params
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
     offsetscale.l = ev.value;
    Redraw();
 });
+
+const offsetSlider2Params = {
+  GDoF2: 0.4, //starts as double the size of the box's params
+};
+//make the plane size slider
+offsetscaleFolder.addInput(offsetSlider2Params, 'GDoF2', {
+  min: 0.2, //min = double the size of the box's params
+  max: 1.2, //max = quadruple the size of the box's params
+}).on('change', (ev) => { //on change, dispose old plane geometry and create new
+  offsetscale2.l = ev.value;
+ Redraw();
+});
+
+const offsetSliderForce1Params = {
+  scale1: 0.4, //starts as double the size of the box's params
+};
+//make the plane size slider
+offsetscaleFolder.addInput(offsetSliderForce1Params, 'scale1', {
+  min: 0.2, //min = double the size of the box's params
+  max: 1.2, //max = quadruple the size of the box's params
+}).on('change', (ev) => { //on change, dispose old plane geometry and create new
+  offsetscaleForce1.l = ev.value;
+ Redraw();
+});
+
+const offsetSliderForce2Params = {
+  scale2: 0.2, //starts as double the size of the box's params
+};
+//make the plane size slider
+offsetscaleFolder.addInput(offsetSliderForce2Params, 'scale2', {
+  min: 0.05, //min = double the size of the box's params
+  max: 0.4, //max = quadruple the size of the box's params
+}).on('change', (ev) => { //on change, dispose old plane geometry and create new
+  offsetscaleForce2.l = ev.value;
+ Redraw();
+});
+
 
 
 subdCheckbox.on('change', (ev) => { //on change, change the hidden and visibility values set
@@ -420,7 +457,16 @@ var triP1 = new function () {
 var offsetscale = new function () {
   this.l = 0.4;
 }
+var offsetscale2 = new function () {
+  this.l = 0.4;
+}
+var offsetscaleForce1 = new function () {
+  this.l = 0.4;
+}
 
+var offsetscaleForce2 = new function () {
+  this.l = 0.2;
+}
 // *********************** force diagram inital data ***********************
 
 var force_group_v
@@ -1404,7 +1450,30 @@ function Redraw(){
       var apply_Rarrow32 = createCylinderArrowMesh(endPtArrowVertice3,endPtArrowVertice32,arrow_apply_outlineGlob,0.025,0.06,0.56);
       form_general_global.add(apply_Rarrow32);
     }
-  } else {
+  } 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  else {
+
+    // find the 
     // apply loads locations o1, o2, o3
     
     var formPtO1a = create_offset_point(formBtPt1, formBtPt2,formBtPt3,offsetscale.l);
@@ -1600,12 +1669,14 @@ function Redraw(){
     var edgescale = 2; // size of the force diagram
 
     //PtA
+
     var forcePtA = new THREE.Vector3(0.5,-0.5,0);
     var TXforcePtA=createSpriteText('A', "", new THREE.Vector3(forcePtA.x, forcePtA.y, forcePtA.z+0.05));
     force_general.add(TXforcePtA);
 
 
     //PtB
+
     var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale );
     var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
     var TXforcePtB=createSpriteText('B', "", new THREE.Vector3(forcePtB.x, forcePtB.y, forcePtB.z+0.05));
@@ -1629,6 +1700,7 @@ function Redraw(){
     var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
     var TXforcePtC=createSpriteText('C', "", new THREE.Vector3(forcePtC.x, forcePtC.y, forcePtC.z+0.05));
     force_general.add(TXforcePtC);
+    
     //PtD
 
     var forcePtD1temp = CalNormalVectorUpdated(formPtO1, formPtO3, formPtO3b, edgescale);
@@ -1647,18 +1719,53 @@ function Redraw(){
     var forcePtD = LinesSectPt(dirBD, forcePtB, dirAD, forcePtA);
     var TXforcePtD=createSpriteText('D', "", new THREE.Vector3(forcePtD.x, forcePtD.y, forcePtD.z+0.05));
     force_general.add(TXforcePtD);
+
+    //PtABmid
+
+    var forcePtABmid = new THREE.Vector3((forcePtA.x + forcePtB.x)/2, (forcePtA.y + forcePtB.y)/2, (forcePtA.z + forcePtB.z)/2)
+    var forcePtAB = new THREE.Vector3(
+      forcePtABmid.x + offsetscaleForce1.l*subVecUpdated(forcePtABmid,forcePtD).x, 
+      forcePtABmid.y + offsetscaleForce1.l*subVecUpdated(forcePtABmid,forcePtD).y, 
+      forcePtABmid.z + offsetscaleForce1.l*subVecUpdated(forcePtABmid,forcePtD).z
+    )
+  
+    //PtBCmid
+
+    var forcePtBCmid = new THREE.Vector3((forcePtC.x + forcePtB.x)/2, (forcePtC.y + forcePtB.y)/2, (forcePtC.z + forcePtB.z)/2)
+    var forcePtBC = new THREE.Vector3(
+      forcePtBCmid.x + offsetscaleForce1.l*subVecUpdated(forcePtBCmid,forcePtD).x, 
+      forcePtBCmid.y + offsetscaleForce1.l*subVecUpdated(forcePtBCmid,forcePtD).y, 
+      forcePtBCmid.z + offsetscaleForce1.l*subVecUpdated(forcePtBCmid,forcePtD).z
+    )
+
+    //PtACmid
+
+    var forcePtACmid = new THREE.Vector3((forcePtC.x + forcePtA.x)/2, (forcePtC.y + forcePtA.y)/2, (forcePtC.z + forcePtA.z)/2)
+    var forcePtAC = new THREE.Vector3(
+      forcePtACmid.x + offsetscaleForce1.l*subVecUpdated(forcePtACmid,forcePtD).x, 
+      forcePtACmid.y + offsetscaleForce1.l*subVecUpdated(forcePtACmid,forcePtD).y, 
+      forcePtACmid.z + offsetscaleForce1.l*subVecUpdated(forcePtACmid,forcePtD).z
+    )
+
+    //PtA1
+    
+    var forcePtAmid = create_offset_point(forcePtA, forcePtB, forcePtC,  offsetscaleForce2.l)
+    var forcePtBmid = create_offset_point(forcePtB, forcePtA, forcePtC,  offsetscaleForce2.l)
+    var forcePtCmid = create_offset_point(forcePtC, forcePtB, forcePtA,  offsetscaleForce2.l)
+
+
     // face ABC
     var forceFaceABC = ForceFace3pt(forcePtA,forcePtB,forcePtC,0x014F06)
     force_group_f.add(forceFaceABC)
     var forceFaceABC2 = ForceFace3pt(forcePtA,forcePtB,forcePtC,0x014F06)
     force_general_global.add(forceFaceABC2)
 
-    var ACDarrow = createCircleFaceArrow(face_center(forcePtA,forcePtC,forcePtD), 0.15, cross(subVecUpdated(forcePtC, forcePtA),subVecUpdated(forcePtA, forcePtD)))
-    force_general.add(ACDarrow);
-    var BCDarrow = createCircleFaceArrow(face_center(forcePtB,forcePtC,forcePtD), 0.15, cross(subVecUpdated(forcePtB, forcePtC),subVecUpdated(forcePtC, forcePtD)))
-    force_general.add(BCDarrow);
-    var ABDarrow = createCircleFaceArrow(face_center(forcePtA,forcePtB,forcePtD), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtB, forcePtD)))
-    force_general.add(ABDarrow);
+    // var ACDarrow = createCircleFaceArrow(face_center(forcePtA,forcePtC,forcePtD), 0.15, cross(subVecUpdated(forcePtC, forcePtA),subVecUpdated(forcePtA, forcePtD)))
+    // force_general.add(ACDarrow);
+    // var BCDarrow = createCircleFaceArrow(face_center(forcePtB,forcePtC,forcePtD), 0.15, cross(subVecUpdated(forcePtB, forcePtC),subVecUpdated(forcePtC, forcePtD)))
+    // force_general.add(BCDarrow);
+    // var ABDarrow = createCircleFaceArrow(face_center(forcePtA,forcePtB,forcePtD), 0.15, cross(subVecUpdated(forcePtA, forcePtB),subVecUpdated(forcePtB, forcePtD)))
+    // force_general.add(ABDarrow);
 
 
     //force edges
@@ -1678,15 +1785,68 @@ function Redraw(){
     const forceEdgeBC = createCylinderMesh(forcePtB,forcePtC,forceEdgeMaterial,edgeSize,edgeSize);
     force_group_e.add(forceEdgeBC)
 
-    const forceEdgeBD = createCylinderMesh(forcePtB,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
-    force_group_e.add(forceEdgeBD)
+    // const forceEdgeBD = createCylinderMesh(forcePtB,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+    // force_group_e.add(forceEdgeBD)
 
-    const forceEdgeAD = createCylinderMesh(forcePtA,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
-    force_group_e.add(forceEdgeAD)
+    // const forceEdgeAD = createCylinderMesh(forcePtA,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+    // force_group_e.add(forceEdgeAD)
 
-    const forceEdgeCD = createCylinderMesh(forcePtC,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
-    force_group_e.add(forceEdgeCD)
+    // const forceEdgeCD = createCylinderMesh(forcePtC,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+    // force_group_e.add(forceEdgeCD)
 
+    const forceEdgeAAB = createCylinderMesh(forcePtA,forcePtAB,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAAB)
+
+    const forceEdgeBAB = createCylinderMesh(forcePtB,forcePtAB,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBAB)
+
+    const forceEdgeBBC = createCylinderMesh(forcePtB,forcePtBC,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBBC)
+
+    const forceEdgeCBC = createCylinderMesh(forcePtC,forcePtBC,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCBC)
+
+    const forceEdgeAAC = createCylinderMesh(forcePtA,forcePtAC,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAAC)
+
+    const forceEdgeCAC = createCylinderMesh(forcePtC,forcePtAC,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCAC)
+
+    const forceEdgeAAmid = createCylinderMesh(forcePtA,forcePtAmid, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAAmid)
+
+    const forceEdgeBBmid = createCylinderMesh(forcePtB,forcePtBmid, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBBmid)
+
+    const forceEdgeCCmid = createCylinderMesh(forcePtC,forcePtCmid, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCCmid)
+
+    const forceEdgeAmidBmid = createCylinderMesh(forcePtAmid,forcePtBmid, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAmidBmid)
+
+    const forceEdgeBmidCmid = createCylinderMesh(forcePtBmid,forcePtCmid, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBmidCmid)
+
+    const forceEdgeAmidCmid = createCylinderMesh(forcePtAmid,forcePtCmid, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAmidCmid)
+
+    const forceEdgeAmidAB = createCylinderMesh(forcePtAmid,forcePtAB, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAmidAB)
+
+    const forceEdgeBmidAB = createCylinderMesh(forcePtBmid,forcePtAB, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBmidAB)
+
+    const forceEdgeAmidAC = createCylinderMesh(forcePtAmid,forcePtAC, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAmidAC)
+
+    const forceEdgeCmidAC = createCylinderMesh(forcePtCmid,forcePtAC, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCmidAC)
+
+    const forceEdgeBmidBC = createCylinderMesh(forcePtBmid,forcePtBC, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBmidBC)
+
+    const forceEdgeCmidBC = createCylinderMesh(forcePtCmid,forcePtBC, forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCmidBC)
     // *********************** force trial point O **************************
 
     var TrialP_O = new THREE.Vector3(fo.x,fo.y,fo.z);
@@ -1920,6 +2080,213 @@ function Redraw(){
     var formPtO2new = create_trial_intec (formBtPt2,forcePtB,ForceO1,forcePtC,formPtO2,formPtO2b);
     var formPtO3new = create_trial_intec (formBtPt3,forcePtC,ForceO1,forcePtA,formPtO3,formPtO3b);
 
+    //formPt O1 - step1
+    var formPtAAB =  new THREE.Vector3(
+      formPtO1new.x - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtAB, forcePtA, 1)).x, 
+      formPtO1new.y - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtAB, forcePtA, 1)).y, 
+      formPtO1new.z - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtAB, forcePtA, 1)).z
+    )
+    addVerticeWOut(0.04, formPtAAB, form_group_v)
+
+    var formPtBAB =  new THREE.Vector3(
+      formPtO1new.x - offsetscale2.l*(CalNormalVectorUpdated(forcePtB, forcePtAB, ForceO1, 1)).x, 
+      formPtO1new.y - offsetscale2.l*(CalNormalVectorUpdated(forcePtB, forcePtAB, ForceO1, 1)).y, 
+      formPtO1new.z - offsetscale2.l*(CalNormalVectorUpdated(forcePtB, forcePtAB, ForceO1, 1)).z
+    )
+    addVerticeWOut(0.04, formPtBAB, form_group_v)
+
+    //formPt O2 - step1
+    var formPtBBC =  new THREE.Vector3(
+      formPtO2new.x - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtBC, forcePtB, 1)).x, 
+      formPtO2new.y - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtBC, forcePtB, 1)).y, 
+      formPtO2new.z - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtBC, forcePtB, 1)).z
+    )
+    addVerticeWOut(0.04, formPtBBC, form_group_v)
+
+    var formPtCBC =  new THREE.Vector3(
+      formPtO2new.x - offsetscale2.l*(CalNormalVectorUpdated(forcePtC, forcePtBC, ForceO1, 1)).x, 
+      formPtO2new.y - offsetscale2.l*(CalNormalVectorUpdated(forcePtC, forcePtBC, ForceO1, 1)).y, 
+      formPtO2new.z - offsetscale2.l*(CalNormalVectorUpdated(forcePtC, forcePtBC, ForceO1, 1)).z
+    )
+    addVerticeWOut(0.04, formPtCBC, form_group_v)
+
+    //formPt O3 - step1
+    var formPtCAC =  new THREE.Vector3(
+      formPtO3new.x - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtAC, forcePtC, 1)).x, 
+      formPtO3new.y - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtAC, forcePtC, 1)).y, 
+      formPtO3new.z - offsetscale2.l*(CalNormalVectorUpdated(ForceO1, forcePtAC, forcePtC, 1)).z
+    )
+    addVerticeWOut(0.04, formPtCAC, form_group_v)
+
+    var formPtAAC =  new THREE.Vector3(
+      formPtO3new.x - offsetscale2.l*(CalNormalVectorUpdated(forcePtA, forcePtAC, ForceO1, 1)).x, 
+      formPtO3new.y - offsetscale2.l*(CalNormalVectorUpdated(forcePtA, forcePtAC, ForceO1, 1)).y, 
+      formPtO3new.z - offsetscale2.l*(CalNormalVectorUpdated(forcePtA, forcePtAC, ForceO1, 1)).z
+    )
+    addVerticeWOut(0.04, formPtAAC, form_group_v)
+
+    //intersec pt - AAB & BAB
+
+    var formPtAmidAB = findINSecPt(forcePtAB, forcePtAmid, ForceO1, ForceO1, forcePtAB, forcePtBmid, edgescale, formPtAAB, formPtBAB)
+    addVerticeWOut(0.04, formPtAmidAB, form_group_v)
+
+    //intersec pt - AAC & CAC
+
+    var formPtCmidAC = findINSecPt(forcePtAC, forcePtCmid, ForceO1, ForceO1, forcePtAmid, forcePtAC, edgescale, formPtCAC, formPtAAC)
+    addVerticeWOut(0.04, formPtCmidAC, form_group_v)
+
+    //intersec pt - BBC & CBC
+
+    var formPtCmidBC = findINSecPt(forcePtBC, forcePtBmid, ForceO1, ForceO1, forcePtCmid, forcePtBC, edgescale, formPtBBC, formPtCBC)
+    addVerticeWOut(0.04, formPtCmidBC, form_group_v)
+
+    var formTestEdge_1 = createCylinderMesh(formBtPt1,formPtO1new,forceEdgeMaterial,0.05,0.05)
+    form_group_e.add(formTestEdge_1)
+    var formTestEdge_2 = createCylinderMesh(formBtPt2,formPtO2new,forceEdgeMaterial,0.05,0.05)
+    form_group_e.add(formTestEdge_2)
+    var formTestEdge_3 = createCylinderMesh(formBtPt3,formPtO3new,forceEdgeMaterial,0.05,0.05)
+    form_group_e.add(formTestEdge_3)
+
+    var formTestEdge_4 = createCylinderMesh(formPtAAB,formPtO1new,forceEdgeMaterial,0.02,0.02)
+    form_group_e.add(formTestEdge_4)
+    var formTestEdge_5 = createCylinderMesh(formPtBAB,formPtO1new,forceEdgeMaterial,0.02,0.02)
+    form_group_e.add(formTestEdge_5)
+    var formTestEdge_6 = createCylinderMesh(formPtBBC,formPtO2new,forceEdgeMaterial,0.02,0.02)
+    form_group_e.add(formTestEdge_6)
+    var formTestEdge_7 = createCylinderMesh(formPtCBC,formPtO2new,forceEdgeMaterial,0.02,0.02)
+    form_group_e.add(formTestEdge_7)
+    var formTestEdge_8 = createCylinderMesh(formPtAAC,formPtO3new,forceEdgeMaterial,0.02,0.02)
+    form_group_e.add(formTestEdge_8)
+    var formTestEdge_9 = createCylinderMesh(formPtCAC,formPtO3new,forceEdgeMaterial,0.02,0.02)
+    form_group_e.add(formTestEdge_9)
+
+    var formTestEdge_10 = createCylinderMesh(formPtAAB,formPtAmidAB,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_10)
+    var formTestEdge_11 = createCylinderMesh(formPtBAB,formPtAmidAB,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_11)
+    var formTestEdge_12 = createCylinderMesh(formPtAAC,formPtCmidAC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_12)
+    var formTestEdge_13 = createCylinderMesh(formPtCAC,formPtCmidAC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_13)
+    var formTestEdge_14 = createCylinderMesh(formPtBBC,formPtCmidBC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_14)
+    var formTestEdge_15 = createCylinderMesh(formPtCBC,formPtCmidBC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_15)
+
+    var formTestEdge_16 = createCylinderMesh(formPtCmidAC,formPtCmidBC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_16)
+    var formTestEdge_17 = createCylinderMesh(formPtAmidAB,formPtCmidBC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_17)
+    var formTestEdge_18 = createCylinderMesh(formPtCmidAC,formPtAmidAB,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_18)
+
+    var formTestEdge_19 = createCylinderMesh(formPtAAB,formPtAAC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_19)
+    var formTestEdge_20 = createCylinderMesh(formPtBAB,formPtBBC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_20)
+    var formTestEdge_21 = createCylinderMesh(formPtCAC,formPtCBC,forceEdgeMaterial,0.01,0.01)
+    form_group_e.add(formTestEdge_21)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function findINSecPt (dir1a, dir1b, dir1c, dir2a, dir2b, dir2c, edgescale, stPt1, stP2){
+      var forcePtC1temp = CalNormalVectorUpdated(dir1a, dir1b, dir1c, edgescale);
+      var forcePtC1 = new THREE.Vector3(stPt1.x - forcePtC1temp.x, stPt1.y - forcePtC1temp.y, stPt1.z - forcePtC1temp.z);
+  
+      var forcePtC2temp = CalNormalVectorUpdated(dir2a, dir2b, dir2c, edgescale );
+      var forcePtC2 = new THREE.Vector3(stP2.x - forcePtC2temp.x, stP2.y - forcePtC2temp.y, stP2.z - forcePtC2temp.z);
+  
+      var dirBC = new THREE.Vector3(); // create once an reuse it
+  
+      dirBC.subVectors(stPt1, forcePtC1).normalize();
+  
+      var dirAC = new THREE.Vector3(); // create once an reuse it
+  
+      dirAC.subVectors(forcePtC2,stP2).normalize();
+      var forcePtC = LinesSectPt(dirBC, stPt1, dirAC, stP2);
+      return forcePtC
+    }
+
+
+      // ************************* functions
+    function addVerticeWOut(size, location, group){
+      var materialpointo = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+      var materialpointoSupport = new THREE.MeshPhongMaterial({color: "black", transparent: false});
+      var outlineMaterial = new THREE.MeshBasicMaterial( { color: "black", transparent: false, side: THREE.BackSide } );
+      var outlineMaterialSupport = new THREE.MeshBasicMaterial( { color: "white", transparent: false, side: THREE.BackSide } );
+      var spformPointO1 = new THREE.SphereGeometry(size);
+      var new_formPtO1 = new THREE.Mesh(spformPointO1, materialpointo);
+      new_formPtO1.position.copy(location);
+      new_formPtO1.castShadow=true;
+      var outlineMeshnew1 = new THREE.Mesh( spformPointO1, outlineMaterial );
+      outlineMeshnew1.position.copy(location);
+      outlineMeshnew1.scale.multiplyScalar(1.55);
+      group.add(new_formPtO1); 
+      group.add(outlineMeshnew1); 
+    }
+   
+
+
+
+
     var formPt2 = create_trial_intec (formPtO2new,forcePtC,TrialP_O,forcePtB,formBtPt2,new THREE.Vector3(formBtPt2.x,formBtPt2.y,formBtPt2.z - 1));
     var trial_o3 = create_trial_intec (trial_o1,forcePtD,TrialP_O,forcePtA,formPtO3,formPtO3b);
     var trial_P3 = create_trial_intec (trial_o3,forcePtA,TrialP_O,forcePtC,formBtPt3,new THREE.Vector3(formBtPt3.x,formBtPt3.y,formBtPt3.z - 1));
@@ -1929,6 +2296,7 @@ function Redraw(){
     var outlineMaterial = new THREE.MeshBasicMaterial( { color: "black", transparent: false, side: THREE.BackSide } );
     var outlineMaterialSupport = new THREE.MeshBasicMaterial( { color: "white", transparent: false, side: THREE.BackSide } );
 
+    
     var spformPointO1 = new THREE.SphereGeometry(0.04);
     var new_formPtO1 = new THREE.Mesh(spformPointO1, materialpointo);
     new_formPtO1.position.copy(formPtO1new);
@@ -2117,8 +2485,8 @@ function Redraw(){
     const endPtVertice1 = addVectorAlongDir(formPtO1new,formBtPt1,  -0.08);
     const formEdge1 = createCylinderMesh(endPtVertice1SpV,endPtVertice1,formEdgePt1O1Material,edgeSize1,edgeSize1);
 
-    form_group_e.add(endPtVertice1Sp)
-    form_group_e.add(formEdge1)
+    // form_group_e.add(endPtVertice1Sp)
+    // form_group_e.add(formEdge1)
 
     var apply_1o1 = [];
     apply_1o1.push(endPtVertice1SpV);
@@ -2245,8 +2613,8 @@ function Redraw(){
     const endPtVertice2 = addVectorAlongDir(formPtO2new,formBtPt2,  -0.08);
     const formEdge2 = createCylinderMesh(endPtVertice2SpV,endPtVertice2,formEdgePt2O2Material,edgeSize2,edgeSize2);
 
-    form_group_e.add(endPtVertice2Sp)
-    form_group_e.add(formEdge2)
+    // form_group_e.add(endPtVertice2Sp)
+    // form_group_e.add(formEdge2)
 
     var apply_1o12 = [];
     apply_1o12.push(endPtVertice2SpV);
@@ -2373,8 +2741,8 @@ function Redraw(){
     const endPtVertice3 = addVectorAlongDir(formPtO3new,formBtPt3,  -0.08);
     const formEdge3 = createCylinderMesh(endPtVertice3SpV,endPtVertice3,formEdgePt3O3Material,edgeSize3,edgeSize3);
 
-    form_group_e.add(endPtVertice3Sp)
-    form_group_e.add(formEdge3)
+    // form_group_e.add(endPtVertice3Sp)
+    // form_group_e.add(formEdge3)
 
     var apply_1o13 = [];
     apply_1o13.push(endPtVertice3SpV);
@@ -2457,9 +2825,9 @@ function Redraw(){
     const endPtVertice4 = addVectorAlongDir(formPtO1new,formPtO3new,  -0.08);
     const formEdge4 = createCylinderMesh(endPtVertice4SpV,endPtVertice4,formEdgePtO1O3Material,edgeSize4,edgeSize4);
 
-    form_group_e.add(endPtVertice4Sp)
-    form_group_e.add(endPtVertice4Sp2)
-    form_group_e.add(formEdge4)
+    // form_group_e.add(endPtVertice4Sp)
+    // form_group_e.add(endPtVertice4Sp2)
+    // form_group_e.add(formEdge4)
 
     // triangle BDO1 - 3
     var normalBDO1_a = subVec(ForceO1, forcePtD);
@@ -2518,9 +2886,9 @@ function Redraw(){
     const endPtVertice5 = addVectorAlongDir(formPtO1new,formPtO2new,  -0.08);
     const formEdge5 = createCylinderMesh(endPtVertice5SpV,endPtVertice5,formEdgePtO1O2Material,edgeSize5,edgeSize5);
 
-    form_group_e.add(endPtVertice5Sp)
-    form_group_e.add(endPtVertice5Sp2)
-    form_group_e.add(formEdge5)
+    // form_group_e.add(endPtVertice5Sp)
+    // form_group_e.add(endPtVertice5Sp2)
+    // form_group_e.add(formEdge5)
 
     // triangle CDO1 - 3
     var normalCDO1_a = subVec(ForceO1, forcePtD);
@@ -2577,9 +2945,9 @@ function Redraw(){
     const endPtVertice6 = addVectorAlongDir(formPtO3new,formPtO2new,  -0.08);
     const formEdge6 = createCylinderMesh(endPtVertice6SpV,endPtVertice6,formEdgePtO3O2Material,edgeSize6,edgeSize6);
 
-    form_group_e.add(endPtVertice6Sp)
-    form_group_e.add(endPtVertice6Sp2)
-    form_group_e.add(formEdge6)
+    // form_group_e.add(endPtVertice6Sp)
+    // form_group_e.add(endPtVertice6Sp2)
+    // form_group_e.add(formEdge6)
 
   }
 

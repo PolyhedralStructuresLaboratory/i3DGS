@@ -1,7 +1,7 @@
-import '/style.css'; //setup basic visual factors for the overall web
+import '/Users/chenwx/college coding/i3dgs/style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from 'three';
-import * as Geo from '/js/functions.js';
+import * as Geo from '/Archive/js/functions.js';
 import { createMultiMaterialObject } from 'three/examples/jsm/utils/SceneUtils';
 
 
