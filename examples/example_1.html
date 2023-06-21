@@ -256,7 +256,7 @@
     };
 
     // faces - checkbox
-    const faceVisibilityCheckbox = tab.pages[0].addInput(faceVisibilityCheckboxParams, 'face').on('change', (ev) => { //on change, dispose old plane geometry and create new
+    const faceVisibilityCheckbox = tab.pages[0].addInput(faceVisibilityCheckboxParams, 'face').on('change', () => { //on change, dispose old plane geometry and create new
         redrawFace();
     });
 
@@ -266,7 +266,7 @@
     };
 
     // faces - checkbox
-    const cellVisibilityCheckbox = tab.pages[0].addInput(cellVisibilityCheckboxParams, 'cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
+    tab.pages[0].addInput(cellVisibilityCheckboxParams, 'cell').on('change', () => { //on change, dispose old plane geometry and create new
         redrawCell();
     });
 
@@ -507,7 +507,7 @@
     var forceCellScale = 0.7
 
 
-    // *********************** form diagram inital data ***********************
+    // *********************** form diagram initial data ***********************
 
     var formTpPt = [];
     formTpPt.push(new THREE.Vector3(0, 0, 0));
@@ -546,7 +546,7 @@
     var form_group_step_6
     var form_group_step_7
 
-    // *********************** force diagram inital data ***********************
+    // *********************** force diagram initial data ***********************
 
     var force_group_f
     var force_group_e
@@ -721,7 +721,7 @@
         dirAC.subVectors(forcePtC2, forcePtA).normalize();
         var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
 
-        // *********************** caculating the normals for apply loads ***********************
+        // *********************** calculating the normals for apply loads ***********************
         // triangle ABC
         var normalABC_a = subVec(forcePtA, forcePtB)
         var normalABC_b = subVec(forcePtB, forcePtC)
@@ -731,17 +731,13 @@
         var resultapply = normalABC.dot(edgeVector0)
 
         // redefine the force points PtB, PtC ( one condition is that the force diagram flipped)
-
         if (resultapply < 0) {
-
             var lenAC = forcePtA.distanceTo(forcePtC);
             var forcePtBnew = addVectorAlongDir(forcePtC, forcePtA, lenAC)
 
             var lenAB = forcePtA.distanceTo(forcePtB);
-            var forcePtCnew = addVectorAlongDir(forcePtB, forcePtA, lenAB)
-            forcePtC = forcePtCnew
+            forcePtC = addVectorAlongDir(forcePtB, forcePtA, lenAB)
             forcePtB = forcePtBnew
-
         }
 
         // redefine the force point PtD ( one condition is that the force diagram flipped)
@@ -780,7 +776,7 @@
             var forcePtD = LinesSectPt(dirAD, forcePtA, dirBD, forcePtB);
         }
 
-        // *********************** caculating the areas of triangles (from the four points) ***********************
+        // *********************** calculating the areas of triangles (from the four points) ***********************
 
         var areaABD = create_force_face_area(forcePtA, forcePtB, forcePtD);
         var areaBCD = create_force_face_area(forcePtB, forcePtC, forcePtD);
@@ -788,9 +784,9 @@
 
         var areaMax = Math.max(areaABD, areaBCD, areaACD);
 
-        // *********************** caculating the normals for each triangle ***********************
+        // *********************** calculating the normals for each triangle ***********************
 
-        // ****** caculating normals *******
+        // ****** calculating normals *******
         // A = p2 - p1, B = p3 - p1
         // Nx = Ay * Bz - Az * By
         // Ny = Az * Bx - Ax * Bz
@@ -956,18 +952,16 @@
                 startPt.y + (scale) * directionVec.y,
                 startPt.z + (scale) * directionVec.z
             );
-            const finalEdge = createCylinderMesh(startPt, endPt, formMSedgeMaterial, minkedgeSize, minkedgeSize);
-            return finalEdge
+            return createCylinderMesh(startPt, endPt, formMSedgeMaterial, minkedgeSize, minkedgeSize)
         }
 
         function drawMinkForceExpandPt(startPt, scale, dirVec1, dirVec2) {
             var directionVec = subVecUpdated(dirVec1, dirVec2);
-            var endPt = new THREE.Vector3(
+            return new THREE.Vector3(
                 startPt.x + (scale) * directionVec.x,
                 startPt.y + (scale) * directionVec.y,
                 startPt.z + (scale) * directionVec.z
-            );
-            return endPt
+            )
         }
 
         const forceMSedgeBO1_Pt1O1 = drawMinkForceExpandEdge(
@@ -1078,26 +1072,26 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
             } else {
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
             }
@@ -1106,26 +1100,26 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
             } else {
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
             }
@@ -1136,26 +1130,26 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x80002F
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x940041
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0xCC0549
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0xD72F62
                 }
             } else {
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x80002F
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x940041
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0xCC0549
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0xD72F62
                 }
             }
@@ -1164,13 +1158,13 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x0F3150
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x05416D
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0x376D9B
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0x5B84AE
                 }
 
@@ -1178,13 +1172,13 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x0F3150
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x05416D
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0x376D9B
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0x5B84AE
                 }
             }
@@ -1195,10 +1189,10 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor3 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor3 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor3 = 0xCC0549
                 }
                 if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
@@ -1208,13 +1202,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor3 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor3 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor3 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor3 = 0xD72F62
                 }
             }
@@ -1224,26 +1218,26 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor3 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor3 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor3 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor3 = 0x5B84AE
                 }
             } else {
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor3 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor3 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor3 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor3 = 0x5B84AE
                 }
             }
@@ -1384,13 +1378,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
                 var forceMinkFaceABD = minkFace3pt(forceMSptA, forceMSptB, forceMSptD, formedgeColor1)
@@ -1410,13 +1404,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
                 // force_group_mink.add( forceMinkFaceACD )
@@ -1437,13 +1431,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
                 // var forceMinkFaceABD =  minkFace3pt(forceMSptA, forceMSptB, forceMSptD,formedgeColor1)
@@ -1464,13 +1458,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
                 //  var forceMinkFaceACD = ForceFace3pt(forceMSptC, forceMSptA, forceMSptD, formedgeColor1);
@@ -1495,13 +1489,13 @@
             if (areaBCD / areaMax >= 0.75) {
                 formedgeColor2 = 0x80002F
             }
-            if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+            if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                 formedgeColor2 = 0x940041
             }
-            if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+            if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                 formedgeColor2 = 0xCC0549
             }
-            if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+            if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                 formedgeColor2 = 0xD72F62
             }
             var forceMinkFaceBCD = minkFace3pt(forceMSptB, forceMSptC, forceMSptD, formedgeColor1)
@@ -1520,13 +1514,13 @@
             if (areaBCD / areaMax >= 0.75) {
                 formedgeColor2 = 0x0F3150
             }
-            if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+            if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                 formedgeColor2 = 0x05416D
             }
-            if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+            if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                 formedgeColor2 = 0x376D9B
             }
-            if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+            if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                 formedgeColor2 = 0x5B84AE
             }
             var forceMinkFaceBCD = minkFace3pt(forceMSptB, forceMSptC, forceMSptD, formedgeColor1)
@@ -1549,13 +1543,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor3 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor3 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor3 = 0xCC0549
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor3 = 0xD72F62
                 }
                 var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
@@ -1573,13 +1567,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor3 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor3 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor3 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor3 = 0xD72F62
                 }
                 var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
@@ -1600,13 +1594,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor3 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor3 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor3 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor3 = 0x5B84AE
                 }
                 var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
@@ -1625,13 +1619,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor3 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor3 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor3 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor3 = 0x5B84AE
                 }
                 var forceMinkFaceACD = minkFace3pt(forceMSptA, forceMSptC, forceMSptD, formedgeColor1)
@@ -1700,7 +1694,7 @@
         scene2.add(force_group_mink);
     }
 
-    // *********************** redraw the form and force diagram when parametrer is changing ****************
+    // *********************** redraw the form and force diagram when parameter is changing ****************
     function Redraw() {
 
         if (faceVisibilityCheckboxParams.face) {
@@ -1776,7 +1770,7 @@
 
         //2nd. bottom point (movable) - bottom vertice 1
         const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1[1])
-        Ctrl_pts[0] = vertice_1; //adding to gumbal selection
+        Ctrl_pts[0] = vertice_1; //adding to gumball selection
         const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
 
         form_group_v.add(vertice_1);
@@ -1784,7 +1778,7 @@
 
         //3rd. bottom point (movable) - bottom vertice 2
         const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2[1])
-        Ctrl_pts[1] = vertice_2; //adding to gumbal selection
+        Ctrl_pts[1] = vertice_2; //adding to gumball selection
         const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
 
         form_group_v.add(vertice_2);
@@ -1792,7 +1786,7 @@
 
         //4th. bottom point (movable) - bottom vertice 3
         const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3[1])
-        Ctrl_pts[2] = vertice_3; //adding to gumbal selection
+        Ctrl_pts[2] = vertice_3; //adding to gumball selection
         const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
         form_group_v.add(vertice_3);
         form_group_v.add(vertice_3_out);
@@ -1808,42 +1802,6 @@
         //add text
         var TXapplyForce = createSpriteTextApply('f', "1", new THREE.Vector3(formTpPt[1].x, formTpPt[1].y, formTpPt[1].z + 0.35));
         form_general.add(TXapplyForce);
-
-
-        var normal_apply = new THREE.MeshPhongMaterial({color: 0x009600});
-        var normal_apply_outline = new THREE.MeshBasicMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-
-        var normal_applyGlob = new THREE.MeshPhongMaterial({color: 0x009600});
-        var normal_apply_outlineGlob = new THREE.MeshBasicMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-
-        var arrow_apply = new THREE.MeshPhongMaterial({color: 0x009600});
-        var arrow_apply_outline = new THREE.MeshBasicMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-
-        var arrow_applyGlob = new THREE.MeshPhongMaterial({color: 0x009600});
-        var arrow_apply_outlineGlob = new THREE.MeshBasicMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-
-        var applyline_dash_glob = new THREE.LineDashedMaterial({
-            color: 0x009600,//color
-            dashSize: 0.05,
-            gapSize: 0.03,
-            linewidth: 1
-        });
 
         // *********************** form apply loads dash lines **************************
         const dashline = dashLinesGR(formTpPt[0], formTpPt[1], 0.008, 0.01, 1.02);
@@ -1897,7 +1855,7 @@
         dirAC.subVectors(forcePtC2, forcePtA).normalize();
         var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
 
-        // *********************** caculating the normals for apply loads ***********************
+        // *********************** calculating the normals for apply loads ***********************
         // triangle ABC
         var normalABC_a = subVec(forcePtA, forcePtB)
         var normalABC_b = subVec(forcePtB, forcePtC)
@@ -1905,8 +1863,6 @@
 
         var edgeVector0 = subVec(formTpPt[0], formTpPt[1]);
         var resultapply = normalABC.dot(edgeVector0)
-
-        var forcePtBUpdated, forcePtCUpdated
 
         // redefine the force points PtB, PtC ( one condition is that the force diagram flipped)
 
@@ -1916,8 +1872,7 @@
             var forcePtBnew = addVectorAlongDir(forcePtC, forcePtA, lenAC)
 
             var lenAB = forcePtA.distanceTo(forcePtB);
-            var forcePtCnew = addVectorAlongDir(forcePtB, forcePtA, lenAB)
-            forcePtC = forcePtCnew
+            forcePtC = addVectorAlongDir(forcePtB, forcePtA, lenAB)
             forcePtB = forcePtBnew
 
         }
@@ -2024,7 +1979,7 @@
         var ABCarrow = createCircleFaceArrow(face_center(forcePtA, forcePtB, forcePtC), 0.15, cross(subVecUpdated(forcePtA, forcePtB), subVecUpdated(forcePtB, forcePtC)))
         force_general.add(ABCarrow);
 
-        // *********************** caculating the areas of triangles (from the four points) ***********************
+        // *********************** calculating the areas of triangles (from the four points) ***********************
 
         var areaABD = create_force_face_area(forcePtA, forcePtB, forcePtD);
         var areaBCD = create_force_face_area(forcePtB, forcePtC, forcePtD);
@@ -2032,9 +1987,9 @@
 
         var areaMax = Math.max(areaABD, areaBCD, areaACD);
 
-        // *********************** caculating the normals for each triangle ***********************
+        // *********************** calculating the normals for each triangle ***********************
 
-        // ****** caculating normals *******
+        // ****** calculating normals *******
         // A = p2 - p1, B = p3 - p1
         // Nx = Ay * Bz - Az * By
         // Ny = Az * Bx - Ax * Bz
@@ -2104,43 +2059,42 @@
 
         force_group_e.add(forceEdgeCD)
 
-        const endPtVerticePtA = addEdgeSphere(edgeSize, forcePtA, edgeColor)
-        const endPtVerticePtB = addEdgeSphere(edgeSize, forcePtB, edgeColor)
-        const endPtVerticePtC = addEdgeSphere(edgeSize, forcePtC, edgeColor)
-        const endPtVerticePtD = addEdgeSphere(edgeSize, forcePtD, edgeColor)
+        addEdgeSphere(edgeSize, forcePtA, edgeColor)
+        addEdgeSphere(edgeSize, forcePtB, edgeColor)
+        addEdgeSphere(edgeSize, forcePtC, edgeColor)
+        addEdgeSphere(edgeSize, forcePtD, edgeColor)
 
 
         // *********************** form edges **************************
         var formedgeColor1, formedgeColor2, formedgeColor3
 
+        var edgeSize1, edgeSize2, edgeSize3;
+        var result1, result2, result3;
+
         if (resultapply > 0) {
-
-            var edgeSize1 = areaABD * 0.05;
-            var edgeSize2 = areaBCD * 0.05;
-            var edgeSize3 = areaACD * 0.05;
+            edgeSize1 = areaABD * 0.05;
+            edgeSize2 = areaBCD * 0.05;
+            edgeSize3 = areaACD * 0.05;
 
             edgeSize1 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
             edgeSize2 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
             edgeSize3 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
 
-            var result1 = normalABD.dot(edgeVector1)
-            var result2 = normalBCD.dot(edgeVector2)
-            var result3 = normalCAD.dot(edgeVector3)
-
+            result1 = normalABD.dot(edgeVector1)
+            result2 = normalBCD.dot(edgeVector2)
+            result3 = normalCAD.dot(edgeVector3)
         } else {
-
-            var edgeSize1 = areaACD * 0.05;
-            var edgeSize2 = areaBCD * 0.05;
-            var edgeSize3 = areaABD * 0.05;
+            edgeSize1 = areaACD * 0.05;
+            edgeSize2 = areaBCD * 0.05;
+            edgeSize3 = areaABD * 0.05;
 
             edgeSize1 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
             edgeSize2 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
             edgeSize3 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
 
-            var result1 = normalCAD.dot(edgeVector1)
-            var result2 = normalBCD.dot(edgeVector2)
-            var result3 = normalABD.dot(edgeVector3)
-
+            result1 = normalCAD.dot(edgeVector1)
+            result2 = normalBCD.dot(edgeVector2)
+            result3 = normalABD.dot(edgeVector3)
         }
         //red color options:
         //0.75 - 0x80002F
@@ -2330,13 +2284,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
                 var forceFaceABD = ForceFace3pt(forcePtA, forcePtB, forcePtD, formedgeColor1);
@@ -2353,13 +2307,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
                 var forceFaceACD = ForceFace3pt(forcePtA, forcePtC, forcePtD, formedgeColor1);
@@ -2377,13 +2331,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
                 var forceFaceABD = ForceFace3pt(forcePtA, forcePtB, forcePtD, formedgeColor1);
@@ -2399,13 +2353,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
                 var forceFaceACD = ForceFace3pt(forcePtA, forcePtC, forcePtD, formedgeColor1);
@@ -2429,13 +2383,13 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x80002F
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x940041
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0xCC0549
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0xD72F62
                 }
                 var forceFaceBCD = ForceFace3pt(forcePtB, forcePtC, forcePtD, formedgeColor2);
@@ -2451,13 +2405,13 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x80002F
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x940041
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0xCC0549
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0xD72F62
                 }
                 var forceFaceBCD = ForceFace3pt(forcePtB, forcePtC, forcePtD, formedgeColor2);
@@ -2475,13 +2429,13 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x0F3150
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x05416D
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0x376D9B
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0x5B84AE
                 }
                 var forceFaceBCD = ForceFace3pt(forcePtB, forcePtC, forcePtD, formedgeColor2);
@@ -2503,13 +2457,13 @@
                 if (areaBCD / areaMax >= 0.75) {
                     formedgeColor2 = 0x0F3150
                 }
-                if (0.5 <= areaBCD / areaMax & areaBCD / areaMax < 0.75) {
+                if (0.5 <= areaBCD / areaMax && areaBCD / areaMax < 0.75) {
                     formedgeColor2 = 0x05416D
                 }
-                if (0.25 <= areaBCD / areaMax & areaBCD / areaMax < 0.5) {
+                if (0.25 <= areaBCD / areaMax && areaBCD / areaMax < 0.5) {
                     formedgeColor2 = 0x376D9B
                 }
-                if (0 <= areaBCD / areaMax & areaBCD / areaMax < 0.25) {
+                if (0 <= areaBCD / areaMax && areaBCD / areaMax < 0.25) {
                     formedgeColor2 = 0x5B84AE
                 }
                 var forceFaceBCD = ForceFace3pt(forcePtB, forcePtC, forcePtD, formedgeColor2);
@@ -2537,13 +2491,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor3 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor3 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor3 = 0xCC0549
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor3 = 0xD72F62
                 }
                 var forceFaceACD = ForceFace3pt(forcePtA, forcePtC, forcePtD, formedgeColor3);
@@ -2559,13 +2513,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor3 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor3 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor3 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor3 = 0xD72F62
                 }
                 var forceFaceABD = ForceFace3pt(forcePtA, forcePtB, forcePtD, formedgeColor3);
@@ -2589,13 +2543,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor3 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor3 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor3 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor3 = 0x5B84AE
                 }
                 var forceFaceACD = ForceFace3pt(forcePtA, forcePtC, forcePtD, formedgeColor3);
@@ -2616,13 +2570,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor3 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor3 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor3 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor3 = 0x5B84AE
                 }
                 var forceFaceABD = ForceFace3pt(forcePtA, forcePtB, forcePtD, formedgeColor3);
@@ -2713,7 +2667,7 @@
 // ****************************************************** Steps Generation ********************************************************
 
 
-        // add plan color egdes
+        // add plan color edges
         var stepformEdgeMaterial = new THREE.MeshPhongMaterial({
             color: "grey"
         });
@@ -3214,12 +3168,9 @@
         if (formBtPt1[1].z <= 0) {
             rotateAroundObjectAxis(StepCircle2, vecab, Math.PI / 2 - an1)
         }
-        ;
         if (formBtPt1[1].z > 0) {
             rotateAroundObjectAxis(StepCircle2, vecab, Math.PI / 2 + an1)
         }
-        ;
-
 
         //**************** draw the dividers in the second circle (step 5) ****************
 
@@ -3328,13 +3279,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
                 var stepforceFaceABD = ForceFace3pt(forcePtAOffset2, forcePtBOffset2, forcePtDOffset, formedgeColor1);
@@ -3351,13 +3302,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x80002F
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x940041
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0xCC0549
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0xD72F62
                 }
                 var stepforceFaceACD = ForceFace3pt(forcePtAOffset3, forcePtCOffset2, forcePtDOffset2, formedgeColor1);
@@ -3376,13 +3327,13 @@
                 if (areaABD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaABD / areaMax & areaABD / areaMax < 0.75) {
+                if (0.5 <= areaABD / areaMax && areaABD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaABD / areaMax & areaABD / areaMax < 0.5) {
+                if (0.25 <= areaABD / areaMax && areaABD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaABD / areaMax & areaABD / areaMax < 0.25) {
+                if (0 <= areaABD / areaMax && areaABD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
                 var stepforceFaceABD = ForceFace3pt(forcePtAOffset2, forcePtBOffset2, forcePtDOffset, formedgeColor1);
@@ -3400,13 +3351,13 @@
                 if (areaACD / areaMax >= 0.75) {
                     formedgeColor1 = 0x0F3150
                 }
-                if (0.5 <= areaACD / areaMax & areaACD / areaMax < 0.75) {
+                if (0.5 <= areaACD / areaMax && areaACD / areaMax < 0.75) {
                     formedgeColor1 = 0x05416D
                 }
-                if (0.25 <= areaACD / areaMax & areaACD / areaMax < 0.5) {
+                if (0.25 <= areaACD / areaMax && areaACD / areaMax < 0.5) {
                     formedgeColor1 = 0x376D9B
                 }
-                if (0 <= areaACD / areaMax & areaACD / areaMax < 0.25) {
+                if (0 <= areaACD / areaMax && areaACD / areaMax < 0.25) {
                     formedgeColor1 = 0x5B84AE
                 }
                 var stepforceFaceACD = ForceFace3pt(forcePtAOffset3, forcePtCOffset2, forcePtDOffset2, formedgeColor1);
@@ -3437,7 +3388,7 @@
         form_group_step_6.add(step6formEdge1)
 
 
-        //fucntions related to draw circle perpenticular to edge
+        //functions related to draw circle perpendicular to edge
         function facenormal(pt1, pt2, pt3, k) {
             var cb = new THREE.Vector3();
             var ab = new THREE.Vector3();
@@ -3446,8 +3397,7 @@
             ab.subVectors(pt3, pt1);
             cb.cross(ab);
             normal1.copy(cb).normalize();
-            var normal2 = new THREE.Vector3(k * normal1.x, k * normal1.y, k * normal1.z)
-            return normal2
+            return new THREE.Vector3(k * normal1.x, k * normal1.y, k * normal1.z)
         }
 
         function distanceVector(v1, v2) {
@@ -3810,7 +3760,7 @@
             z: 0
         });
 
-        //resize window to maintaian the size of geometry
+        //resize window to maintain the size of geometry
         window.addEventListener('resize', onWindowResize, false);
 
         function onWindowResize() {
@@ -3899,12 +3849,10 @@
 
 
     function create_force_face_area(point1, point2, pointO) {
-        var face_area = new THREE.Vector3().crossVectors(
+        return new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(point1, pointO),
             new THREE.Vector3().subVectors(point2, pointO),
         ).length() / 2
-
-        return face_area
     }
 
 
@@ -3926,8 +3874,7 @@
 
     function drawArrowfromVec(startPt, endPt, length) {
         //var vector = new THREE.Vector3();
-        var vector = new THREE.Vector3(startPt.x - length * endPt.x, startPt.y - length * endPt.y, startPt.z - length * endPt.z);
-        return vector
+        return new THREE.Vector3(startPt.x - length * endPt.x, startPt.y - length * endPt.y, startPt.z - length * endPt.z)
     }
 
     function subVecUpdated(n2, n1) {
@@ -3957,17 +3904,13 @@
     }
 
     function norm(n1) {
-        var nnorm = Math.sqrt(n1.x * n1.x + n1.y * n1.y + n1.z * n1.z);
-        return nnorm;
+        return Math.sqrt(n1.x * n1.x + n1.y * n1.y + n1.z * n1.z);
     }
 
     function LinesSectPt(L1_dir, P1_pnt, L2_dir, P2_pnt) {
 
-        var L1_dir1 = new THREE.Vector3(0, 0, 0);
-        var L2_dir2 = new THREE.Vector3(0, 0, 0);
-
-        L1_dir1 = Pnt_copy(L1_dir);
-        L2_dir2 = Pnt_copy(L2_dir);
+        var L1_dir1 = Pnt_copy(L1_dir);
+        var L2_dir2 = Pnt_copy(L2_dir);
 
 
         L1_dir1.x = L1_dir.x / norm(L1_dir);
@@ -4043,8 +3986,7 @@
         normal.copy(VecAB).normalize();
 
 
-        var newPoint = new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
-        return newPoint;
+        return new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
     }
 
     function CalNormalVectorUpdated(vec1, vec2, vec3, n) {
@@ -4057,9 +3999,7 @@
         VecAB.cross(VecCB);
         normal.copy(VecAB).normalize();
 
-
-        var newPoint = new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
-        return newPoint;
+        return new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
     }
 
 
@@ -4083,7 +4023,6 @@
             radiusCone = 2 * radius;
         }
         // edgeLengthRatio = edgeLengthRatio !== undefined ? edgeLengthRatio : 0.7 ;
-        var pointMid = new THREE.Vector3().addVectors(pointX, edgeLengthRatio * direction);
         var orientation = new THREE.Matrix4();
         orientation.lookAt(pointX, pointY, new THREE.Object3D().up);
         orientation.multiply(new THREE.Matrix4().set
@@ -4158,25 +4097,25 @@
     function addVertice(size, name, location) {
         var pt_material = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.name = name;
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.name = name;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
     function addVerticeStep(size, name, location) {
         var pt_material = new THREE.MeshPhongMaterial({color: "green", transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.name = name;
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.name = name;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
     //construct vertices outlines
@@ -4197,13 +4136,13 @@
     function addVerticeSup(size, name, location) {
         var pt_material = new THREE.MeshPhongMaterial({color: "black", transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.name = name;
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.name = name;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
     function addVerticeOutSup(size, location, scale) {
@@ -4225,12 +4164,12 @@
     function addEdgeSphere(size, location, color) {
         var pt_material = new THREE.MeshPhongMaterial({color: color, transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
 
@@ -4255,9 +4194,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //form faces - grey color
@@ -4280,9 +4217,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //force faces
@@ -4309,9 +4244,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
 
@@ -4338,9 +4271,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
 
@@ -4369,9 +4300,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     function FormFace4ptGN(pt1, pt2, pt3, pt4) {
@@ -4398,9 +4327,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     function minkFace4pt(pt1, pt2, pt3, pt4, color) {
@@ -4427,9 +4354,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     function minkFace3pt(pt1, pt2, pt3, color) {
@@ -4452,9 +4377,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //force trial faces - grey color
@@ -4493,9 +4416,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //***************** construct dash lines ***********************
@@ -4668,11 +4589,7 @@
     function addOffsetPt3V(point1, point2, point3, scale) {
 
         var centroid = new THREE.Vector3((point1.x + point2.x + point3.x) / 3, (point1.y + point2.y + point3.y) / 3, (point1.z + point2.z + point3.z) / 3);
-
-
-        var scale_point1 = new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale);
-
-        return scale_point1
+        return new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale)
     }
 
 
@@ -4691,9 +4608,7 @@
 
         dirto.subVectors(intecP1, intecP1B).normalize();
 
-        var trial_intec = LinesSectPt(dirtsP, startpoint, dirto, intecP1);
-        return trial_intec
-
+        return LinesSectPt(dirtsP, startpoint, dirto, intecP1)
     }
 
     function createdashline(point1, point2, color) {
@@ -4719,16 +4634,13 @@
     }
 
     function Cal_Plane_Line_Intersect_Point(Point_online, LineVec, Point_onPlane, PlaneVec) {
-
-        var IntersectPoint = new THREE.Vector3(
+        return new THREE.Vector3(
             //x
             Point_online.x + LineVec.x * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
             //y
             Point_online.y + LineVec.y * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
             //z
-            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z))
-
-        return IntersectPoint;
+            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z));
     }
 
     function ForceFace(pt0, pt1, pt2, pt3, pt4, pt5) {
@@ -5065,11 +4977,10 @@
         const stepDiviPt1vec = subVecUpdated(stepDiviPt1, circlecenter);
         var divilen1 = Math.sqrt(radius * radius / (stepDiviPt1vec.x * stepDiviPt1vec.x + stepDiviPt1vec.y * stepDiviPt1vec.y + stepDiviPt1vec.z * stepDiviPt1vec.z));
         var stepDiviPt1end = drawArrowfromVec(circlecenter, stepDiviPt1vec, divilen1)
-        var stepDiviEdge = createCylinderMesh(
+        return createCylinderMesh(
             circlecenter,
             stepDiviPt1end,
-            new THREE.MeshPhongMaterial({color: "white", transparent: true, opacity: 0.6}), 0.008, 0.008);
-        return stepDiviEdge
+            new THREE.MeshPhongMaterial({color: "white", transparent: true, opacity: 0.6}), 0.008, 0.008)
     }
 
     function findDividerPt(TopPt, midPt, btPt, circlecenter, radius) {
@@ -5080,8 +4991,7 @@
 
         const stepDiviPt1vec = subVecUpdated(stepDiviPt1, circlecenter);
         var divilen1 = Math.sqrt(radius * radius / (stepDiviPt1vec.x * stepDiviPt1vec.x + stepDiviPt1vec.y * stepDiviPt1vec.y + stepDiviPt1vec.z * stepDiviPt1vec.z));
-        var stepDiviPt1end = drawArrowfromVec(circlecenter, stepDiviPt1vec, divilen1)
-        return stepDiviPt1end
+        return drawArrowfromVec(circlecenter, stepDiviPt1vec, divilen1)
     }
 </script>
 </html>
