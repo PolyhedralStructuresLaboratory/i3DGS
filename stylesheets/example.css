@@ -1,0 +1,100 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    background-image: linear-gradient(white, rgb(146, 146, 146));
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+}
+
+/* ************** UI - Checkbox ************** */
+
+#left_container_wrapper {
+    position: fixed;
+    left: 18%;
+    top: 76%;
+    margin: 0 auto;
+    cursor: grab;
+}
+
+#right_container_wrapper {
+    position: fixed;
+    left: 63%;
+    top: 76%;
+    margin: 0 auto;
+    cursor: grab;
+}
+
+#left_container_header {
+    font-family: 'Palatino', serif;
+    color: #000000;
+    font-size: 15px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#right_container_header {
+    font-family: 'Palatino', serif;
+    color: #000000;
+    font-size: 15px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+:root {
+    --tp-base-background-color: hsla(0, 0%, 100%, 0.0);
+    --tp-base-shadow-color: hsla(0, 0%, 0%, 0.479);
+
+    --tp-button-background-color: rgba(204, 204, 204, 0);
+    --tp-button-background-color-active: rgba(0, 0, 0, 0.014);
+    --tp-button-background-color-focus: rgba(0, 0, 0, 0.554);
+    --tp-button-background-color-hover: rgba(0, 0, 0, 0.793);
+    --tp-button-foreground-color: hsla(0, 0%, 0%, 0.439);
+
+    --tp-container-background-color: hsla(0, 0%, 0%, 0.094);
+    --tp-container-background-color-active: hsla(0, 0%, 0%, 0.259);
+    --tp-container-background-color-focus: hsla(0, 0%, 0%, 0.372);
+    --tp-container-background-color-hover: hsla(0, 0%, 0%, 0.199);
+    --tp-container-foreground-color: hsla(0, 0%, 0%, 0.5);
+
+    --tp-groove-foreground-color: hsla(0, 0%, 0%, 0.2);
+
+    --tp-input-background-color: hsla(0, 0%, 0%, 0.238);
+    --tp-input-background-color-active: hsla(0, 0%, 0%, 0.6);
+    --tp-input-background-color-focus: hsla(0, 0%, 0%, 0.5);
+    --tp-input-background-color-hover: hsla(0, 0%, 0%, 0.4);
+    --tp-input-foreground-color: hsla(0, 0%, 0%, 0.407);
+
+    --tp-label-foreground-color: hsla(0, 0%, 0%, 0.5);
+
+    --tp-monitor-background-color: hsla(0, 0%, 0%, 0.3);
+    --tp-monitor-foreground-color: hsla(0, 0%, 100%, 0.3);
+}
+
+/* ************** credits ************** */
+
+#credits {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    margin: auto auto 15px;
+    font-family: 'Open Sans', sans-serif;
+    color: #cbcbcb;;
+    font-size: 0.4em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1;
+    letter-spacing: 1px;
+}
+
+#credits a {
+    color: #cbcbcb;
+}
+
+#credits a:hover {
+    color: #a7a7a7;
+}
