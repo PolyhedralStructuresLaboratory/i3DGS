@@ -227,8 +227,6 @@ trialVisibilityCheckbox.on('change', () => { //on change, change the hidden and 
     heightSlider.hidden = !heightSlider.hidden;
     oSlider.disabled = !oSlider.disabled;
 });
-globalVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-});
 
 // *********************** form diagram initial data ***********************
 

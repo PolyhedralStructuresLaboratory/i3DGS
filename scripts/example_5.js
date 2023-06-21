@@ -220,9 +220,6 @@ oSlider.on('change', (ev) => { //on change, dispose old geometry and create new
     Redraw()
 });
 
-globalVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-});
-
 // *********************** form diagram initial data ***********************
 
 
@@ -264,10 +261,6 @@ var force_group_f
 var force_group_e
 var force_group_c
 var force_general
-
-var force_group_f_trial
-var force_group_e_trial
-var force_general_trial
 
 var force_general_global
 
@@ -317,9 +310,6 @@ function Redraw() {
     scene2.remove(force_group_e);
     scene2.remove(force_group_c);
     scene2.remove(force_general);
-    scene2.remove(force_group_f_trial);
-    scene2.remove(force_group_e_trial);
-    scene2.remove(force_general_trial);
     scene2.remove(force_general_global);
 
     scene2.remove(force_text);
@@ -331,9 +321,6 @@ function Redraw() {
     force_general = new THREE.Group();
     force_text = new THREE.Group();
 
-    force_group_f_trial = new THREE.Group();
-    force_group_e_trial = new THREE.Group();
-    force_general_trial = new THREE.Group();
     force_general_global = new THREE.Group();
 
 
@@ -376,6 +363,7 @@ function Redraw() {
         side: THREE.BackSide
     });
 
+    // WE WANT THIS TO SHOW UP
     var arrow_applyGlob = new THREE.MeshPhongMaterial({color: 0x009600});
     var arrow_apply_outlineGlob = new THREE.MeshBasicMaterial({
         color: "white",
@@ -776,21 +764,6 @@ function Redraw() {
 
     var TrialP_O = new THREE.Vector3(fo.x, fo.y, fo.z);
 
-    // const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
-    // const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
-    // force_general_trial.add(TrialP_0Sp);
-    // force_general_trial.add(TrialP_0Sp_out);
-
-    // const TrialFaces = ForceTrialFace3Pt(forcePtA,forcePtB,forcePtD, TrialP_O)
-    // force_group_f_trial.add(TrialFaces)
-    // const TrialFaces2 = ForceTrialFace3Pt(forcePtB,forcePtC,forcePtD, TrialP_O)
-    // force_group_f_trial.add(TrialFaces2)
-    // const TrialFaces3 = ForceTrialFace3Pt(forcePtA,forcePtC,forcePtD, TrialP_O)
-    // force_group_f_trial.add(TrialFaces3)
-
-    // var TXformNodeTrialO = createSpriteTextPrime ('O', "'", new THREE.Vector3(TrialP_O.x, TrialP_O.y, TrialP_O.z+0.1));
-    // force_general_trial.add(TXformNodeTrialO);
-
     // ***********************           trial form                **************************
     var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity: 0.8});
 
@@ -859,14 +832,12 @@ function Redraw() {
     });
     var applylineox1 = new THREE.LineSegments(line_ox1_geo, applyline_1);
     applylineox1.computeLineDistances();//compute
-    // force_general_trial.add(applylineox1);
 
     var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
     var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
 
     createCylinderArrowMesh(x1_closeP1, x1_closeP2, force_normal_material, 0.012, 0.025, 0.55);
 
-    // force_general_trial.add(x1_arrow);
     var materialpointx = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
 
     var spforcePointx = new THREE.SphereGeometry(0.01);
@@ -1953,6 +1924,7 @@ function Redraw() {
         const endPtArrowBCO1b1 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.01);
         const endPtArrowBCO1b2 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.45);
 
+        // hello???
         var BCO1arrow1 = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, formEdgePt2O2Material, 0.02, 0.05, 0.56);
         force_general.add(BCO1arrow1);
         var BCO1arrow12 = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
@@ -2383,6 +2355,9 @@ function Redraw() {
         if (obj.type === "Sprite") {
             obj.material.visible = !globalVisibilityCheckboxParams.global;
         }
+        if (obj.type === "Line") {
+            obj.material.visible = !globalVisibilityCheckboxParams.global;
+        }
     });
     form_group_e.traverse(function (obj) {
         if (obj.type === "Mesh") {
@@ -2403,17 +2378,12 @@ function Redraw() {
     scene.add(form_general);
     scene.add(form_general_global);
 
+    scene2.add(force_general);
     scene2.add(force_group_v);
     scene2.add(force_group_f);
     scene2.add(force_group_e);
     scene2.add(force_group_c);
-    scene2.add(force_general);
     scene2.add(force_general_global);
-
-    scene2.add(force_group_e_trial);
-    scene2.add(force_group_f_trial);
-    scene2.add(force_general_trial);
-
 
 }
 
