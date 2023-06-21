@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Interactive 3DGS</title>
-    <style type="text/css">
+    <style>
         html, body {
             margin: 0;
             height: 100%;
@@ -32,7 +32,7 @@
         }
 
         #left_container_header {
-            font-family: 'Palatino';
+            font-family: 'Palatino', serif;
             color: #000000;
             font-size: 15px;
             padding-bottom: 5px;
@@ -41,7 +41,7 @@
         }
 
         #right_container_header {
-            font-family: 'Palatino';
+            font-family: 'Palatino', serif;
             color: #000000;
             font-size: 15px;
             padding-bottom: 5px;
@@ -84,9 +84,8 @@
         #credits {
             position: absolute;
             width: 100%;
-            margin: auto;
             bottom: 0;
-            margin-bottom: 15px;
+            margin: auto auto 15px;
             font-family: 'Open Sans', sans-serif;
             color: #cbcbcb;;
             font-size: 0.4em;
@@ -264,7 +263,7 @@
         'show': false, //at first, box is unchecked so value is "false"
     };
     const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxParams, 'show').on
-    ('change', (ev) => { //on change, dispose old plane geometry and create new
+    ('change', () => { //on change, dispose old plane geometry and create new
         redrawTrial();
     });
     const primeheightParams = {
@@ -437,7 +436,7 @@
         this.l = 1;
     }
 
-    // ***********************            foce diagram            **************************
+    // ***********************            force diagram            **************************
     var edgescale = 2; // size of the force diagram
 
     //PtA
@@ -544,7 +543,7 @@
             form_general_trial.add(trial_linep2p3);
             form_general_trial.add(trial_linep1p3);
 
-            //trial plane face nromals
+            //trial plane face normals
             var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P3.x) / 3, (trial_P1.y + trial_P2.y + trial_P3.y) / 3, (trial_P1.z + trial_P2.z + trial_P3.z) / 3)
             var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3, trial_P2, trial_P1, 1.2)
             var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x - 0.2 * vec_p1p2p3_temp.x, trialmid_p1p2p3.y - 0.2 * vec_p1p2p3_temp.y, trialmid_p1p2p3.z - 0.2 * vec_p1p2p3_temp.z)
@@ -721,7 +720,7 @@
             form_general_trial.add(trial_linep2p3);
             form_general_trial.add(trial_linep1p3);
 
-            //trial plane face nromals
+            //trial plane face normals
             var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x + trial_P2.x + trial_P3.x) / 3, (trial_P1.y + trial_P2.y + trial_P3.y) / 3, (trial_P1.z + trial_P2.z + trial_P3.z) / 3)
             var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3, trial_P2, trial_P1, 1.2)
             var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x - 0.2 * vec_p1p2p3_temp.x, trialmid_p1p2p3.y - 0.2 * vec_p1p2p3_temp.y, trialmid_p1p2p3.z - 0.2 * vec_p1p2p3_temp.z)
@@ -830,7 +829,7 @@
     }
 
 
-    // *********************** redraw the form and force diagram when parametrer is changing ****************
+    // *********************** redraw the form and force diagram when parameter is changing ****************
     function Redraw() {
 
         if(trialVisibilityCheckboxParams.show) {
@@ -881,7 +880,7 @@
 
         //1nd. bottom point (movable) - bottom vertice 1
         const vertice_1 = addVerticeSup(0.04, "sp1", formBtPt1)
-        Ctrl_pts[0] = vertice_1; //adding to gumbal selection
+        Ctrl_pts[0] = vertice_1; //adding to gumball selection
         const vertice_1_out = addVerticeOutSup(0.04, vertice_1.position, 1.55);
 
         form_group_v.add(vertice_1);
@@ -889,7 +888,7 @@
 
         //2nd. bottom point (movable) - bottom vertice 2
         const vertice_2 = addVerticeSup(0.04, "sp2", formBtPt2)
-        Ctrl_pts[1] = vertice_2; //adding to gumbal selection
+        Ctrl_pts[1] = vertice_2; //adding to gumball selection
         const vertice_2_out = addVerticeOutSup(0.04, vertice_2.position, 1.55);
 
         form_group_v.add(vertice_2);
@@ -897,20 +896,13 @@
 
         //3rd. bottom point (movable) - bottom vertice 3
         const vertice_3 = addVerticeSup(0.04, "sp3", formBtPt3)
-        Ctrl_pts[2] = vertice_3; //adding to gumbal selection
+        Ctrl_pts[2] = vertice_3; //adding to gumball selection
         const vertice_3_out = addVerticeOutSup(0.04, vertice_3.position, 1.55);
         form_group_v.add(vertice_3);
         form_group_v.add(vertice_3_out);
 
         var normal_apply = new THREE.MeshPhongMaterial({color: 0x009600});
         var normal_apply_outline = new THREE.MeshBasicMaterial({
-            color: "white",
-            transparent: false,
-            side: THREE.BackSide
-        });
-
-        var normal_applyGlob = new THREE.MeshPhongMaterial({color: 0x009600});
-        var normal_apply_outlineGlob = new THREE.MeshBasicMaterial({
             color: "white",
             transparent: false,
             side: THREE.BackSide
@@ -1046,10 +1038,9 @@
             form_general.add(form_linep2p3);
             form_general.add(form_linep1p3);
 
-            //plane face nromals
+            //plane face normals
             var normal_material = new THREE.MeshPhongMaterial({color: "red"})
             var normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
-            var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
             //normal 124
             var mid_p1p2p3 = new THREE.Vector3((formBtPt1.x + formBtPt2.x + formBtPt3.x) / 3, (formBtPt1.y + formBtPt2.y + formBtPt3.y) / 3, (formBtPt1.z + formBtPt2.z + formBtPt3.z) / 3)
             var vec_p1p2p3_temp = CalNormalVectorUpdated(formBtPt3, formBtPt2, formBtPt1, 1.2)
@@ -1133,15 +1124,7 @@
             //trial form closing plane
             //plane mesh
 
-            var trialline_dash = new THREE.LineDashedMaterial({
-                color: "black",//color
-                dashSize: 0.1,
-                gapSize: 0.03,
-                linewidth: 1
-
-            });
-
-            //trial plane face nromals
+            //trial plane face normals
             var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
 
             // ***********************          find trial force point x1              **************************
@@ -1904,10 +1887,9 @@
             form_general.add(form_linep2p3);
             form_general.add(form_linep1p3);
 
-            //plane face nromals
+            //plane face normals
             var normal_material = new THREE.MeshPhongMaterial({color: "red"})
             var normal_outlinematerial = new THREE.MeshPhongMaterial({color: "white", side: THREE.BackSide})
-            var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
             //normal 124
             var mid_p1p2p3 = new THREE.Vector3((formBtPt1.x + formBtPt2.x + formBtPt3.x) / 3, (formBtPt1.y + formBtPt2.y + formBtPt3.y) / 3, (formBtPt1.z + formBtPt2.z + formBtPt3.z) / 3)
             var vec_p1p2p3_temp = CalNormalVectorUpdated(formBtPt3, formBtPt2, formBtPt1, 1.2)
@@ -1921,7 +1903,7 @@
             var TXformPlaneNormal = createSpriteTextNormal('n', "cp", "", new THREE.Vector3(normal_p1p2p3.x, normal_p1p2p3.y, normal_p1p2p3.z + 0.05));
             form_general.add(TXformPlaneNormal);
 
-            // ***********************            foce diagram            **************************
+            // ***********************            force diagram            **************************
             //PtA
             var TXforcePtA = createSpriteText('A', "", new THREE.Vector3(forcePtA.x, forcePtA.y, forcePtA.z + 0.05));
             force_general.add(TXforcePtA);
@@ -2024,15 +2006,7 @@
             //trial form closing plane
             //plane mesh
 
-            var trialline_dash = new THREE.LineDashedMaterial({
-                color: "black",//color
-                dashSize: 0.1,
-                gapSize: 0.03,
-                linewidth: 1
-
-            });
-
-            //trial plane face nromals
+            //trial plane face normals
             var force_normal_material = new THREE.MeshPhongMaterial({color: "red"})
 
             // ***********************          find trial force point x1              **************************
@@ -2120,9 +2094,9 @@
 
             const forceEdgeDO1 = createCylinderMesh(forcePtD, ForceO1, forceEdgeMaterial, edgeSize, edgeSize);
             force_group_e.add(forceEdgeDO1);
-            var forceFaceNormal1 = drawForceNormals(forcePtA, forcePtB, forcePtD, normal_apply, normal_apply_outline, "1")
-            var forceFaceNormal2 = drawForceNormals(forcePtA, forcePtD, forcePtC, normal_apply, normal_apply_outline, "3")
-            var forceFaceNormal3 = drawForceNormals(forcePtB, forcePtD, forcePtC, normal_apply, normal_apply_outline, "2")
+            drawForceNormals(forcePtA, forcePtB, forcePtD, normal_apply, normal_apply_outline, "1")
+            drawForceNormals(forcePtA, forcePtD, forcePtC, normal_apply, normal_apply_outline, "3")
+            drawForceNormals(forcePtB, forcePtD, forcePtC, normal_apply, normal_apply_outline, "2")
 
             function drawForceNormals(forcePtA, forcePtB, forcePtC, normal_apply, normal_apply_outline, number) {
                 var normal_apply = new THREE.MeshPhongMaterial({color: 0x009600});
@@ -2179,19 +2153,18 @@
             var formPtO2new = create_trial_intec(formBtPt2, forcePtB, ForceO1, forcePtC, formPtO2, formPtO2b);
             var formPtO3new = create_trial_intec(formBtPt3, forcePtC, ForceO1, forcePtA, formPtO3, formPtO3b);
 
-            var formPt2 = create_trial_intec(formPtO2new, forcePtC, TrialP_O, forcePtB, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
+            //formPt2
+            create_trial_intec(formPtO2new, forcePtC, TrialP_O, forcePtB, formBtPt2, new THREE.Vector3(formBtPt2.x, formBtPt2.y, formBtPt2.z - 1));
+
             var trial_o3 = create_trial_intec(trial_o1, forcePtD, TrialP_O, forcePtA, formPtO3, formPtO3b);
-            var trial_P3 = create_trial_intec(trial_o3, forcePtA, TrialP_O, forcePtC, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
+
+            //trial_P3
+            create_trial_intec(trial_o3, forcePtA, TrialP_O, forcePtC, formBtPt3, new THREE.Vector3(formBtPt3.x, formBtPt3.y, formBtPt3.z - 1));
+
             //New Point o1, o2 ,o3
             var materialpointo = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
-            var materialpointoSupport = new THREE.MeshPhongMaterial({color: "black", transparent: false});
             var outlineMaterial = new THREE.MeshBasicMaterial({
                 color: "black",
-                transparent: false,
-                side: THREE.BackSide
-            });
-            var outlineMaterialSupport = new THREE.MeshBasicMaterial({
-                color: "white",
                 transparent: false,
                 side: THREE.BackSide
             });
@@ -2947,12 +2920,12 @@
 
         })
 
-        trfm_ctrl.addEventListener('mouseDown', (evt) => {
+        trfm_ctrl.addEventListener('mouseDown', () => {
             orbit_ctrl.enabled = false;
 
         });
 
-        trfm_ctrl.addEventListener('mouseUp', (evt) => {
+        trfm_ctrl.addEventListener('mouseUp', () => {
 
             orbit_ctrl.enabled = true;
         });
@@ -2981,7 +2954,7 @@
             }
         }
 
-        function onMouseUp(event) {
+        function onMouseUp() {
             leftMouseDown = false;
             rightMouseDown = false;
             //document.removeEventListener('mousemove', onMouseMove);
@@ -3084,7 +3057,7 @@
             z: 0
         });
 
-        //resize window to maintaian the size of geometry
+        //resize window to maintain the size of geometry
         window.addEventListener('resize', onWindowResize, false);
 
         function onWindowResize() {
@@ -3182,17 +3155,14 @@
     // *************** support functions *******************
     function create_offset_point(point1, point2, point3, scale) {
         var centroid = new THREE.Vector3((point1.x + point2.x + point3.x) / 3, (point1.y + point2.y + point3.y) / 3, (point1.z + point2.z + point3.z) / 3);
-        var scale_point = new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale);
-        return scale_point
+        return new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale)
     }
 
     function create_force_face(point1, point2, pointO) {
-        var face = new THREE.Vector3().crossVectors(
+        return new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(point1, pointO),
             new THREE.Vector3().subVectors(point2, pointO),
         ).length() / 2
-
-        return face
     }
 
 
@@ -3232,14 +3202,12 @@
     }
 
     function norm(n1) {
-        var nnorm = Math.sqrt(n1.x * n1.x + n1.y * n1.y + n1.z * n1.z);
-        return nnorm;
+        return Math.sqrt(n1.x * n1.x + n1.y * n1.y + n1.z * n1.z);
     }
 
     function LinesSectPt(L1_dir, P1_pnt, L2_dir, P2_pnt) {
 
-        var L1_dir1 = new THREE.Vector3(0, 0, 0);
-        var L2_dir2 = new THREE.Vector3(0, 0, 0);
+        var L1_dir1, L2_dir2;
 
         L1_dir1 = Pnt_copy(L1_dir);
         L2_dir2 = Pnt_copy(L2_dir);
@@ -3318,8 +3286,7 @@
         normal.copy(VecAB).normalize();
 
 
-        var newPoint = new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
-        return newPoint;
+        return new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
     }
 
     function CalNormalVectorUpdated(vec1, vec2, vec3, n) {
@@ -3333,8 +3300,7 @@
         normal.copy(VecAB).normalize();
 
 
-        var newPoint = new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
-        return newPoint;
+        return new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
     }
 
 
@@ -3358,7 +3324,6 @@
             radiusCone = 2 * radius;
         }
 // edgeLengthRatio = edgeLengthRatio !== undefined ? edgeLengthRatio : 0.7 ;
-        var pointMid = new THREE.Vector3().addVectors(pointX, edgeLengthRatio * direction);
         var orientation = new THREE.Matrix4();
         orientation.lookAt(pointX, pointY, new THREE.Object3D().up);
         orientation.multiply(new THREE.Matrix4().set
@@ -3433,25 +3398,25 @@
     function addVertice(size, name, location) {
         var pt_material = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.name = name;
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.name = name;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
     function addVerticeSup(size, name, location) {
         var pt_material = new THREE.MeshPhongMaterial({color: "black", transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.name = name;
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.name = name;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
     //construct vertices outlines
@@ -3487,18 +3452,16 @@
     function addEdgeSphere(size, location, color) {
         var pt_material = new THREE.MeshPhongMaterial({color: color, transparent: false});
         var pt_geo = new THREE.SphereGeometry(size);
-        var pt_sphare = new THREE.Mesh(pt_geo, pt_material);
+        var pt_sphere = new THREE.Mesh(pt_geo, pt_material);
 
-        pt_sphare.position.copy(location);
-        pt_sphare.castShadow = true;
+        pt_sphere.position.copy(location);
+        pt_sphere.castShadow = true;
 
-        return pt_sphare
+        return pt_sphere
     }
 
     function drawArrowfromVec(startPt, endPt, length) {
-        var vector = new THREE.Vector3();
-        vector = new THREE.Vector3(startPt.x - length * endPt.x, startPt.y - length * endPt.y, startPt.z - length * endPt.z);
-        return vector
+        return new THREE.Vector3(startPt.x - length * endPt.x, startPt.y - length * endPt.y, startPt.z - length * endPt.z)
     }
 
     //***************** construct faces ***********************
@@ -3522,9 +3485,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //form faces - grey color
@@ -3547,9 +3508,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //force faces
@@ -3576,9 +3535,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
 
@@ -3605,9 +3562,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     function FormPlane3Pt(pt1, pt2, pt3) {
@@ -3629,9 +3584,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
 
@@ -3660,9 +3613,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     function FormFace4ptGN(pt1, pt2, pt3, pt4) {
@@ -3689,9 +3640,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     //force trial faces - grey color
@@ -3730,9 +3679,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
     function ForceTrialFace3Pt(pt1, pt2, pt3, ptO) {
@@ -3762,9 +3709,7 @@
             })
         ];
 
-        var mesh = new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces);
-
-        return mesh
+        return new THREE.SceneUtils.createMultiMaterialObject(geometry, material_greenfaces)
     }
 
 
@@ -3937,7 +3882,7 @@
 
     function create_trial_intec(startpoint, forceP1, forceP2, forceP3, intecP1, intecP1B) {
 
-        var startpoint
+        var startpoint;
 
         var trial_startpoint_vec = CalNormalVector(forceP1, forceP2, forceP3, 0.5);
         var trial_startpoint_intec_temp = new THREE.Vector3(startpoint.x - 1.2 * trial_startpoint_vec.x, startpoint.y - 1.2 * trial_startpoint_vec.y, startpoint.z - 1.2 * trial_startpoint_vec.z);
@@ -3950,12 +3895,11 @@
 
         dirto.subVectors(intecP1, intecP1B).normalize();
 
-        var trial_intec = LinesSectPt(dirtsP, startpoint, dirto, intecP1);
-        return trial_intec
+        return LinesSectPt(dirtsP, startpoint, dirto, intecP1)
 
     }
 
-    function createdashline(point1, point2, trialline_dash) {
+    function createdashline(point1, point2) {
 
         var dashline = [];
         dashline.push(point1);
@@ -3979,15 +3923,13 @@
 
     function Cal_Plane_Line_Intersect_Point(Point_online, LineVec, Point_onPlane, PlaneVec) {
 
-        var IntersectPoint = new THREE.Vector3(
+        return new THREE.Vector3(
             //x
             Point_online.x + LineVec.x * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
             //y
             Point_online.y + LineVec.y * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
             //z
-            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z))
-
-        return IntersectPoint;
+            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z));
     }
 
 
