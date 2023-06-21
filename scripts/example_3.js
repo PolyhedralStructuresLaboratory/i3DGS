@@ -82,7 +82,7 @@ const tab = paneLeft.addTab({
     pages: [
         {title: 'SubD'},
         {title: 'Trial'},
-        {title: 'Inital'}
+        {title: 'Initial'}
     ],
 });
 
@@ -126,15 +126,10 @@ const trialVisibilityCheckbox = tab.pages[1].addInput(trialVisibilityCheckboxPar
 ('change', () => { //on change, dispose old plane geometry and create new
     redrawTrial();
 });
-const primeheightParams = {
+const trialHeightSliderParams = {
     trialHeight: -2,
 };
-const trialHeightFolder = tab.pages[1].addFolder({
-    title: 'trial height'
-});
-trialHeightFolder.hidden = true; //hide the plane folder b/c box is unchecked at first
-//make the plane size slider
-trialHeightFolder.addInput(primeheightParams, 'trialHeight', {
+const trialHeightSlider = tab.pages[1].addInput(trialHeightSliderParams, 'trialHeight', {
     min: -4, //min = double the size of the box's params
     max: 1, //max = quadruple the size of the box's params
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -142,17 +137,20 @@ trialHeightFolder.addInput(primeheightParams, 'trialHeight', {
     redrawTrial();
 });
 
-const trialHeightSliderParams = {
+const heightSliderParams = {
     height: 0.7, //starts as double the size of the box's params
 };
 //make the plane size slider
-trialHeightFolder.addInput(trialHeightSliderParams, 'height', {
+const heightSlider = tab.pages[1].addInput(heightSliderParams, 'height', {
     min: 0.5, //min = double the size of the box's params
     max: 1, //max = quadruple the size of the box's params
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
     triP1.z = ev.value;
     redrawTrial();
 });
+
+trialHeightSlider.hidden = true;
+heightSlider.hidden = true;
 
 const globalVisibilityCheckboxParams = {
     'global': false, //at first, box is unchecked so value is "false"
@@ -225,14 +223,14 @@ oSlider.on('change', (ev) => { //on change, dispose old geometry and create new
 });
 
 trialVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-    trialHeightFolder.hidden = !trialHeightFolder.hidden;
+    trialHeightSlider.hidden = !trialHeightSlider.hidden;
+    heightSlider.hidden = !heightSlider.hidden;
     oSlider.disabled = !oSlider.disabled;
 });
 globalVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-    oSlider.disabled = !oSlider.disabled;
 });
 
-// *********************** form diagram inital data ***********************
+// *********************** form diagram initial data ***********************
 
 
 var formBtPt1 = new THREE.Vector3(1.3, -1.3, -1.3);
@@ -262,7 +260,7 @@ var offsetscale = new function () {
     this.l = 0.4;
 }
 
-// *********************** force diagram inital data ***********************
+// *********************** force diagram initial data ***********************
 
 var force_group_v
 var force_group_f

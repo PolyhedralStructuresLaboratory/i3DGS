@@ -1,7 +1,7 @@
-import '/Users/chenwx/college coding/i3dgs/style.css'; //setup basic visual factors for the overall web
+import '/Users/chenwx/college coding/i3dgs/Archive/archive_3/style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from 'three';
-import * as Geo from '/Archive/js/functions.js';
+import * as Geo from '/Archive/archive_3/functions.js';
 
 import {Pane} from 'tweakpane';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';

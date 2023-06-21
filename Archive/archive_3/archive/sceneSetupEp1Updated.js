@@ -1,14 +1,15 @@
-import '/Users/chenwx/college coding/i3dgs/style.css'; //setup basic visual factors for the overall web
+import '/Users/chenwx/college coding/i3dgs/Archive/archive_3/style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from 'three';
-import * as Geo from '/Archive/js/functions.js';
+import * as Geo from '/Archive/archive_3/functions.js';
 
 import {Pane} from 'tweakpane';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 import $ from 'jquery';
-// *********************** Basic settings ***********************
+
+
 //claim variables
 var renderer;
 var camera;
@@ -22,53 +23,10 @@ var rayCaster = new THREE.Raycaster();
 
 
 var selectObj=null;
-var leftMouseDown;
-var rightMouseDown;
 
 
 
-// ******** construct render setting
-function initRender(){
-  renderer = new THREE.WebGLRenderer({alpha: true});
-  renderer.setClearAlpha(0); 
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMapEnabled = true;
-  renderer.shadowMaptype = THREE.PCFSoftShadowMap;
-  renderer.localClippingEnabled = true;
-  //renderer.setPixelRatio(devicePixelRatio);
-  document.body.appendChild(renderer.domElement);//insert this into body
-}
 
-// ******** construct camera setting
-function initCamera(){
-
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth/(window.innerHeight*2), 0.1, 200);
-  camera.position.set(8, 0, 0);
-
-  camera.up.x = 0;
-  camera.up.y = 0;
-  camera.up.z = 1;
-
-  camera.lookAt({
-    x : 0,
-    y : 0,
-    z : 0
-  });
-
-  //resize window to maintaian the size of geometry
-  window.addEventListener( 'resize', onWindowResize, false );
-  function onWindowResize(){
-      camera.aspect = window.innerWidth/2 / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize( window.innerWidth, window.innerHeight );
-  }
-}
-
-// ********* scene setting
-function initScene(){
-  scene = new THREE.Scene();
-  scene2 = new THREE.Scene();
-}
 
 //*********************** testing new UI (tweakpane) *********************
 
@@ -324,6 +282,20 @@ planeMesh.visible = false;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // *********************** form diagram inital data ***********************
 
 var formTpPt = [];
@@ -395,6 +367,7 @@ function Redraw(){
   force_general = new THREE.Group();
   force_text = new THREE.Group();
 
+
   // *********************** form vertices **************************
   // set basic points in form diagram (one top, one mid (0,0,0), three bottoms)
   // 1st. mid point
@@ -426,6 +399,8 @@ function Redraw(){
   form_group_v.add(vertice_3);
   form_group_v.add(vertice_3_out);
 
+
+
   // *********************** form faces **************************
 
   //face 1, 2, 3 - green color
@@ -446,6 +421,7 @@ function Redraw(){
   form_group_f.add(formFace_5);
   form_group_f.add(formFace_6);
 
+
   // *********************** form cells **************************
   const formCell1 = Geo.addCell3Face(formTpPt[0], formTpPt[1], formBtPt1[1], formBtPt2[1], 0.8)
   form_group_c.add(formCell1);
@@ -458,6 +434,7 @@ function Redraw(){
 
   const formCell4 = Geo.addCell3Face(formTpPt[0], formBtPt1[1], formBtPt2[1], formBtPt3[1],0.8)
   form_group_c.add(formCell4);
+
 
   // *********************** form apply loads dash lines **************************
   const dashline = Geo.dashLinesGR(formTpPt[0], formTpPt[1], 0.008, 0.01, 1.02);
@@ -479,27 +456,26 @@ function Redraw(){
   const applyArrowOut = Geo.createCylinderArrowMesh(new THREE.Vector3(formTpPt[1].x, formTpPt[1].y, formTpPt[1].z + 0.3), formTpPt[1], applyArrowMaterialOut, 0.02,0.04,0.545);
   form_general.add(applyArrowOut);
 
+
+
+  // *****************
+  // force
+  // ******************
+
   // *********************** force diagram ***********************
   // *********************** force points ***********************
   var edgescale = 2; // size of the force diagram
 
   //PtA and PtB
   var forcePtA = new THREE.Vector3(0.5, 0, 0)
-  // var forcePtBtemp = Geo.CalNormalVector(formTpPt[0], formTpPt[1], formBtPt1[1], edgescale );
-  // var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
 
   var forcePtBtemp = Geo.CalNormalVectorUpdated(formBtPt1[1], formTpPt[1], formTpPt[0], edgescale );
   var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
 
   //PtC
-  // var forcePtC1temp = Geo.CalNormalVector(formTpPt[0], formTpPt[1], formBtPt2[1], edgescale );
-  // var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
 
   var forcePtC1temp = Geo.CalNormalVectorUpdated(formBtPt2[1], formTpPt[1], formTpPt[0], edgescale);
   var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
-
-  // var forcePtC2temp = Geo.CalNormalVector(formTpPt[0], formTpPt[1], formBtPt3[1], edgescale );
-  // var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
 
   var forcePtC2temp = Geo.CalNormalVectorUpdated(formBtPt3[1], formTpPt[1], formTpPt[0], edgescale );
   var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
@@ -513,51 +489,53 @@ function Redraw(){
   dirAC.subVectors(forcePtC2, forcePtA).normalize();
   var forcePtC = Geo.LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
 
-
   // *********************** caculating the normals for apply loads *********************** 
   // triangle ABC 
   var normalABC_a = Geo.subVec(forcePtA, forcePtB)
   var normalABC_b = Geo.subVec(forcePtB, forcePtC)
   var normalABC = Geo.cross(normalABC_a, normalABC_b)
 
-  var edgeVector0 = Geo.subVec(formBtPt1[1], formTpPt[0]);
+  var edgeVector0 = Geo.subVec(formTpPt[0], formTpPt[1]);
   var resultapply = normalABC.dot(edgeVector0)
-  //var forcePtBtemp = Geo.subVec(forcePtC-forcePtB)
+
   var forcePtBUpdated, forcePtCUpdated
+  
+  // redefine the force points PtB, PtC ( one condition is that the force diagram flipped)
+
   if (resultapply>0){
     forcePtBUpdated = forcePtB
     forcePtCUpdated= forcePtC
-    
   } else{
     var forcePtBtemp = Geo.CalNormalVectorUpdated(formBtPt1[1], formTpPt[1], formTpPt[0], -edgescale );
-    var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
-    forcePtCUpdated= forcePtB
+    var forcePtBnew = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+    forcePtCUpdated= forcePtBnew
     var lenAC = forcePtA.distanceTo(forcePtC);
     forcePtBUpdated =  Geo.addVectorAlongDir(forcePtA, forcePtC, lenAC)
   }
 
+  // redefine the force point PtD ( one condition is that the force diagram flipped)
+
   //PtD
-  // var forcePtD1temp = Geo.CalNormalVector(formTpPt[0], formBtPt1[1], formBtPt3[1], edgescale );
-  // var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
 
-  var forcePtD1temp = Geo.CalNormalVectorUpdated(formBtPt1[1], formTpPt[0], formBtPt3[1], edgescale );
-  var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
-
-  // var forcePtD2temp = Geo.CalNormalVector(formTpPt[0], formBtPt2[1], formBtPt1[1], edgescale );
-  // var forcePtD2 = new THREE.Vector3(forcePtB.x - forcePtD2temp.x, forcePtB.y - forcePtD2temp.y, forcePtB.z - forcePtD2temp.z);
   if (resultapply>0){
-  var forcePtD2temp = Geo.CalNormalVectorUpdated(formBtPt2[1],  formTpPt[0], formBtPt1[1], edgescale );
-  var forcePtD2 = new THREE.Vector3(forcePtBUpdated.x - forcePtD2temp.x, forcePtBUpdated.y - forcePtD2temp.y, forcePtBUpdated.z - forcePtD2temp.z);
+    var forcePtD1temp = Geo.CalNormalVectorUpdated(formBtPt1[1], formTpPt[0], formBtPt3[1], edgescale );
+    var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
 
-  var dirAD= new THREE.Vector3(); // create once an reuse it
+    var forcePtD2temp = Geo.CalNormalVectorUpdated(formBtPt2[1],  formTpPt[0], formBtPt1[1], edgescale );
+    var forcePtD2 = new THREE.Vector3(forcePtBUpdated.x - forcePtD2temp.x, forcePtBUpdated.y - forcePtD2temp.y, forcePtBUpdated.z - forcePtD2temp.z);
 
-  dirAD.subVectors(forcePtA, forcePtD1).normalize();
+    var dirAD= new THREE.Vector3(); // create once an reuse it
 
-  var dirBD = new THREE.Vector3(); // create once an reuse it
+    dirAD.subVectors(forcePtA, forcePtD1).normalize();
 
-  dirBD.subVectors(forcePtD2, forcePtBUpdated).normalize();
-  var forcePtD = Geo.LinesSectPt(dirAD, forcePtA, dirBD, forcePtBUpdated);
+    var dirBD = new THREE.Vector3(); // create once an reuse it
+
+    dirBD.subVectors(forcePtD2, forcePtBUpdated).normalize();
+    var forcePtD = Geo.LinesSectPt(dirAD, forcePtA, dirBD, forcePtBUpdated);
   } else{
+    var forcePtD1temp = Geo.CalNormalVectorUpdated(formBtPt2[1], formTpPt[0], formBtPt3[1], edgescale );
+    var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
+
     var forcePtD2temp = Geo.CalNormalVectorUpdated(formBtPt2[1],  formTpPt[0], formBtPt1[1], edgescale );
     var forcePtD2 = new THREE.Vector3(forcePtCUpdated.x - forcePtD2temp.x, forcePtCUpdated.y - forcePtD2temp.y, forcePtCUpdated.z - forcePtD2temp.z);
   
@@ -573,26 +551,29 @@ function Redraw(){
 
   var forcePtA_text = Geo.createSpriteText('A',forcePtA)
   force_text.add(forcePtA_text)
+
   if (resultapply>0){
-  var forcePtB_text = Geo.createSpriteText('B',forcePtBUpdated)
-  force_text.add(forcePtB_text)
-  var forcePtC_text = Geo.createSpriteText('C',forcePtCUpdated)
-  force_text.add(forcePtC_text)
+    var forcePtB_text = Geo.createSpriteText('B',forcePtBUpdated)
+    force_text.add(forcePtB_text)
+    var forcePtC_text = Geo.createSpriteText('C',forcePtCUpdated)
+    force_text.add(forcePtC_text)
   } else {
     var forcePtB_text = Geo.createSpriteText('B',forcePtCUpdated)
-  force_text.add(forcePtB_text)
-  var forcePtC_text = Geo.createSpriteText('C',forcePtBUpdated)
-  force_text.add(forcePtC_text)
+    force_text.add(forcePtB_text)
+    var forcePtC_text = Geo.createSpriteText('C',forcePtBUpdated)
+    force_text.add(forcePtC_text)
   }
 
-
   // *********************** caculating the areas of triangles (from the four points) *********************** 
-  var areaABD = Geo.create_force_face_area(forcePtA,forcePtBUpdated,forcePtD);
-  var areaBCD = Geo.create_force_face_area(forcePtBUpdated,forcePtCUpdated,forcePtD);
-  var areaACD = Geo.create_force_face_area(forcePtA,forcePtCUpdated,forcePtD);
-
-
-
+  if (resultapply>0){
+    var areaABD = Geo.create_force_face_area(forcePtA,forcePtBUpdated,forcePtD);
+    var areaBCD = Geo.create_force_face_area(forcePtBUpdated,forcePtCUpdated,forcePtD);
+    var areaACD = Geo.create_force_face_area(forcePtA,forcePtCUpdated,forcePtD);
+  } else{
+    var areaABD = Geo.create_force_face_area(forcePtA,forcePtCUpdated,forcePtD);
+    var areaBCD = Geo.create_force_face_area(forcePtCUpdated,forcePtBUpdated,forcePtD);
+    var areaACD = Geo.create_force_face_area(forcePtA,forcePtBUpdated,forcePtD);
+  }
 
   // *********************** caculating the normals for each triangle *********************** 
 
@@ -602,28 +583,49 @@ function Redraw(){
   // Ny = Az * Bx - Ax * Bz
   // Nz = Ax * By - Ay * Bx
   // ******
+  if (resultapply>0){
+    // triangle ABD 
+    var normalABD_a = Geo.subVec(forcePtBUpdated, forcePtA)
+    var normalABD_b = Geo.subVec(forcePtA, forcePtD)
+    var normalABD = Geo.cross(normalABD_a, normalABD_b)
 
-  // triangle ABD 
-  var normalABD_a = Geo.subVec(forcePtBUpdated, forcePtA)
-  var normalABD_b = Geo.subVec(forcePtA, forcePtD)
-  var normalABD = Geo.cross(normalABD_a, normalABD_b)
+    var edgeVector1 = Geo.subVec(formTpPt[0], formBtPt1[1]);
 
-  var edgeVector1 = Geo.subVec(formTpPt[0], formBtPt1[1]);
+    // triangle BCD 
+    var normalBCD_a = Geo.subVec(forcePtCUpdated, forcePtBUpdated)
+    var normalBCD_b = Geo.subVec(forcePtBUpdated, forcePtD)
+    var normalBCD = Geo.cross(normalBCD_a, normalBCD_b)
 
-  // triangle BCD 
-  var normalBCD_a = Geo.subVec(forcePtCUpdated, forcePtBUpdated)
-  var normalBCD_b = Geo.subVec(forcePtBUpdated, forcePtD)
-  var normalBCD = Geo.cross(normalBCD_a, normalBCD_b)
+    var edgeVector2 = Geo.subVec(formTpPt[0], formBtPt2[1]);
 
-  var edgeVector2 = Geo.subVec(formTpPt[0], formBtPt2[1]);
+    // triangle ACD 
+    var normalCAD_a = Geo.subVec(forcePtA, forcePtCUpdated)
+    var normalCAD_b = Geo.subVec(forcePtCUpdated, forcePtD)
+    var normalCAD = Geo.cross(normalCAD_a, normalCAD_b)
 
-  // triangle ACD 
-  var normalCAD_a = Geo.subVec(forcePtA, forcePtCUpdated)
-  var normalCAD_b = Geo.subVec(forcePtCUpdated, forcePtD)
-  var normalCAD = Geo.cross(normalCAD_a, normalCAD_b)
+    var edgeVector3 = Geo.subVec(formTpPt[0], formBtPt3[1]);
+  } else{
+    // triangle ABD 
+    var normalABD_a = Geo.subVec(forcePtCUpdated, forcePtA)
+    var normalABD_b = Geo.subVec(forcePtA, forcePtD)
+    var normalABD = Geo.cross(normalABD_a, normalABD_b)
 
-  var edgeVector3 = Geo.subVec(formTpPt[0], formBtPt3[1]);
+    var edgeVector1 = Geo.subVec(formTpPt[0], formBtPt1[1]);
 
+    // triangle BCD 
+    var normalBCD_a = Geo.subVec(forcePtBUpdated, forcePtCUpdated)
+    var normalBCD_b = Geo.subVec(forcePtCUpdated, forcePtD)
+    var normalBCD = Geo.cross(normalBCD_a, normalBCD_b)
+
+    var edgeVector2 = Geo.subVec(formTpPt[0], formBtPt2[1]);
+
+    // triangle ACD 
+    var normalCAD_a = Geo.subVec(forcePtA, forcePtBUpdated)
+    var normalCAD_b = Geo.subVec(forcePtBUpdated, forcePtD)
+    var normalCAD = Geo.cross(normalCAD_a, normalCAD_b)
+
+    var edgeVector3 = Geo.subVec(formTpPt[0], formBtPt3[1]);
+  }
   // *********************** force cells **************************
   const forceCell = Geo.addCell4Face(forcePtD, forcePtA, forcePtBUpdated, forcePtCUpdated, forceCellScale )
   force_group_c.add(forceCell);
@@ -632,10 +634,10 @@ function Redraw(){
       obj.material.visible =false;
     }
     });
-  //console.log(forceCellScale)
 
+  // *********************** force edges (including vertices) **************************
   //testing the force edges
-  var edgeSize = 0.02;
+  var edgeSize = 0.01;
   var edgeColor = "lightgrey";
 
   var forceEdgeMaterial=new THREE.MeshPhongMaterial( {
@@ -662,9 +664,19 @@ function Redraw(){
 
   force_group_e.add(forceEdgeBD)
 
-  const forceEdgeCD = Geo.createCylinderMesh(forcePtC,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+  const forceEdgeCD = Geo.createCylinderMesh(forcePtCUpdated,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
 
   force_group_e.add(forceEdgeCD)
+
+  if (resultapply>0){
+    const endPtVerticePtA = Geo.addEdgeSphere(edgeSize, forcePtA, edgeColor)
+    const endPtVerticePtB = Geo.addEdgeSphere(edgeSize, forcePtB, edgeColor)
+    const endPtVerticePtC = Geo.addEdgeSphere(edgeSize, forcePtC, edgeColor)
+    const endPtVerticePtD = Geo.addEdgeSphere(edgeSize, forcePtD, edgeColor)
+  }
+
+
+
 
   scene2.add(force_group_v);
   scene2.add(force_group_f);
@@ -674,18 +686,30 @@ function Redraw(){
   scene2.add(force_text);
 
   // *********************** form edges **************************
-
-  //var edgeSize = 0.04;
-  var edgeSize1 = areaABD * 0.05;
-  var edgeSize2 = areaBCD * 0.05;
-  var edgeSize3 = areaACD * 0.05;
-  //var edgeColor = 0x054c92;
-
   var formedgeColor1, formedgeColor2, formedgeColor3
-  var result1 = normalABD.dot(edgeVector1)
-  var result2 = normalBCD.dot(edgeVector2)
-  var result3 = normalCAD.dot(edgeVector3)
- 
+
+  if (resultapply>0){
+   
+    var edgeSize1 = areaABD * 0.05;
+    var edgeSize2 = areaBCD * 0.05;
+    var edgeSize3 = areaACD * 0.05;
+
+    var result1 = normalABD.dot(edgeVector1)
+    var result2 = normalBCD.dot(edgeVector2)
+    var result3 = normalCAD.dot(edgeVector3)
+
+  } else{
+
+    var edgeSize1 = areaBCD * 0.05;
+    var edgeSize2 = areaABD * 0.05;
+    var edgeSize3 = areaACD * 0.05;
+
+    var result1 = normalBCD.dot(edgeVector1)
+    var result2 = normalABD.dot(edgeVector2)
+    var result3 = normalCAD.dot(edgeVector3)
+
+  }
+
   if (result1 < 0){
     formedgeColor1 = 'red';
   } else{
@@ -712,6 +736,7 @@ function Redraw(){
   var formEdge3Material=new THREE.MeshPhongMaterial( { 
     color:  formedgeColor3
   } );
+
 
   //create end sphere for bottom vertice 1
   const endPtVertice1SpV = Geo.addVectorAlongDir(formBtPt1[1], formTpPt[0], -0.14);
@@ -742,7 +767,7 @@ function Redraw(){
 
   form_group_e.add(endPtVertice3Sp)
   form_group_e.add(formEdge3)
-
+ 
 
   scene.add(form_group_v);
   scene.add(form_group_f);
@@ -751,6 +776,11 @@ function Redraw(){
   scene.add(form_general);
 
 }
+
+
+
+
+
 
 
 
@@ -820,6 +850,9 @@ function initModel() {
       {
         selectObj = intersects[0].object;
         trfm_ctrl.attach(selectObj);
+        trfm_ctrl.position.update();
+        console.log(selectObj.position)
+        console.log(trfm_ctrl.position)
       }
   }
   function onMouseUp(event) 
@@ -899,10 +932,50 @@ function initModel() {
 
 
 
+// *********************** Basic settings ***********************
 
+// ******** construct render setting
+function initRender(){
+  renderer = new THREE.WebGLRenderer({alpha: true});
+  renderer.setClearAlpha(0); 
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMapEnabled = true;
+  renderer.shadowMaptype = THREE.PCFSoftShadowMap;
+  renderer.localClippingEnabled = true;
+  renderer.setPixelRatio(devicePixelRatio);
+  document.body.appendChild(renderer.domElement);//insert this into body
+}
 
+// ******** construct camera setting
+function initCamera(){
 
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth/(window.innerHeight*2), 0.1, 200);
+  camera.position.set(8, 0, 0);
 
+  camera.up.x = 0;
+  camera.up.y = 0;
+  camera.up.z = 1;
+
+  camera.lookAt({
+    x : 0,
+    y : 0,
+    z : 0
+  });
+
+  //resize window to maintaian the size of geometry
+  window.addEventListener( 'resize', onWindowResize, false );
+  function onWindowResize(){
+      camera.aspect = window.innerWidth/2 / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+  }
+}
+
+// ********* scene setting
+function initScene(){
+  scene = new THREE.Scene();
+  scene2 = new THREE.Scene();
+}
 
 
 var INTERSECTED;
@@ -910,9 +983,9 @@ var INTERSECTED;
 function render() 
 {
 
-  var rayCaster2=new THREE.Raycaster();
-  rayCaster2.setFromCamera(mouse, camera);
-  var intersects = rayCaster2.intersectObjects(Ctrl_pts);
+  //var rayCaster=new THREE.Raycaster();
+  rayCaster.setFromCamera(mouse, camera);
+  var intersects = rayCaster.intersectObjects(Ctrl_pts);
 
   if (intersects.length > 0) {//有相交的object时
    
@@ -930,7 +1003,7 @@ function render()
           {
           
             selectObj = intersects[0].object;
-            console.log("selectobj.name="+intersects[0].object.name.charAt(2));
+            //console.log("selectobj.name="+intersects[0].object.name.charAt(2));
             trfm_ctrl.attach(selectObj);
           }
           
@@ -962,14 +1035,16 @@ function render()
   renderer.render(scene2, camera);
 }
 
-
-
 //create recursive function to keep updating the animation
 function animate() {
   requestAnimationFrame(animate);
   orbit_ctrl.update();
   render();
 }
+
+
+
+
 
 
 

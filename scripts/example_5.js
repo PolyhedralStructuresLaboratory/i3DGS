@@ -77,7 +77,7 @@ const paneLeft = new Tweakpane.Pane({
 const tab = paneLeft.addTab({
     pages: [
         {title: 'Parameters'},
-        {title: 'Inital'}
+        {title: 'Initial'}
     ],
 });
 
@@ -221,10 +221,9 @@ oSlider.on('change', (ev) => { //on change, dispose old geometry and create new
 });
 
 globalVisibilityCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-    oSlider.disabled = !oSlider.disabled;
 });
 
-// *********************** form diagram inital data ***********************
+// *********************** form diagram initial data ***********************
 
 
 var formBtPt1 = new THREE.Vector3(1.3, -1.3, -1.3);

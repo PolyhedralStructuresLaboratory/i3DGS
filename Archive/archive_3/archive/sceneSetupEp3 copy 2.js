@@ -1,7 +1,7 @@
-import '/Users/chenwx/college coding/i3dgs/style.css'; //setup basic visual factors for the overall web
+import '/Users/chenwx/college coding/i3dgs/Archive/archive_3/style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from 'three';
-import * as Geo from '/Archive/js/functions.js';
+import * as Geo from '/Archive/archive_3/functions.js';
 import { createMultiMaterialObject } from 'three/examples/jsm/utils/SceneUtils';
 
 
@@ -100,11 +100,11 @@ const tab = paneLeft.addTab({
 // tweakpane - width
 
 const widthParams = {
-    MSscale: 1,
+  SubD: 1,
 };
-tab.pages[0].addInput(widthParams, 'MSscale', {
+tab.pages[0].addInput(widthParams, 'SubD', {
     min: 1,
-    max: 4,
+    max: 3,
     step: 1
 }).on('change', (ev) => { //on change, dispose old geometry and create new
   subd.l = ev.value;
@@ -114,44 +114,14 @@ tab.pages[0].addInput(widthParams, 'MSscale', {
 // tweakpane - height
 
 const heightParams = {
-    height: 2,
+    GDoF: 0.5,
 };
-tab.pages[0].addInput(heightParams, 'height', {
-    min: 1,
-    max: 5,
+tab.pages[0].addInput(heightParams, 'GDoF', {
+    min: 0.3,
+    max: 0.8,
 }).on('change', (ev) => { //on change, dispose old geometry and create new
-    boxMesh.geometry.dispose();
-    globalHeight = ev.value;
-    boxMesh.geometry = new THREE.BoxGeometry(
-        globalWidth,
-        globalHeight,
-        globalDepth
-    );
-    planeMesh.geometry.dispose();
-    planeMesh.geometry = new THREE.PlaneGeometry(
-        globalWidth * globalPlaneFactor,
-        globalHeight * globalPlaneFactor,
-        10,
-        10
-    );
-});
-
-// tweakpane - depth
-
-const depthParams = {
-    depth: 2,
-};
-tab.pages[0].addInput(depthParams, 'depth', {
-    min: 1,
-    max: 5,
-}).on('change', (ev) => { //on change, dispose old geometry and create new
-    boxMesh.geometry.dispose();
-    globalDepth = ev.value;
-    boxMesh.geometry = new THREE.BoxGeometry(
-        globalWidth,
-        globalHeight,
-        globalDepth
-    );
+ offsetscale.l = ev.value;
+ Redraw()
 });
 
 //tweakpane - color (new feature!)
@@ -312,6 +282,10 @@ var form_group_mink
 
 var triP1 = new function () {
   this.z = 0.6;
+}
+
+var offsetscale = new function () {
+  this.l = 0.6;
 }
 
 
@@ -961,18 +935,849 @@ function Redraw(){
   
 
   if(subd.l == 2){
-    // // apply loads locations o1
-    // var formPtO1 = new THREE.Vector3((formBtPt1.x+formBtPt2.x+formBtPt3.x)/3,(formBtPt1.y+formBtPt2.y+formBtPt3.y)/3,(formBtPt1.z+formBtPt2.z+formBtPt3.z)/3 + 1);
+    // apply loads locations o1, o2, o3
+    
+    var formPtO1a = create_offset_point(formBtPt1, formBtPt2,formBtPt3,offsetscale.l);
+    var formPtO1 = new THREE.Vector3(formPtO1a.x, formPtO1a.y, formPtO1a.z +2)
+    var formPtO1b = new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 2.5);
 
-    // // add apply loads arrows
-    // var arrow_apply =new THREE.MeshPhongMaterial( {color: 0x009600} );
-    // var arrow_apply_outline = new THREE.MeshBasicMaterial( { color: "white", transparent: false, side: THREE.BackSide } );
+    var formPtO2a = create_offset_point(formBtPt2, formBtPt1,formBtPt3,offsetscale.l);
+    var formPtO2 = new THREE.Vector3(formPtO2a.x, formPtO2a.y, formPtO2a.z +2)
+    var formPtO2b = new THREE.Vector3(formPtO2.x, formPtO2.y, formPtO2.z - 2.5);
 
-    // var apply_arrow1 = createCylinderArrowMesh(formPtO1,new THREE.Vector3(formPtO1.x,formPtO1.y,formPtO1.z-0.4),arrow_apply,0.02,0.05,0.56);
-    // form_general.add(apply_arrow1);
-    // var apply_arrow12 = createCylinderArrowMesh(new THREE.Vector3(formPtO1.x,formPtO1.y,formPtO1.z+0.005),new THREE.Vector3(formPtO1.x,formPtO1.y,formPtO1.z-0.425),arrow_apply_outline,0.025,0.06,0.53);
-    // form_general.add(apply_arrow12);
-  };
+    var formPtO3a = create_offset_point(formBtPt3, formBtPt1,formBtPt2,offsetscale.l);
+    var formPtO3 = new THREE.Vector3(formPtO3a.x, formPtO3a.y, formPtO3a.z +2)
+    var formPtO3b = new THREE.Vector3(formPtO3.x, formPtO3.y, formPtO3.z - 2.5);
+
+    // add apply loads arrows - 1
+    var arrow_apply =new THREE.MeshPhongMaterial( {color: 0x009600} );
+    var arrow_apply_outline = new THREE.MeshBasicMaterial( { color: "white", transparent: false, side: THREE.BackSide } );
+
+    var apply_arrow1 = createCylinderArrowMesh(formPtO1,new THREE.Vector3(formPtO1.x,formPtO1.y,formPtO1.z-0.4),arrow_apply,0.02,0.05,0.56);
+    form_general.add(apply_arrow1);
+    var apply_arrow12 = createCylinderArrowMesh(new THREE.Vector3(formPtO1.x,formPtO1.y,formPtO1.z+0.005),new THREE.Vector3(formPtO1.x,formPtO1.y,formPtO1.z-0.425),arrow_apply_outline,0.025,0.06,0.53);
+    form_general.add(apply_arrow12);
+
+    // add dash lines o1o1B, o2o2B
+    var applyline_dash_form = new THREE.LineDashedMaterial({
+      color: 0x009600,//color
+      dashSize: 0.05,
+      gapSize: 0.03,
+      linewidth: 1
+    });
+
+    var apply_o1o1B = [];
+    apply_o1o1B.push(formPtO1);
+    apply_o1o1B.push(formPtO1b);
+    var apply_1_geo = new THREE.BufferGeometry().setFromPoints( apply_o1o1B );
+    var applyline_o1B = new THREE.LineSegments(apply_1_geo,applyline_dash_form);
+    applyline_o1B.computeLineDistances();//compute
+    form_general.add(applyline_o1B);
+
+    // add apply loads arrows - 2
+
+    var apply_arrow2 = createCylinderArrowMesh(formPtO2,new THREE.Vector3(formPtO2.x,formPtO2.y,formPtO2.z-0.4),arrow_apply,0.02,0.05,0.56);
+    form_general.add(apply_arrow2);
+    var apply_arrow22 = createCylinderArrowMesh(new THREE.Vector3(formPtO2.x,formPtO2.y,formPtO2.z+0.005),new THREE.Vector3(formPtO2.x,formPtO2.y,formPtO2.z-0.425),arrow_apply_outline,0.025,0.06,0.53);
+    form_general.add(apply_arrow22);
+
+    var apply_o2B = [];
+    apply_o2B.push(formPtO2);
+    apply_o2B.push(formPtO2b);
+    var apply_2_geo = new THREE.BufferGeometry().setFromPoints( apply_o2B );
+    var applyline_o2B = new THREE.LineSegments(apply_2_geo,applyline_dash_form);
+    applyline_o2B.computeLineDistances();//compute
+    form_general.add(applyline_o2B);
+
+    // add apply loads arrows - 3
+
+    var apply_arrow3 = createCylinderArrowMesh(formPtO3,new THREE.Vector3(formPtO3.x,formPtO3.y,formPtO3.z-0.4),arrow_apply,0.02,0.05,0.56);
+    form_general.add(apply_arrow3);
+    var apply_arrow32 = createCylinderArrowMesh(new THREE.Vector3(formPtO3.x,formPtO3.y,formPtO3.z+0.005),new THREE.Vector3(formPtO3.x,formPtO3.y,formPtO3.z-0.425),arrow_apply_outline,0.025,0.06,0.53);
+    form_general.add(apply_arrow32);
+
+    var apply_o3B = [];
+    apply_o3B.push(formPtO3);
+    apply_o3B.push(formPtO3b);
+    var apply_3_geo = new THREE.BufferGeometry().setFromPoints( apply_o3B );
+    var applyline_o3B = new THREE.LineSegments(apply_3_geo,applyline_dash_form);
+    applyline_o3B.computeLineDistances();//compute
+    form_general.add(applyline_o3B);
+
+    // green faces : o1 o1b point1 
+    var greenface_p1 = FormFace4ptGN(
+      new THREE.Vector3(formBtPt1.x,formBtPt1.y, formPtO1b.z),
+      new THREE.Vector3(formBtPt1.x,formBtPt1.y, formPtO1.z),
+      formPtO1,
+      formPtO1b
+      )
+    form_group_f.add(greenface_p1);
+
+    var green_p1 = [];
+    green_p1.push(new THREE.Vector3(formBtPt1.x,formBtPt1.y, formPtO1b.z));
+    green_p1.push(new THREE.Vector3(formBtPt1.x,formBtPt1.y, formPtO1.z));
+    var green_p1_geo = new THREE.BufferGeometry().setFromPoints(green_p1);
+    var dashline_p1 = new THREE.LineSegments(green_p1_geo,applyline_dash_form);
+    dashline_p1.computeLineDistances();//compute
+    form_group_f.add(dashline_p1);
+
+    // green faces : o2 o2b point2 
+    var greenface_p2 = FormFace4ptGN(
+      new THREE.Vector3(formBtPt2.x,formBtPt2.y, formPtO2b.z),
+      new THREE.Vector3(formBtPt2.x,formBtPt2.y, formPtO2.z),
+      formPtO2,
+      formPtO2b
+      )
+    form_group_f.add(greenface_p2);
+
+    var green_p2 = [];
+    green_p2.push(new THREE.Vector3(formBtPt2.x,formBtPt2.y, formPtO2b.z));
+    green_p2.push(new THREE.Vector3(formBtPt2.x,formBtPt2.y, formPtO2.z));
+    var green_p2_geo = new THREE.BufferGeometry().setFromPoints(green_p2);
+    var dashline_p2 = new THREE.LineSegments(green_p2_geo,applyline_dash_form);
+    dashline_p2.computeLineDistances();//compute
+    form_group_f.add(dashline_p2);
+
+    // green faces : o3 o3b point3 
+    var greenface_p3 = FormFace4ptGN(
+      new THREE.Vector3(formBtPt3.x,formBtPt3.y, formPtO3b.z),
+      new THREE.Vector3(formBtPt3.x,formBtPt3.y, formPtO3.z),
+      formPtO3,
+      formPtO3b
+    )
+    form_group_f.add(greenface_p3);
+
+    var green_p3 = [];
+    green_p3.push(new THREE.Vector3(formBtPt3.x,formBtPt3.y, formPtO3b.z));
+    green_p3.push(new THREE.Vector3(formBtPt3.x,formBtPt3.y, formPtO3.z));
+    var green_p3_geo = new THREE.BufferGeometry().setFromPoints(green_p3);
+    var dashline_p3 = new THREE.LineSegments(green_p3_geo,applyline_dash_form);
+    dashline_p3.computeLineDistances();//compute
+    form_group_f.add(dashline_p3);
+
+    // green faces : o1 o2 
+    var greenface_p4 = FormFace4ptGN(
+      formPtO1b,
+      formPtO1,
+      formPtO2,
+      formPtO2b
+    )
+    form_group_f.add(greenface_p4);
+
+    var greenface_p5 = FormFace4ptGN(
+      formPtO2b,
+      formPtO2,
+      formPtO3,
+      formPtO3b
+    )
+    form_group_f.add(greenface_p5);
+
+    var greenface_p6 = FormFace4ptGN(
+      formPtO1b,
+      formPtO1,
+      formPtO3,
+      formPtO3b
+    )
+    form_group_f.add(greenface_p6);
+
+    //form closing plane                  
+    //plane mesh
+    var form_closingplane = FormPlane3Pt(formBtPt2,formBtPt1,formBtPt3)
+    form_general.add(form_closingplane);
+
+    var formline_dash = new THREE.LineDashedMaterial({
+      color: "black",//color
+      dashSize: 0.1,
+      gapSize: 0.03,
+      linewidth: 1
+
+    });
+  
+    var form_linep1p2 = createdashline (formBtPt1, formBtPt2,formline_dash)
+    var form_linep2p3 = createdashline (formBtPt2, formBtPt3,formline_dash)
+    var form_linep1p3 = createdashline (formBtPt1, formBtPt3,formline_dash)
+
+    form_general.add(form_linep1p2);
+    form_general.add(form_linep2p3);
+    form_general.add(form_linep1p3);
+
+    //plane face nromals
+    var normal_material = new THREE.MeshPhongMaterial({color:"red"})
+    var normal_outlinematerial = new THREE.MeshPhongMaterial({color:"white", side:THREE.BackSide})
+    var force_normal_material = new THREE.MeshPhongMaterial({color:"red"})
+    //normal 124
+    var mid_p1p2p3 = new THREE.Vector3((formBtPt1.x+formBtPt2.x+formBtPt3.x)/3,(formBtPt1.y+formBtPt2.y+formBtPt3.y)/3,(formBtPt1.z+formBtPt2.z+formBtPt3.z)/3 )
+    var vec_p1p2p3_temp = CalNormalVectorUpdated(formBtPt3,formBtPt2,formBtPt1,1.2)
+    var normal_p1p2p3 = new THREE.Vector3(mid_p1p2p3.x-0.2*vec_p1p2p3_temp.x, mid_p1p2p3.y-0.2*vec_p1p2p3_temp.y, mid_p1p2p3.z-0.2*vec_p1p2p3_temp.z)
+
+    var form_normal_1 = createCylinderArrowMesh(mid_p1p2p3,normal_p1p2p3,normal_material,0.015,0.035,0.55);
+    var form_normal_1_outline = createCylinderArrowMesh(mid_p1p2p3,normal_p1p2p3,normal_outlinematerial,0.018,0.038,0.54);
+
+    form_general.add(form_normal_1);
+    form_general.add(form_normal_1_outline);
+
+    // ***********************            foce diagram            **************************
+    var edgescale = 2; // size of the force diagram
+
+    //PtA
+    var forcePtA = new THREE.Vector3(0.5,-0.5,0);
+
+    //PtB
+    var forcePtBtemp = CalNormalVectorUpdated(formBtPt1, formPtO1, formPtO1b, edgescale );
+    var forcePtB = new THREE.Vector3(forcePtA.x - forcePtBtemp.x, forcePtA.y - forcePtBtemp.y, forcePtA.z - forcePtBtemp.z);
+
+    //PtC
+
+    var forcePtC1temp = CalNormalVectorUpdated(formBtPt2, formPtO2, formPtO2b, edgescale);
+    var forcePtC1 = new THREE.Vector3(forcePtB.x - forcePtC1temp.x, forcePtB.y - forcePtC1temp.y, forcePtB.z - forcePtC1temp.z);
+
+    var forcePtC2temp = CalNormalVectorUpdated(formBtPt3, formPtO3, formPtO3b, edgescale );
+    var forcePtC2 = new THREE.Vector3(forcePtA.x - forcePtC2temp.x, forcePtA.y - forcePtC2temp.y, forcePtA.z - forcePtC2temp.z);
+
+    var dirBC = new THREE.Vector3(); // create once an reuse it
+
+    dirBC.subVectors(forcePtB, forcePtC1).normalize();
+
+    var dirAC = new THREE.Vector3(); // create once an reuse it
+
+    dirAC.subVectors(forcePtC2, forcePtA).normalize();
+    var forcePtC = LinesSectPt(dirBC, forcePtB, dirAC, forcePtA);
+
+    //PtD
+
+    var forcePtD1temp = CalNormalVectorUpdated(formPtO1, formPtO3, formPtO3b, edgescale);
+    var forcePtD1 = new THREE.Vector3(forcePtA.x - forcePtD1temp.x, forcePtA.y - forcePtD1temp.y, forcePtA.z - forcePtD1temp.z);
+
+    var forcePtD2temp = CalNormalVectorUpdated(formPtO2, formPtO1, formPtO1b, edgescale );
+    var forcePtD2 = new THREE.Vector3(forcePtB.x - forcePtD2temp.x, forcePtB.y - forcePtD2temp.y, forcePtB.z - forcePtD2temp.z);
+
+    var dirBD = new THREE.Vector3(); // create once an reuse it
+
+    dirBD.subVectors(forcePtB, forcePtD2).normalize();
+
+    var dirAD = new THREE.Vector3(); // create once an reuse it
+
+    dirAD.subVectors(forcePtD1, forcePtA).normalize();
+    var forcePtD = LinesSectPt(dirBD, forcePtB, dirAD, forcePtA);
+
+
+    //force edges
+    var edgeSize = 0.005;
+    var edgeColor = "lightgrey";
+
+    var forceEdgeMaterial=new THREE.MeshPhongMaterial( {
+      color:  edgeColor
+    } );
+
+    const forceEdgeAB = createCylinderMesh(forcePtA,forcePtB,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAB);
+    
+    const forceEdgeAC = createCylinderMesh(forcePtA,forcePtC,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAC);
+
+    const forceEdgeBC = createCylinderMesh(forcePtB,forcePtC,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBC)
+
+    const forceEdgeBD = createCylinderMesh(forcePtB,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBD)
+
+    const forceEdgeAD = createCylinderMesh(forcePtA,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAD)
+
+    const forceEdgeCD = createCylinderMesh(forcePtC,forcePtD,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCD)
+
+    // *********************** force trial point O **************************
+
+    var TrialP_O = new THREE.Vector3(fo.x,fo.y,fo.z);
+
+    const TrialP_0Sp = addVertice(0.01, "sp1", TrialP_O);
+    const TrialP_0Sp_out = addVerticeOut(0.01, TrialP_0Sp.position, 1.55)
+    force_group_v.add(TrialP_0Sp);
+    force_group_v.add(TrialP_0Sp_out);
+
+    const TrialFaces = ForceTrialFace3Pt(forcePtA,forcePtB,forcePtD, TrialP_O)
+    force_group_f_trial.add(TrialFaces)
+    const TrialFaces2 = ForceTrialFace3Pt(forcePtB,forcePtC,forcePtD, TrialP_O)
+    force_group_f_trial.add(TrialFaces2)
+    const TrialFaces3 = ForceTrialFace3Pt(forcePtA,forcePtC,forcePtD, TrialP_O)
+    force_group_f_trial.add(TrialFaces3)
+
+    // ***********************           trial form                **************************
+    var DragPointMat = new THREE.MeshPhongMaterial({color: 0x696969, transparent: true, opacity:0.8});
+
+    var trial_P1 = new THREE.Vector3(formBtPt1.x,formBtPt1.y,triP1.z)
+
+    var trial_o1 = create_trial_intec (trial_P1,forcePtA,TrialP_O,forcePtB,formPtO1,formPtO1b);
+    var trial_o2 = create_trial_intec (trial_o1,forcePtD,TrialP_O,forcePtB,formPtO2,formPtO2b);
+    var trial_P2 = create_trial_intec (trial_o2,forcePtC,TrialP_O,forcePtB,formBtPt2,new THREE.Vector3(formBtPt2.x,formBtPt2.y,formBtPt2.z - 1));
+    var trial_o3 = create_trial_intec (trial_o1,forcePtD,TrialP_O,forcePtA,formPtO3,formPtO3b);
+    var trial_P3 = create_trial_intec (trial_o3,forcePtA,TrialP_O,forcePtC,formBtPt3,new THREE.Vector3(formBtPt3.x,formBtPt3.y,formBtPt3.z - 1));
+
+    var trial_mesh_p1o1 = createCylinderMesh(trial_o1,trial_P1,DragPointMat,0.02,0.02);
+    var trial_mesh_p2o2 = createCylinderMesh(trial_o2,trial_P2,DragPointMat,0.02,0.02);
+    var trial_mesh_p3o3 = createCylinderMesh(trial_P3,trial_o3,DragPointMat,0.02,0.02);
+    var trial_mesh_o1o2 = createCylinderMesh(trial_o1,trial_o2,DragPointMat,0.02,0.02);
+    var trial_mesh_o1o3 = createCylinderMesh(trial_o1,trial_o3,DragPointMat,0.02,0.02);
+    var trial_mesh_o3o2 = createCylinderMesh(trial_o3,trial_o2,DragPointMat,0.02,0.02);
+
+    form_group_e_trial.add(trial_mesh_p1o1);
+    form_group_e_trial.add(trial_mesh_p2o2);
+    form_group_e_trial.add(trial_mesh_p3o3);
+    form_group_e_trial.add(trial_mesh_o1o2);
+    form_group_e_trial.add(trial_mesh_o1o3);
+    form_group_e_trial.add(trial_mesh_o3o2);
+
+    //trial form closing plane                  
+    //plane mesh
+    var trial_closingplane = FormPlane3Pt(trial_P2,trial_P1,trial_P3)
+    form_general_trial.add(trial_closingplane);
+    
+    var trialline_dash = new THREE.LineDashedMaterial({
+      color: "black",//color
+      dashSize: 0.1,
+      gapSize: 0.03,
+      linewidth: 1
+
+    });
+  
+    var trial_linep1p2 = createdashline ( trial_P1,  trial_P2,trialline_dash)
+    var trial_linep2p3 = createdashline ( trial_P2,  trial_P3,trialline_dash)
+    var trial_linep1p3 = createdashline ( trial_P1,  trial_P3,trialline_dash)
+    
+
+    form_general_trial.add(trial_linep1p2);
+    form_general_trial.add(trial_linep2p3);
+    form_general_trial.add(trial_linep1p3);
+
+    //trial plane face nromals
+    var trialmid_p1p2p3 = new THREE.Vector3((trial_P1.x+trial_P2.x+trial_P3.x)/3,(trial_P1.y+trial_P2.y+trial_P3.y)/3,(trial_P1.z+trial_P2.z+trial_P3.z)/3 )
+    var vec_p1p2p3_temp = CalNormalVectorUpdated(trial_P3,trial_P2,trial_P1,1.2)
+    var trialnormal_p1p2p3 = new THREE.Vector3(trialmid_p1p2p3.x-0.2*vec_p1p2p3_temp.x, trialmid_p1p2p3.y-0.2*vec_p1p2p3_temp.y, trialmid_p1p2p3.z-0.2*vec_p1p2p3_temp.z)
+
+    var trial_normal_material = new THREE.MeshPhongMaterial({color:"red"})
+    var trial_normal_outlinematerial = new THREE.MeshPhongMaterial({color:"white", side:THREE.BackSide})
+    var force_normal_material = new THREE.MeshPhongMaterial({color:"red"})
+
+    var trial_normal_1 = createCylinderArrowMesh(trialmid_p1p2p3,trialnormal_p1p2p3,trial_normal_material,0.015,0.035,0.55);
+    var trial_normal_1_outline = createCylinderArrowMesh(trialmid_p1p2p3,trialnormal_p1p2p3,trial_normal_outlinematerial,0.018,0.038,0.54);
+
+    form_general_trial.add(trial_normal_1);
+    form_general_trial.add(trial_normal_1_outline);
+
+     // ***********************          find trial force point x1              **************************
+
+    //location of x1 
+    //find x1
+    var ForceX1_vec = CalNormalVectorUpdated(trial_P1,trial_P2,trial_P3,0.5);
+    var ForceX1_temp = new THREE.Vector3(TrialP_O.x-1.2*ForceX1_vec.x, TrialP_O.y-1.2*ForceX1_vec.y,TrialP_O.z-1.2*ForceX1_vec.z);   
+
+    //define intersection point x1
+    var intersect_x1_vec = new THREE.Vector3(ForceX1_temp.x-TrialP_O.x,ForceX1_temp.y-TrialP_O.y,ForceX1_temp.z-TrialP_O.z);
+    var applyplanevec = CalNormalVectorUpdated(forcePtA,forcePtB,forcePtC,0.5);
+    var ForceX1 = Cal_Plane_Line_Intersect_Point(TrialP_O,intersect_x1_vec,forcePtB,applyplanevec);
+
+    var line_ox1 = [];
+    line_ox1.push(TrialP_O);
+    line_ox1.push(ForceX1);
+    var line_ox1_geo = new THREE.BufferGeometry().setFromPoints( line_ox1 );
+    var applyline_1 = new THREE.LineDashedMaterial({
+      color: "black",//color
+      dashSize: 0.2,
+      gapSize: 0.03,
+      linewidth: 1
+    });
+    var applylineox1 = new THREE.LineSegments(line_ox1_geo,applyline_1);
+    applylineox1.computeLineDistances();//compute
+    force_general_trial.add(applylineox1);
+
+    var x1_closeP1 = addVectorAlongDir(TrialP_O, ForceX1, -1);
+    var x1_closeP2 = addVectorAlongDir(TrialP_O, ForceX1, -0.8);
+  
+    var x1_arrow = createCylinderArrowMesh(x1_closeP1,x1_closeP2,force_normal_material,0.012,0.025,0.55);
+  
+    force_general_trial.add(x1_arrow);
+    var materialpointx = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+                      
+    var spforcePointx = new THREE.SphereGeometry(0.01);
+    var new_forcePointx1 = new THREE.Mesh(spforcePointx, materialpointx);
+    
+    new_forcePointx1.position.copy(ForceX1);
+    
+    var outlineMaterialx = new THREE.MeshBasicMaterial( { color: "red", transparent: false, side: THREE.BackSide } );
+    var outlineMeshnewx1 = new THREE.Mesh( spforcePointx, outlineMaterialx );
+    outlineMeshnewx1.position.copy(ForceX1);
+    outlineMeshnewx1.scale.multiplyScalar(1.55);
+
+    force_general.add(new_forcePointx1); 
+    force_general.add(outlineMeshnewx1); 
+    //find constrain point o1
+    var ForceO1_temp = CalNormalVectorUpdated(formBtPt1,formBtPt2,formBtPt3,0.5);
+    var ForceO1 = new THREE.Vector3(ForceX1.x-o1.l*ForceO1_temp.x, ForceX1.y-o1.l*ForceO1_temp.y,ForceX1.z-o1.l*ForceO1_temp.z);   
+
+    var line_o1x1_temp = [];
+    line_o1x1_temp.push(ForceX1);
+    line_o1x1_temp.push(ForceO1);
+
+    var line_o1x1_geo = new THREE.BufferGeometry().setFromPoints( line_o1x1_temp );
+    var line_o1x1 = new THREE.LineSegments(line_o1x1_geo,applyline_1);
+    line_o1x1.computeLineDistances();//compute
+    force_general.add(line_o1x1);
+
+    //add o1 arrow
+    var ForceO1_closeP1 = addVectorAlongDir(ForceO1, ForceX1, -0.6);
+    var ForceO1_closeP2 = addVectorAlongDir(ForceO1, ForceX1, -0.4);
+    var ForceO1_arrow = createCylinderArrowMesh(ForceO1_closeP1,ForceO1_closeP2,force_normal_material,0.012,0.025,0.55);
+
+    force_general.add(ForceO1_arrow);
+
+    // ***********************          find force edges        **************************
+
+    const forceEdgeAO1 = createCylinderMesh(forcePtA,ForceO1,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeAO1);
+
+    const forceEdgeBO1 = createCylinderMesh(forcePtB,ForceO1,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeBO1);
+
+    const forceEdgeCO1 = createCylinderMesh(forcePtC,ForceO1,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeCO1);
+
+    const forceEdgeDO1 = createCylinderMesh(forcePtD,ForceO1,forceEdgeMaterial,edgeSize,edgeSize);
+    force_group_e.add(forceEdgeDO1);
+
+    // ***********************          find form edges        **************************
+
+    var formPtO1new = create_trial_intec (formBtPt1,forcePtA,ForceO1,forcePtB,formPtO1,formPtO1b);
+    var formPtO2new = create_trial_intec (formBtPt2,forcePtB,ForceO1,forcePtC,formPtO2,formPtO2b);
+    var formPtO3new = create_trial_intec (formBtPt3,forcePtC,ForceO1,forcePtA,formPtO3,formPtO3b);
+
+    var formPt2 = create_trial_intec (formPtO2new,forcePtC,TrialP_O,forcePtB,formBtPt2,new THREE.Vector3(formBtPt2.x,formBtPt2.y,formBtPt2.z - 1));
+    var trial_o3 = create_trial_intec (trial_o1,forcePtD,TrialP_O,forcePtA,formPtO3,formPtO3b);
+    var trial_P3 = create_trial_intec (trial_o3,forcePtA,TrialP_O,forcePtC,formBtPt3,new THREE.Vector3(formBtPt3.x,formBtPt3.y,formBtPt3.z - 1));
+    //New Point o1, o2 ,o3
+    var materialpointo = new THREE.MeshPhongMaterial({color: "lightgrey", transparent: false});
+    var outlineMaterial = new THREE.MeshBasicMaterial( { color: "black", transparent: false, side: THREE.BackSide } );
+
+    var spformPointO1 = new THREE.SphereGeometry(0.04);
+    var new_formPtO1 = new THREE.Mesh(spformPointO1, materialpointo);
+    new_formPtO1.position.copy(formPtO1new);
+    new_formPtO1.castShadow=true;
+    var outlineMeshnew1 = new THREE.Mesh( spformPointO1, outlineMaterial );
+    outlineMeshnew1.position.copy(formPtO1new);
+    outlineMeshnew1.scale.multiplyScalar(1.55);
+    form_group_v.add(new_formPtO1); 
+    form_group_v.add(outlineMeshnew1); 
+
+    var spformPointO2 = new THREE.SphereGeometry(0.04);
+    var new_formPtO2 = new THREE.Mesh(spformPointO2, materialpointo);
+    new_formPtO2.position.copy(formPtO2new);
+    new_formPtO2.castShadow=true;
+    var outlineMeshnew2 = new THREE.Mesh( spformPointO2, outlineMaterial );
+    outlineMeshnew2.position.copy(formPtO2new);
+    outlineMeshnew2.scale.multiplyScalar(1.55);
+    form_group_v.add(new_formPtO2); 
+    form_group_v.add(outlineMeshnew2); 
+
+    var spformPointO3 = new THREE.SphereGeometry(0.04);
+    var new_formPtO3 = new THREE.Mesh(spformPointO3, materialpointo);
+    new_formPtO3.position.copy(formPtO3new);
+    new_formPtO3.castShadow=true;
+    var outlineMeshnew3 = new THREE.Mesh( spformPointO3, outlineMaterial );
+    outlineMeshnew3.position.copy(formPtO3new);
+    outlineMeshnew3.scale.multiplyScalar(1.55);
+    form_group_v.add(new_formPtO3); 
+    form_group_v.add(outlineMeshnew3); 
+
+    //Cal areas
+    var areaACO1 = new THREE.Vector3().crossVectors(
+      new THREE.Vector3().subVectors( forcePtC, ForceO1 ),
+      new THREE.Vector3().subVectors( forcePtA, ForceO1 ),
+    ).length()/2
+
+    var areaABO1 = new THREE.Vector3().crossVectors(
+      new THREE.Vector3().subVectors( forcePtB, ForceO1 ),
+      new THREE.Vector3().subVectors( forcePtA, ForceO1 ),
+    ).length()/2
+
+    var areaBCO1 = new THREE.Vector3().crossVectors(
+      new THREE.Vector3().subVectors( forcePtB, ForceO1 ),
+      new THREE.Vector3().subVectors( forcePtC, ForceO1 ),
+    ).length()/2
+
+    var areaADO1 = new THREE.Vector3().crossVectors(
+      new THREE.Vector3().subVectors( forcePtA, ForceO1 ),
+      new THREE.Vector3().subVectors( forcePtD, ForceO1 ),
+    ).length()/2
+
+    var areaBDO1 = new THREE.Vector3().crossVectors(
+      new THREE.Vector3().subVectors( forcePtB, ForceO1 ),
+      new THREE.Vector3().subVectors( forcePtD, ForceO1 ),
+    ).length()/2
+
+    var areaCDO1 = new THREE.Vector3().crossVectors(
+      new THREE.Vector3().subVectors( forcePtC, ForceO1 ),
+      new THREE.Vector3().subVectors( forcePtD, ForceO1 ),
+    ).length()/2
+
+    var areaMax = Math.max(areaACO1, areaABO1, areaBCO1, areaADO1, areaBDO1, areaCDO1);
+
+    //red color options:
+    //0.75 - 0x80002F
+    //0.5 - 0.75 - 0x940041
+    //0.25 - 0.5 - 0xCC0549
+    //0 - 0.25 - 0xD72F62
+
+    //blue color options:
+    //0.75 - 0x0F3150
+    //0.5 - 0.75 - 0x05416D
+    //0.25 - 0.5 - 0x376D9B
+    //0 - 0.25 - 0x5B84AE
+    var formedgeColor1, formedgeColor2, formedgeColor3,formedgeColor4,formedgeColor5,formedgeColor6
+
+    // triangle ABO1 - 1 
+    var normalABO1_a = subVec(forcePtB, forcePtA)
+    var normalABO1_b = subVec(forcePtA, ForceO1)
+    var normalABO1 = cross(normalABO1_a, normalABO1_b)
+    var edgePt1O1 = subVec(formBtPt1, formPtO1new);
+    var resultPt1O1 = normalABO1.dot(edgePt1O1)
+
+    if (resultPt1O1 <0){
+      if (areaABO1/areaMax >= 0.75){
+        formedgeColor1 = 0x0F3150
+      }
+      if (0.5 <= areaABO1/areaMax & areaABO1/areaMax < 0.75){
+        formedgeColor1 = 0x05416D
+      }
+      if (0.25 <= areaABO1/areaMax & areaABO1/areaMax  < 0.5){
+        formedgeColor1 = 0x376D9B
+      }
+      if (0 <= areaABO1/areaMax & areaABO1/areaMax < 0.25){
+        formedgeColor1 = 0x5B84AE
+      }
+      var forceFaceABO1 = ForceFace3pt(forcePtA, forcePtB, ForceO1, formedgeColor1);
+    } else{
+      if (areaABO1/areaMax >= 0.75){
+        formedgeColor1 = 0x80002F
+      }
+      if (0.5 <= areaABO1/areaMax & areaABO1/areaMax < 0.75){
+        formedgeColor1 = 0x940041
+      }
+      if (0.25 <= areaABO1/areaMax & areaABO1/areaMax  < 0.5){
+        formedgeColor1 = 0xCC0549
+      }
+      if (0 <= areaABO1/areaMax & areaABO1/areaMax < 0.25){
+        formedgeColor1 = 0xD72F62
+      }
+      var forceFaceABO1 = ForceFace3pt(forcePtA, forcePtB, ForceO1, formedgeColor1);
+    }
+    var formEdgePt1O1Material=new THREE.MeshPhongMaterial( { 
+      color:  formedgeColor1
+    } );
+    force_group_f.add(forceFaceABO1)
+
+    var edgeSize1 = areaABO1 * 0.02;
+    edgeSize1 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
+  
+    //create end sphere for bottom vertice 1
+    const endPtVertice1SpV = addVectorAlongDir(formBtPt1, formPtO1new, -0.1);
+    const endPtVertice1Sp = addEdgeSphere(edgeSize1, endPtVertice1SpV, formedgeColor1)
+    //create edge bottom vertice 1
+    const endPtVertice1 = addVectorAlongDir(formPtO1new,formBtPt1,  -0.08);
+    const formEdge1 = createCylinderMesh(endPtVertice1SpV,endPtVertice1,formEdgePt1O1Material,edgeSize1,edgeSize1);
+
+    form_group_e.add(endPtVertice1Sp)
+    form_group_e.add(formEdge1)
+
+    // triangle BCO1 -2 
+    var normalBCO1_a = subVec(forcePtC, forcePtB)
+    var normalBCO1_b = subVec(forcePtB, ForceO1)
+    var normalBCO1 = cross(normalBCO1_a, normalBCO1_b)
+    var edgePt2O2 = subVec(formBtPt2, formPtO2new);
+    var resultPt2O1 = normalBCO1.dot(edgePt2O2)
+
+    if (resultPt2O1 <0){
+      if (areaBCO1/areaMax >= 0.75){
+        formedgeColor2 = 0x0F3150
+      }
+      if (0.5 <= areaBCO1/areaMax & areaBCO1/areaMax < 0.75){
+        formedgeColor2 = 0x05416D
+      }
+      if (0.25 <= areaBCO1/areaMax & areaBCO1/areaMax  < 0.5){
+        formedgeColor2 = 0x376D9B
+      }
+      if (0 <= areaBCO1/areaMax & areaBCO1/areaMax < 0.25){
+        formedgeColor2 = 0x5B84AE
+      }
+      var forceFaceBCO1 = ForceFace3pt(forcePtB, forcePtC, ForceO1, formedgeColor2);
+    } else{
+      if (areaBCO1/areaMax >= 0.75){
+        formedgeColor2 = 0x80002F
+      }
+      if (0.5 <= areaBCO1/areaMax & areaBCO1/areaMax < 0.75){
+        formedgeColor2 = 0x940041
+      }
+      if (0.25 <= areaBCO1/areaMax & areaBCO1/areaMax  < 0.5){
+        formedgeColor2 = 0xCC0549
+      }
+      if (0 <= areaBCO1/areaMax & areaBCO1/areaMax < 0.25){
+        formedgeColor2 = 0xD72F62
+      }
+      var forceFaceBCO1 = ForceFace3pt(forcePtB, forcePtC, ForceO1, formedgeColor2);
+    }
+    var formEdgePt2O2Material=new THREE.MeshPhongMaterial( { 
+      color:  formedgeColor2
+    } );
+    force_group_f.add(forceFaceBCO1)
+
+    var edgeSize2 = areaBCO1 * 0.02;
+    edgeSize2 = THREE.MathUtils.clamp(edgeSize2, 0.01, 0.5);
+
+    //create end sphere for bottom vertice 1
+    const endPtVertice2SpV = addVectorAlongDir(formBtPt2, formPtO2new, -0.1);
+    const endPtVertice2Sp = addEdgeSphere(edgeSize2, endPtVertice2SpV, formedgeColor2)
+    //create edge bottom vertice 1
+    const endPtVertice2 = addVectorAlongDir(formPtO2new,formBtPt2,  -0.08);
+    const formEdge2 = createCylinderMesh(endPtVertice2SpV,endPtVertice2,formEdgePt2O2Material,edgeSize2,edgeSize2);
+
+    form_group_e.add(endPtVertice2Sp)
+    form_group_e.add(formEdge2)
+
+    // triangle ACO1 - 3
+    var normalACO1_a = subVec(forcePtA, forcePtC);
+    var normalACO1_b = subVec(forcePtC, ForceO1);
+    var normalACO1 = cross(normalACO1_a, normalACO1_b);
+    var edgePt3O3 = subVec(formBtPt3, formPtO3new);
+    var resultPtO1O3 = normalACO1.dot(edgePt3O3);
+
+    if (resultPtO1O3 < 0){
+      if (areaACO1/areaMax >= 0.75){
+        formedgeColor3 = 0x0F3150
+      }
+      if (0.5 <= areaACO1/areaMax & areaACO1/areaMax < 0.75){
+        formedgeColor3 = 0x05416D
+      }
+      if (0.25 <= areaACO1/areaMax & areaACO1/areaMax  < 0.5){
+        formedgeColor3 = 0x376D9B
+      }
+      if (0 <= areaACO1/areaMax & areaACO1/areaMax < 0.25){
+        formedgeColor3 = 0x5B84AE
+      }
+      var forceFaceACO1 = ForceFace3pt(forcePtC, forcePtA, ForceO1, formedgeColor3);
+    } else{
+      if (areaACO1/areaMax >= 0.75){
+        formedgeColor3 = 0x80002F
+      }
+      if (0.5 <= areaACO1/areaMax & areaACO1/areaMax < 0.75){
+        formedgeColor3 = 0x940041
+      }
+      if (0.25 <= areaACO1/areaMax & areaACO1/areaMax  < 0.5){
+        formedgeColor3 = 0xCC0549
+      }
+      if (0 <= areaACO1/areaMax & areaACO1/areaMax < 0.25){
+        formedgeColor3 = 0xD72F62
+      }
+      var forceFaceACO1 = ForceFace3pt(forcePtC, forcePtA, ForceO1, formedgeColor3); 
+    }
+    
+    var formEdgePt3O3Material=new THREE.MeshPhongMaterial( { 
+      color:  formedgeColor3
+    } );
+    force_group_f.add(forceFaceACO1)
+
+    var edgeSize3 = areaACO1 * 0.02;
+    edgeSize3 = THREE.MathUtils.clamp(edgeSize3, 0.01, 0.5);
+    
+    //create end sphere for bottom vertice 1
+    const endPtVertice3SpV = addVectorAlongDir(formBtPt3, formPtO3new, -0.1);
+    const endPtVertice3Sp = addEdgeSphere(edgeSize3, endPtVertice3SpV, formedgeColor3)
+    //create edge bottom vertice 1
+    const endPtVertice3 = addVectorAlongDir(formPtO3new,formBtPt3,  -0.08);
+    const formEdge3 = createCylinderMesh(endPtVertice3SpV,endPtVertice3,formEdgePt3O3Material,edgeSize3,edgeSize3);
+
+    form_group_e.add(endPtVertice3Sp)
+    form_group_e.add(formEdge3)
+
+    // triangle ADO1 - 3
+    var normalADO1_a = subVec(ForceO1, forcePtD);
+    var normalADO1_b = subVec(forcePtD, forcePtA);
+    var normalADO1 = cross(normalADO1_a, normalADO1_b);
+    var edgePtO1O3 = subVec(formPtO1new, formPtO3new);
+    var resultPtO1O3 = normalADO1.dot(edgePtO1O3);
+
+    if (resultPtO1O3 < 0){
+      if (areaADO1/areaMax >= 0.75){
+        formedgeColor4 = 0x0F3150
+      }
+      if (0.5 <= areaADO1/areaMax & areaADO1/areaMax < 0.75){
+        formedgeColor4 = 0x05416D
+      }
+      if (0.25 <= areaADO1/areaMax & areaADO1/areaMax  < 0.5){
+        formedgeColor4 = 0x376D9B
+      }
+      if (0 <= areaADO1/areaMax & areaADO1/areaMax < 0.25){
+        formedgeColor4 = 0x5B84AE
+      }
+      var forceFaceADO1 = ForceFace3pt(forcePtD, forcePtA, ForceO1, formedgeColor4);
+    } else{
+      if (areaADO1/areaMax >= 0.75){
+        formedgeColor4 = 0x80002F
+      }
+      if (0.5 <= areaADO1/areaMax & areaADO1/areaMax < 0.75){
+        formedgeColor4 = 0x940041
+      }
+      if (0.25 <= areaADO1/areaMax & areaADO1/areaMax  < 0.5){
+        formedgeColor4 = 0xCC0549
+      }
+      if (0 <= areaADO1/areaMax & areaADO1/areaMax < 0.25){
+        formedgeColor4 = 0xD72F62
+      }
+      var forceFaceADO1 = ForceFace3pt(forcePtD, forcePtA, ForceO1, formedgeColor4); 
+    }
+    
+    var formEdgePtO1O3Material=new THREE.MeshPhongMaterial( { 
+      color:  formedgeColor4
+    } );
+    force_group_f.add(forceFaceADO1)
+
+    var edgeSize4 = areaADO1 * 0.02;
+    edgeSize4 = THREE.MathUtils.clamp(edgeSize4, 0.01, 0.5);
+    
+    //create end sphere for bottom vertice 1
+    const endPtVertice4SpV = addVectorAlongDir(formPtO3new, formPtO1new, -0.08);
+    const endPtVertice4Sp = addEdgeSphere(edgeSize4, endPtVertice4SpV, formedgeColor4)
+
+    const endPtVertice4SpV2 = addVectorAlongDir(formPtO1new, formPtO3new, -0.08);
+    const endPtVertice4Sp2 = addEdgeSphere(edgeSize4, endPtVertice4SpV2, formedgeColor4)
+    //create edge bottom vertice 1
+    const endPtVertice4 = addVectorAlongDir(formPtO1new,formPtO3new,  -0.08);
+    const formEdge4 = createCylinderMesh(endPtVertice4SpV,endPtVertice4,formEdgePtO1O3Material,edgeSize4,edgeSize4);
+
+    form_group_e.add(endPtVertice4Sp)
+    form_group_e.add(endPtVertice4Sp2)
+    form_group_e.add(formEdge4)
+
+    // triangle BDO1 - 3
+    var normalBDO1_a = subVec(ForceO1, forcePtD);
+    var normalBDO1_b = subVec(forcePtD, forcePtB);
+    var normalBDO1 = cross(normalBDO1_a, normalBDO1_b);
+    var edgePtO1O2 = subVec(formPtO2new, formPtO1new);
+    var resultPtO1O2 = normalBDO1.dot(edgePtO1O2);
+
+    if (resultPtO1O2 < 0){
+      if (areaBDO1/areaMax >= 0.75){
+        formedgeColor5 = 0x0F3150
+      }
+      if (0.5 <= areaBDO1/areaMax & areaBDO1/areaMax < 0.75){
+        formedgeColor5 = 0x05416D
+      }
+      if (0.25 <= areaBDO1/areaMax & areaBDO1/areaMax  < 0.5){
+        formedgeColor5 = 0x376D9B
+      }
+      if (0 <= areaBDO1/areaMax & areaBDO1/areaMax < 0.25){
+        formedgeColor5 = 0x5B84AE
+      }
+      var forceFaceBDO1 = ForceFace3pt(forcePtD, forcePtB, ForceO1, formedgeColor5);
+    } else{
+      if (areaBDO1/areaMax >= 0.75){
+        formedgeColor5 = 0x80002F
+      }
+      if (0.5 <= areaBDO1/areaMax & areaBDO1/areaMax < 0.75){
+        formedgeColor5 = 0x940041
+      }
+      if (0.25 <= areaBDO1/areaMax & areaBDO1/areaMax  < 0.5){
+        formedgeColor5 = 0xCC0549
+      }
+      if (0 <= areaBDO1/areaMax & areaBDO1/areaMax < 0.25){
+        formedgeColor5 = 0xD72F62
+      }
+      var forceFaceBDO1 = ForceFace3pt(forcePtD, forcePtB, ForceO1, formedgeColor5); 
+    }
+    
+    var formEdgePtO1O2Material=new THREE.MeshPhongMaterial( { 
+      color:  formedgeColor5
+    } );
+    force_group_f.add(forceFaceBDO1)
+
+    var edgeSize5 = areaBDO1 * 0.02;
+    edgeSize5 = THREE.MathUtils.clamp(edgeSize5, 0.01, 0.5);
+    
+    //create end sphere for bottom vertice 1
+    const endPtVertice5SpV = addVectorAlongDir(formPtO2new, formPtO1new, -0.08);
+    const endPtVertice5Sp = addEdgeSphere(edgeSize5, endPtVertice5SpV, formedgeColor5)
+
+    const endPtVertice5SpV2 = addVectorAlongDir(formPtO1new, formPtO2new, -0.08);
+    const endPtVertice5Sp2 = addEdgeSphere(edgeSize5, endPtVertice5SpV2, formedgeColor5)
+    //create edge bottom vertice 1
+    const endPtVertice5 = addVectorAlongDir(formPtO1new,formPtO2new,  -0.08);
+    const formEdge5 = createCylinderMesh(endPtVertice5SpV,endPtVertice5,formEdgePtO1O2Material,edgeSize5,edgeSize5);
+
+    form_group_e.add(endPtVertice5Sp)
+    form_group_e.add(endPtVertice5Sp2)
+    form_group_e.add(formEdge5)
+
+    // triangle CDO1 - 3
+    var normalCDO1_a = subVec(ForceO1, forcePtD);
+    var normalCDO1_b = subVec(forcePtD, forcePtC);
+    var normalCDO1 = cross(normalCDO1_a, normalCDO1_b);
+    var edgePtO3O2 = subVec(formPtO3new, formPtO2new);
+    var resultPtO3O2 = normalCDO1.dot(edgePtO3O2);
+
+    if (resultPtO3O2 < 0){
+      if (areaCDO1/areaMax >= 0.75){
+        formedgeColor6 = 0x0F3150
+      }
+      if (0.5 <= areaCDO1/areaMax & areaCDO1/areaMax < 0.75){
+        formedgeColor6 = 0x05416D
+      }
+      if (0.25 <= areaCDO1/areaMax & areaCDO1/areaMax  < 0.5){
+        formedgeColor6 = 0x376D9B
+      }
+      if (0 <= areaCDO1/areaMax & areaCDO1/areaMax < 0.25){
+        formedgeColor6 = 0x5B84AE
+      }
+      var forceFaceCDO1 = ForceFace3pt(forcePtD, forcePtC, ForceO1, formedgeColor6);
+    } else{
+      if (areaCDO1/areaMax >= 0.75){
+        formedgeColor6 = 0x80002F
+      }
+      if (0.5 <= areaCDO1/areaMax & areaCDO1/areaMax < 0.75){
+        formedgeColor6 = 0x940041
+      }
+      if (0.25 <= areaCDO1/areaMax & areaCDO1/areaMax  < 0.5){
+        formedgeColor6 = 0xCC0549
+      }
+      if (0 <= areaCDO1/areaMax & areaCDO1/areaMax < 0.25){
+        formedgeColor6 = 0xD72F62
+      }
+      var forceFaceCDO1 = ForceFace3pt(forcePtD, forcePtC, ForceO1, formedgeColor6); 
+    }
+    
+    var formEdgePtO3O2Material=new THREE.MeshPhongMaterial( { 
+      color:  formedgeColor6
+    } );
+    force_group_f.add(forceFaceCDO1)
+
+    var edgeSize6 = areaBDO1 * 0.02;
+    edgeSize6 = THREE.MathUtils.clamp(edgeSize6, 0.01, 0.5);
+    
+    //create end sphere for bottom vertice 1
+    const endPtVertice6SpV = addVectorAlongDir(formPtO2new, formPtO3new, -0.08);
+    const endPtVertice6Sp = addEdgeSphere(edgeSize6, endPtVertice6SpV, formedgeColor6)
+
+    const endPtVertice6SpV2 = addVectorAlongDir(formPtO3new, formPtO2new, -0.08);
+    const endPtVertice6Sp2 = addEdgeSphere(edgeSize6, endPtVertice6SpV2, formedgeColor6)
+    //create edge bottom vertice 1
+    const endPtVertice6 = addVectorAlongDir(formPtO3new,formPtO2new,  -0.08);
+    const formEdge6 = createCylinderMesh(endPtVertice6SpV,endPtVertice6,formEdgePtO3O2Material,edgeSize6,edgeSize6);
+
+    form_group_e.add(endPtVertice6Sp)
+    form_group_e.add(endPtVertice6Sp2)
+    form_group_e.add(formEdge6)
+
+  }
+  if(subd.l ==3){
+
+  }
 
   scene.add(form_group_v);
   scene.add(form_group_f);
@@ -1274,8 +2079,40 @@ orbit_ctrl = new OrbitControls(camera, renderer.domElement);
 initModel();
 animate();
 
-// *************** support functions *******************
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// *************** support functions *******************
+function create_offset_point(point1,point2,point3,scale){
+  var centroid = new THREE.Vector3((point1.x+point2.x+point3.x)/3,(point1.y+point2.y+point3.y)/3,(point1.z+point2.z+point3.z)/3);                              
+  var scale_point = new THREE.Vector3(centroid.x + (point1.x - centroid.x)*scale, centroid.y + (point1.y - centroid.y)*scale, centroid.z + (point1.z - centroid.z)*scale );
+  return scale_point
+}
 
 function create_force_face(point1,point2,pointO){
   var face = new THREE.Vector3().crossVectors(

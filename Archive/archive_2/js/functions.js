@@ -1,4 +1,4 @@
-import '/style.css'; //setup basic visual factors for the overall web
+import '/Archive/archive_3/style.css'; //setup basic visual factors for the overall web
 
 import * as THREE from 'three';
 import { createMultiMaterialObject } from 'three/examples/jsm/utils/SceneUtils';
