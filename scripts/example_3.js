@@ -247,9 +247,6 @@ var form_group_e_trial
 var form_general_trial
 var form_general_global
 
-
-var form_group_mink
-
 var triP1 = new function () {
     this.z = 0.6;
 }
@@ -270,7 +267,6 @@ var force_group_f_trial
 var force_group_e_trial
 var force_general_trial
 
-var force_group_mink
 var force_general_global
 
 var force_text
@@ -699,14 +695,12 @@ function Redraw() {
     scene.remove(form_group_c);
     scene.remove(form_general);
     scene.remove(form_general_global);
-    scene.remove(form_group_mink);
 
     form_group_v = new THREE.Group();
     form_group_f = new THREE.Group();
     form_group_e = new THREE.Group();
     form_group_c = new THREE.Group();
     form_general = new THREE.Group();
-    form_group_mink = new THREE.Group();
 
     form_general_global = new THREE.Group();
 
@@ -716,7 +710,6 @@ function Redraw() {
     scene2.remove(force_group_e);
     scene2.remove(force_group_c);
     scene2.remove(force_general);
-    scene2.remove(force_group_mink);
     scene2.remove(force_general_global);
 
     scene2.remove(force_text);
@@ -728,7 +721,6 @@ function Redraw() {
     force_general = new THREE.Group();
     force_text = new THREE.Group();
 
-    force_group_mink = new THREE.Group();
     force_general_global = new THREE.Group();
 
 
@@ -2733,7 +2725,6 @@ function Redraw() {
     scene.add(form_group_c);
     scene.add(form_general);
     scene.add(form_general_global);
-    scene.add(form_group_mink);
 
     scene2.add(force_group_v);
     scene2.add(force_group_f);
@@ -2741,9 +2732,6 @@ function Redraw() {
     scene2.add(force_group_c);
     scene2.add(force_general);
     scene2.add(force_general_global);
-    scene2.add(force_group_mink);
-
-
 }
 
 
