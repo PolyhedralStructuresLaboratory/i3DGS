@@ -92,16 +92,12 @@ const subdCheckbox = tab.pages[0].addInput(subdCheckboxParams, 'on').on
     subdOn = !subdOn
     Redraw();
 });
-const offsetscaleFolder = tab.pages[0].addFolder({
-    title: 'GDoF'
-});
-offsetscaleFolder.hidden = true; //hide the plane folder b/c box is unchecked at first
 
 const offsetSliderParams = {
-    length: 0.4, //starts as double the size of the box's params
+    'GDoF length': 0.4, //starts as double the size of the box's params
 };
 //make the plane size slider
-offsetscaleFolder.addInput(offsetSliderParams, 'length', {
+const offsetSlider = tab.pages[0].addInput(offsetSliderParams, 'GDoF length', {
     min: 0.2, //min = double the size of the box's params
     max: 0.8, //max = quadruple the size of the box's params
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -109,9 +105,10 @@ offsetscaleFolder.addInput(offsetSliderParams, 'length', {
     Redraw();
 });
 
+offsetSlider.hidden = true;
 
 subdCheckbox.on('change', () => { //on change, change the hidden and visibility values set
-    offsetscaleFolder.hidden = !offsetscaleFolder.hidden;
+    offsetSlider.hidden = !offsetSlider.hidden;
 });
 
 //tweakpane - left panel (second tab)
