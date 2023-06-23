@@ -320,7 +320,6 @@ function Redraw() {
         side: THREE.BackSide
     });
 
-    // WE WANT THIS TO SHOW UP
     var arrow_applyGlob = new THREE.MeshPhongMaterial({color: 0x009600});
     var arrow_apply_outlineGlob = new THREE.MeshBasicMaterial({
         color: "white",

@@ -369,10 +369,6 @@ var form_group_v
 var form_group_f
 var form_group_e
 var form_group_c
-var form_group_e_trial
-var form_general_trial
-var form_general_global
-
 
 var form_group_mink
 var form_group_step
@@ -390,7 +386,6 @@ var force_group_c
 var force_general
 
 var force_group_mink
-var force_general_global
 
 var force_group_step
 var force_group_step_3
@@ -1544,9 +1539,6 @@ function Redraw() {
     scene.remove(form_group_v);
     scene.remove(form_group_e);
     scene.remove(form_general);
-    scene.remove(form_group_e_trial);
-    scene.remove(form_general_trial);
-    scene.remove(form_general_global);
     scene.remove(form_group_step);
     scene.remove(form_group_step_3);
     scene.remove(form_group_step_4);
@@ -1557,10 +1549,6 @@ function Redraw() {
     form_group_v = new THREE.Group();
     form_group_e = new THREE.Group();
     form_general = new THREE.Group();
-    form_general_trial = new THREE.Group();
-
-    form_group_e_trial = new THREE.Group();
-    form_general_global = new THREE.Group();
     form_group_step = new THREE.Group();
     form_group_step_3 = new THREE.Group();
     form_group_step_4 = new THREE.Group();
@@ -1573,7 +1561,6 @@ function Redraw() {
     scene2.remove(force_group_e);
     scene2.remove(force_group_c);
     scene2.remove(force_general);
-    scene2.remove(force_general_global);
 
     scene2.remove(force_group_step);
     scene2.remove(force_group_step_3);
@@ -1587,7 +1574,6 @@ function Redraw() {
     force_group_c = new THREE.Group();
     force_general = new THREE.Group();
 
-    force_general_global = new THREE.Group();
     force_group_step = new THREE.Group();
     force_group_step_3 = new THREE.Group();
     force_group_step_4 = new THREE.Group();
@@ -1809,8 +1795,6 @@ function Redraw() {
     // face ABC
     var forceFaceABC = ForceFace3pt(forcePtA, forcePtB, forcePtC, 0x014F06)
     force_group_f.add(forceFaceABC)
-    var forceFaceABC2 = ForceFace3pt(forcePtA, forcePtB, forcePtC, 0x014F06)
-    force_general_global.add(forceFaceABC2)
 
     var ABCarrow = createCircleFaceArrow(face_center(forcePtA, forcePtB, forcePtC), 0.15, cross(subVecUpdated(forcePtA, forcePtB), subVecUpdated(forcePtB, forcePtC)))
     force_general.add(ABCarrow);
@@ -2455,13 +2439,6 @@ function Redraw() {
                 face_center(forcePtA, forcePtB, forcePtC).z - 0.5));
     }
     force_general.add(TXapplyNormal);
-
-    var forceFaceABDglob = ForceFace3pt(forcePtA, forcePtB, forcePtD, 0x014F06)
-    force_general_global.add(forceFaceABDglob)
-    var forceFaceBCDglob = ForceFace3pt(forcePtB, forcePtC, forcePtD, 0x014F06)
-    force_general_global.add(forceFaceBCDglob)
-    var forceFaceACDglob = ForceFace3pt(forcePtA, forcePtC, forcePtD, 0x014F06)
-    force_general_global.add(forceFaceACDglob)
 
 
     //create end sphere for bottom vertice 1
@@ -3264,30 +3241,6 @@ function Redraw() {
 
     // visual of the elements
 
-    form_general_global.traverse(function (obj) {
-        if (obj.type === "Mesh") {
-            obj.material.visible = false;
-        }
-        if (obj.type === "LineSegments") {
-            obj.material.visible = false;
-        }
-        if (obj.type === "Sprite") {
-            obj.material.visible = false;
-        }
-    });
-
-    force_general_global.traverse(function (obj) {
-        if (obj.type === "Mesh") {
-            obj.material.visible = false;
-        }
-        if (obj.type === "LineSegments") {
-            obj.material.visible = false;
-        }
-        if (obj.type === "Sprite") {
-            obj.material.visible = false;
-        }
-    });
-
     // hide the steps - start from step general
 
     if (stepVisibilityCheckboxParams.steps) {
@@ -3408,10 +3361,6 @@ function Redraw() {
     scene.add(form_group_e);
     scene.add(form_general);
 
-    scene.add(form_general_global);
-    scene.add(form_group_e_trial);
-    scene.add(form_general_trial);
-
     scene.add(form_group_step);
     scene.add(form_group_step_3);
     scene.add(form_group_step_4);
@@ -3423,7 +3372,6 @@ function Redraw() {
     scene2.add(force_group_e);
     scene2.add(force_group_c);
     scene2.add(force_general);
-    scene2.add(force_general_global);
 
     scene2.add(force_group_step);
     scene2.add(force_group_step_3);
