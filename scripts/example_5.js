@@ -2306,6 +2306,12 @@ function Redraw() {
 function initModel() {
     Redraw();
     trfm_ctrl = new THREE.TransformControls(camera, renderer.domElement);
+    for (let i = 0; i < 4; i++) {
+        trfm_ctrl.children[0].children[0].children[i].visible = false;
+    }
+    for (let i = 6; i < 10; i++) {
+        trfm_ctrl.children[0].children[0].children[i].visible = false;
+    }
 
     trfm_ctrl.addEventListener('change', render);
     trfm_ctrl.addEventListener('objectChange', function () {
