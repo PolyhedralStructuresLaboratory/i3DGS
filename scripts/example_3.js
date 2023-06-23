@@ -331,14 +331,6 @@ function redrawFace() {
 
     if (!subdOn) {
 
-        var apply_o1o1B = [];
-        apply_o1o1B.push(formPtO1);
-        apply_o1o1B.push(formPtO1b);
-        var apply_1_geo = new THREE.BufferGeometry().setFromPoints(apply_o1o1B);
-        var applyline_o1B = new THREE.LineSegments(apply_1_geo, applyline_dash_form);
-        applyline_o1B.computeLineDistances();//compute
-        form_group_f.add(applyline_o1B);
-
         // green faces : o1 o1b point2
         var greenface_p2 = FormFace4ptGN(
             new THREE.Vector3(formBtPt2.x, formBtPt2.y, formPtO1b.z),
@@ -966,6 +958,14 @@ function Redraw() {
         form_general.add(apply_arrow1);
         var apply_arrow12 = createCylinderArrowMesh(new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z + 0.005), new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z - 0.425), arrow_apply_outline, 0.025, 0.06, 0.53);
         form_general.add(apply_arrow12);
+
+        var apply_o1o1B = [];
+        apply_o1o1B.push(formPtO1);
+        apply_o1o1B.push(formPtO1b);
+        var apply_1_geo = new THREE.BufferGeometry().setFromPoints(apply_o1o1B);
+        var applyline_o1B = new THREE.LineSegments(apply_1_geo, applyline_dash_form);
+        applyline_o1B.computeLineDistances();//compute
+        form_general.add(applyline_o1B);
 
         //add text
         var TXapplyForce = createSpriteTextApply('f', "1", new THREE.Vector3(formPtO1.x, formPtO1.y, formPtO1.z + 0.1));
