@@ -155,50 +155,7 @@ const globalVisibilityCheckboxParams = {
 };
 const globalVisibilityCheckbox = tab.pages[1].addInput(globalVisibilityCheckboxParams, 'global').on
 ('change', (ev) => { //on change, dispose old plane geometry and create new
-    form_general_global.traverse(function (obj) {
-        if (obj.type === "Mesh") {
-            obj.material.visible = ev.value;
-        }
-        if (obj.type === "LineSegments") {
-            obj.material.visible = ev.value;
-        }
-        if (obj.type === "Sprite") {
-            obj.material.visible = ev.value;
-        }
-    });
-    force_general_global.traverse(function (obj) {
-        if (obj.type === "Mesh") {
-            obj.material.visible = ev.value;
-        }
-        if (obj.type === "LineSegments") {
-            obj.material.visible = ev.value;
-        }
-        if (obj.type === "Sprite") {
-            obj.material.visible = ev.value;
-        }
-    });
-    force_group_f.traverse(function (obj) {
-        if (obj.type === "Mesh") {
-            obj.material.visible = !ev.value;
-        }
-        if (obj.type === "LineSegments") {
-            obj.material.visible = !ev.value;
-        }
-        if (obj.type === "Sprite") {
-            obj.material.visible = !ev.value;
-        }
-    });
-    form_group_e.traverse(function (obj) {
-        if (obj.type === "Mesh") {
-            obj.material.visible = !ev.value;
-        }
-        if (obj.type === "LineSegments") {
-            obj.material.visible = !ev.value;
-        }
-        if (obj.type === "Sprite") {
-            obj.material.visible = !ev.value;
-        }
-    });
+    Redraw();
 });
 
 
@@ -1790,52 +1747,42 @@ function Redraw() {
     force_general_global.add(forceFaceABO1glob)
 
     //draw face normals in the force diagram
+
+    var forceFaceABO1center = face_center(forcePtA, forcePtB, ForceO1);
+    const endforceFaceABO1a = subVecUpdated(formBtPt1, formPtO1new);
+    var endforceFaceABO1b = drawArrowfromVec(forceFaceABO1center, endforceFaceABO1a, 0.01)
+    const endPtArrowABO1b1 = addVectorAlongDir(forceFaceABO1center, endforceFaceABO1b, 0.01);
+    const endPtArrowABO1b2 = addVectorAlongDir(forceFaceABO1center, endforceFaceABO1b, 0.45);
     if (ForceO1.z < 0) {
-
-        var forceFaceABO1center = face_center(forcePtA, forcePtB, ForceO1);
-        const endforceFaceABO1a = subVecUpdated(formBtPt1, formPtO1new);
-        var endforceFaceABO1b = drawArrowfromVec(forceFaceABO1center, endforceFaceABO1a, 0.01)
-        const endPtArrowABO1b1 = addVectorAlongDir(forceFaceABO1center, endforceFaceABO1b, 0.01);
-        const endPtArrowABO1b2 = addVectorAlongDir(forceFaceABO1center, endforceFaceABO1b, 0.45);
-
-        var ABO1arrow1 = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, formEdgePt1O1Material, 0.02, 0.05, 0.56);
-        force_general.add(ABO1arrow1);
-        var ABO1arrow12 = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
-        force_general.add(ABO1arrow12);
-        var TXfaceNormal1 = createSpriteTextApply('n', "4", new THREE.Vector3(endPtArrowABO1b2.x, endPtArrowABO1b2.y, endPtArrowABO1b2.z + 0.1));
-        force_general.add(TXfaceNormal1);
-
-        var ABO1arrow1Glob = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, arrow_applyGlob, 0.02, 0.05, 0.56);
-        force_general_global.add(ABO1arrow1Glob);
-        var ABO1arrow12Glob = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        force_general_global.add(ABO1arrow12Glob);
-
-        var ABO1arrow = createCircleFaceArrow(forceFaceABO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtB), subVecUpdated(forcePtB, forcePtA)))
-        force_general.add(ABO1arrow);
-
-
+        if (!globalVisibilityCheckboxParams.global) {
+            var ABO1arrow1 = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, formEdgePt1O1Material, 0.02, 0.05, 0.56);
+            force_general.add(ABO1arrow1);
+            var ABO1arrow12 = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
+            force_general.add(ABO1arrow12);
+        } else {
+            var ABO1arrow1Glob = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, arrow_applyGlob, 0.02, 0.05, 0.56);
+            force_general_global.add(ABO1arrow1Glob);
+            var ABO1arrow12Glob = createCylinderArrowMesh(endPtArrowABO1b2, endPtArrowABO1b1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
+            force_general_global.add(ABO1arrow12Glob);
+        }
     } else {
-        var forceFaceABO1center = face_center(forcePtA, forcePtB, ForceO1);
-        const endforceFaceABO1a = subVecUpdated(formBtPt1, formPtO1new);
-        var endforceFaceABO1b = drawArrowfromVec(forceFaceABO1center, endforceFaceABO1a, 0.01)
-        const endPtArrowABO1b1 = addVectorAlongDir(forceFaceABO1center, endforceFaceABO1b, 0.01);
-        const endPtArrowABO1b2 = addVectorAlongDir(forceFaceABO1center, endforceFaceABO1b, 0.45);
-
-        var ABO1arrow1 = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, formEdgePt1O1Material, 0.02, 0.05, 0.56);
-        force_general.add(ABO1arrow1);
-        var ABO1arrow12 = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, arrow_apply_outline, 0.025, 0.06, 0.56);
-        force_general.add(ABO1arrow12);
-        var TXfaceNormal1 = createSpriteTextApply('n', "4", new THREE.Vector3(endPtArrowABO1b2.x, endPtArrowABO1b2.y, endPtArrowABO1b2.z + 0.1));
-        force_general.add(TXfaceNormal1);
-
-        var ABO1arrow1Glob = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, arrow_applyGlob, 0.02, 0.05, 0.56);
-        force_general_global.add(ABO1arrow1Glob);
-        var ABO1arrow12Glob = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        force_general_global.add(ABO1arrow12Glob);
-
-        var ABO1arrow = createCircleFaceArrow(forceFaceABO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtB), subVecUpdated(forcePtB, forcePtA)))
-        force_general.add(ABO1arrow);
+        if (!globalVisibilityCheckboxParams.global) {
+            var ABO1arrow1 = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, formEdgePt1O1Material, 0.02, 0.05, 0.56);
+            force_general.add(ABO1arrow1);
+            var ABO1arrow12 = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, arrow_apply_outline, 0.025, 0.06, 0.56);
+            force_general.add(ABO1arrow12);
+        } else {
+            var ABO1arrow1Glob = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, arrow_applyGlob, 0.02, 0.05, 0.56);
+            force_general_global.add(ABO1arrow1Glob);
+            var ABO1arrow12Glob = createCylinderArrowMesh(endPtArrowABO1b1, endPtArrowABO1b2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
+            force_general_global.add(ABO1arrow12Glob);
+        }
     }
+    var TXfaceNormal1 = createSpriteTextApply('n', "4", new THREE.Vector3(endPtArrowABO1b2.x, endPtArrowABO1b2.y, endPtArrowABO1b2.z + 0.1));
+    force_general.add(TXfaceNormal1);
+    var ABO1arrow = createCircleFaceArrow(forceFaceABO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtB), subVecUpdated(forcePtB, forcePtA)))
+    force_general.add(ABO1arrow);
+
     var edgeSize1 = areaABO1 * 0.02;
     edgeSize1 = THREE.MathUtils.clamp(edgeSize1, 0.01, 0.5);
 
@@ -1857,21 +1804,20 @@ function Redraw() {
     applyline_o1Bglob.computeLineDistances();//compute
     form_general_global.add(applyline_o1Bglob);
 
+
+    const endPtArrowVertice1 = addVectorAlongDir(formPtO1new, formBtPt1, 0.1);
+    const endPtArrowVertice12 = addVectorAlongDir(formPtO1new, formBtPt1, 0.45);
+    var apply_Rarrow12;
     if (ForceO1.z < 0) {
-        const endPtArrowVertice1 = addVectorAlongDir(formPtO1new, formBtPt1, 0.1);
-        const endPtArrowVertice12 = addVectorAlongDir(formPtO1new, formBtPt1, 0.45);
         var apply_Rarrow1 = createCylinderArrowMesh(endPtArrowVertice12, endPtArrowVertice1, arrow_applyGlob, 0.02, 0.05, 0.56);
         form_general_global.add(apply_Rarrow1);
-        var apply_Rarrow12 = createCylinderArrowMesh(endPtArrowVertice12, endPtArrowVertice1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        form_general_global.add(apply_Rarrow12);
+        apply_Rarrow12 = createCylinderArrowMesh(endPtArrowVertice12, endPtArrowVertice1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
     } else {
-        const endPtArrowVertice1 = addVectorAlongDir(formPtO1new, formBtPt1, 0.1);
-        const endPtArrowVertice12 = addVectorAlongDir(formPtO1new, formBtPt1, 0.45);
         var apply_Rarrow1 = createCylinderArrowMesh(endPtArrowVertice1, endPtArrowVertice12, arrow_applyGlob, 0.02, 0.05, 0.56);
         form_general_global.add(apply_Rarrow1);
-        var apply_Rarrow12 = createCylinderArrowMesh(endPtArrowVertice1, endPtArrowVertice12, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        form_general_global.add(apply_Rarrow12);
+        apply_Rarrow12 = createCylinderArrowMesh(endPtArrowVertice1, endPtArrowVertice12, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
     }
+    form_general_global.add(apply_Rarrow12);
 
     // triangle BCO1 -2
     var normalBCO1_a = subVec(forcePtC, forcePtB)
@@ -1893,7 +1839,6 @@ function Redraw() {
         if (0 <= areaBCO1 / areaMax && areaBCO1 / areaMax < 0.25) {
             formedgeColor2 = 0x5B84AE
         }
-        var forceFaceBCO1 = ForceFace3pt(forcePtB, forcePtC, ForceO1, formedgeColor2);
     } else {
         if (areaBCO1 / areaMax >= 0.75) {
             formedgeColor2 = 0x80002F
@@ -1907,63 +1852,51 @@ function Redraw() {
         if (0 <= areaBCO1 / areaMax && areaBCO1 / areaMax < 0.25) {
             formedgeColor2 = 0xD72F62
         }
-        var forceFaceBCO1 = ForceFace3pt(forcePtB, forcePtC, ForceO1, formedgeColor2);
     }
+    var forceFaceBCO1 = ForceFace3pt(forcePtB, forcePtC, ForceO1, formedgeColor2);
+
     var formEdgePt2O2Material = new THREE.MeshPhongMaterial({
         color: formedgeColor2
     });
     force_group_f.add(forceFaceBCO1)
     var forceFaceBCO1glob = ForceFace3pt(forcePtB, forcePtC, ForceO1, 0x014F06)
     force_general_global.add(forceFaceBCO1glob)
+
 //draw face normals in the force diagram
-
+    var forceFaceBCO1center = face_center(forcePtB, forcePtC, ForceO1);
+    const endforceFaceBCO1a = subVecUpdated(formBtPt2, formPtO2new);
+    var endforceFaceBCO1b = drawArrowfromVec(forceFaceBCO1center, endforceFaceBCO1a, 0.01)
+    const endPtArrowBCO1b1 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.01);
+    const endPtArrowBCO1b2 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.45);
     if (ForceO1.z < 0) {
-        var forceFaceBCO1center = face_center(forcePtB, forcePtC, ForceO1);
-        const endforceFaceBCO1a = subVecUpdated(formBtPt2, formPtO2new);
-        var endforceFaceBCO1b = drawArrowfromVec(forceFaceBCO1center, endforceFaceBCO1a, 0.01)
-        const endPtArrowBCO1b1 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.01);
-        const endPtArrowBCO1b2 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.45);
-
-        // hello???
-        var BCO1arrow1 = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, formEdgePt2O2Material, 0.02, 0.05, 0.56);
-        force_general.add(BCO1arrow1);
-        var BCO1arrow12 = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
-        force_general.add(BCO1arrow12);
-        var TXfaceNormal2 = createSpriteTextApply('n', "5", new THREE.Vector3(endPtArrowBCO1b2.x, endPtArrowBCO1b2.y, endPtArrowBCO1b2.z + 0.1));
-        force_general.add(TXfaceNormal2);
-
-        var BCO1arrow1Glob = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_applyGlob, 0.02, 0.05, 0.56);
-        force_general_global.add(BCO1arrow1Glob);
-        var BCO1arrow12Glob = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        force_general_global.add(BCO1arrow12Glob);
-
-        var BCO1arrow = createCircleFaceArrow(forceFaceBCO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtC), subVecUpdated(forcePtC, forcePtB)))
-        force_general.add(BCO1arrow);
-
-
+        if (!globalVisibilityCheckboxParams.global) {
+            var BCO1arrow1 = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, formEdgePt2O2Material, 0.02, 0.05, 0.56);
+            force_general.add(BCO1arrow1);
+            var BCO1arrow12 = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
+            force_general.add(BCO1arrow12);
+        } else {
+            var BCO1arrow1Glob = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_applyGlob, 0.02, 0.05, 0.56);
+            force_general_global.add(BCO1arrow1Glob);
+            var BCO1arrow12Glob = createCylinderArrowMesh(endPtArrowBCO1b2, endPtArrowBCO1b1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
+            force_general_global.add(BCO1arrow12Glob);
+        }
     } else {
-        var forceFaceBCO1center = face_center(forcePtB, forcePtC, ForceO1);
-        const endforceFaceBCO1a = subVecUpdated(formBtPt2, formPtO2new);
-        var endforceFaceBCO1b = drawArrowfromVec(forceFaceBCO1center, endforceFaceBCO1a, 0.01)
-        const endPtArrowBCO1b1 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.01);
-        const endPtArrowBCO1b2 = addVectorAlongDir(forceFaceBCO1center, endforceFaceBCO1b, 0.45);
-
-        var BCO1arrow1 = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, formEdgePt2O2Material, 0.02, 0.05, 0.56);
-        force_general.add(BCO1arrow1);
-        var BCO1arrow12 = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, arrow_apply_outline, 0.025, 0.06, 0.56);
-        force_general.add(BCO1arrow12);
-        var TXfaceNormal2 = createSpriteTextApply('n', "5", new THREE.Vector3(endPtArrowBCO1b2.x, endPtArrowBCO1b2.y, endPtArrowBCO1b2.z + 0.1));
-        force_general.add(TXfaceNormal2);
-
-        var BCO1arrow1Glob = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, arrow_applyGlob, 0.02, 0.05, 0.56);
-        force_general_global.add(BCO1arrow1Glob);
-        var BCO1arrow12Glob = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        force_general_global.add(BCO1arrow12Glob);
-        var BCO1arrow = createCircleFaceArrow(forceFaceBCO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtC), subVecUpdated(forcePtC, forcePtB)))
-        force_general.add(BCO1arrow);
-
+        if (!globalVisibilityCheckboxParams.global) {
+            var BCO1arrow1 = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, formEdgePt2O2Material, 0.02, 0.05, 0.56);
+            force_general.add(BCO1arrow1);
+            var BCO1arrow12 = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, arrow_apply_outline, 0.025, 0.06, 0.56);
+            force_general.add(BCO1arrow12);
+        } else {
+            var BCO1arrow1Glob = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, arrow_applyGlob, 0.02, 0.05, 0.56);
+            force_general_global.add(BCO1arrow1Glob);
+            var BCO1arrow12Glob = createCylinderArrowMesh(endPtArrowBCO1b1, endPtArrowBCO1b2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
+            force_general_global.add(BCO1arrow12Glob);
+        }
     }
-
+    var TXfaceNormal2 = createSpriteTextApply('n', "5", new THREE.Vector3(endPtArrowBCO1b2.x, endPtArrowBCO1b2.y, endPtArrowBCO1b2.z + 0.1));
+    force_general.add(TXfaceNormal2);
+    var BCO1arrow = createCircleFaceArrow(forceFaceBCO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtC), subVecUpdated(forcePtC, forcePtB)))
+    force_general.add(BCO1arrow);
 
     var edgeSize2 = areaBCO1 * 0.02;
     edgeSize2 = THREE.MathUtils.clamp(edgeSize2, 0.01, 0.5);
@@ -1986,22 +1919,19 @@ function Redraw() {
     applyline_o1Bglob2.computeLineDistances();//compute
     form_general_global.add(applyline_o1Bglob2);
 
-
+    const endPtArrowVertice2 = addVectorAlongDir(formPtO2new, formBtPt2, 0.1);
+    const endPtArrowVertice22 = addVectorAlongDir(formPtO2new, formBtPt2, 0.45);
+    var apply_Rarrow22;
     if (ForceO1.z < 0) {
-        const endPtArrowVertice2 = addVectorAlongDir(formPtO2new, formBtPt2, 0.1);
-        const endPtArrowVertice22 = addVectorAlongDir(formPtO2new, formBtPt2, 0.45);
         var apply_Rarrow2 = createCylinderArrowMesh(endPtArrowVertice22, endPtArrowVertice2, arrow_applyGlob, 0.02, 0.05, 0.56);
         form_general_global.add(apply_Rarrow2);
-        var apply_Rarrow22 = createCylinderArrowMesh(endPtArrowVertice22, endPtArrowVertice2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        form_general_global.add(apply_Rarrow22);
+        apply_Rarrow22 = createCylinderArrowMesh(endPtArrowVertice22, endPtArrowVertice2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
     } else {
-        const endPtArrowVertice2 = addVectorAlongDir(formPtO2new, formBtPt2, 0.1);
-        const endPtArrowVertice22 = addVectorAlongDir(formPtO2new, formBtPt2, 0.45);
         var apply_Rarrow2 = createCylinderArrowMesh(endPtArrowVertice2, endPtArrowVertice22, arrow_applyGlob, 0.02, 0.05, 0.56);
         form_general_global.add(apply_Rarrow2);
-        var apply_Rarrow22 = createCylinderArrowMesh(endPtArrowVertice2, endPtArrowVertice22, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        form_general_global.add(apply_Rarrow22);
+        apply_Rarrow22 = createCylinderArrowMesh(endPtArrowVertice2, endPtArrowVertice22, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
     }
+    form_general_global.add(apply_Rarrow22);
 
     // triangle ACO1 - 3
     var normalACO1_a = subVec(forcePtA, forcePtC);
@@ -2023,7 +1953,6 @@ function Redraw() {
         if (0 <= areaACO1 / areaMax && areaACO1 / areaMax < 0.25) {
             formedgeColor3 = 0x5B84AE
         }
-        var forceFaceACO1 = ForceFace3pt(forcePtC, forcePtA, ForceO1, formedgeColor3);
     } else {
         if (areaACO1 / areaMax >= 0.75) {
             formedgeColor3 = 0x80002F
@@ -2037,8 +1966,8 @@ function Redraw() {
         if (0 <= areaACO1 / areaMax && areaACO1 / areaMax < 0.25) {
             formedgeColor3 = 0xD72F62
         }
-        var forceFaceACO1 = ForceFace3pt(forcePtC, forcePtA, ForceO1, formedgeColor3);
     }
+    var forceFaceACO1 = ForceFace3pt(forcePtC, forcePtA, ForceO1, formedgeColor3);
 
     var formEdgePt3O3Material = new THREE.MeshPhongMaterial({
         color: formedgeColor3
@@ -2048,50 +1977,40 @@ function Redraw() {
     force_general_global.add(forceFaceACO1glob)
 
     //draw face normals in the force diagram
+    var forceFaceACO1center = face_center(forcePtA, forcePtC, ForceO1);
+    const endforceFaceACO1a = subVecUpdated(formBtPt3, formPtO3new);
+    var endforceFaceACO1b = drawArrowfromVec(forceFaceACO1center, endforceFaceACO1a, 0.01)
+    const endPtArrowACO1b1 = addVectorAlongDir(forceFaceACO1center, endforceFaceACO1b, 0.01);
+    const endPtArrowACO1b2 = addVectorAlongDir(forceFaceACO1center, endforceFaceACO1b, 0.45);
     if (ForceO1.z < 0) {
-        var forceFaceACO1center = face_center(forcePtA, forcePtC, ForceO1);
-        const endforceFaceACO1a = subVecUpdated(formBtPt3, formPtO3new);
-        var endforceFaceACO1b = drawArrowfromVec(forceFaceACO1center, endforceFaceACO1a, 0.01)
-        const endPtArrowACO1b1 = addVectorAlongDir(forceFaceACO1center, endforceFaceACO1b, 0.01);
-        const endPtArrowACO1b2 = addVectorAlongDir(forceFaceACO1center, endforceFaceACO1b, 0.45);
-
-        var ACO1arrow1 = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, formEdgePt3O3Material, 0.02, 0.05, 0.56);
-        force_general.add(ACO1arrow1);
-        var ACO1arrow12 = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
-        force_general.add(ACO1arrow12);
-        var TXfaceNormal1 = createSpriteTextApply('n', "6", new THREE.Vector3(endPtArrowACO1b2.x, endPtArrowACO1b2.y, endPtArrowACO1b2.z + 0.1));
-        force_general.add(TXfaceNormal1);
-
-        var ACO1arrow1Glob = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, arrow_applyGlob, 0.02, 0.05, 0.56);
-        force_general_global.add(ACO1arrow1Glob);
-        var ACO1arrow12Glob = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        force_general_global.add(ACO1arrow12Glob);
-
-        var ACO1arrow = createCircleFaceArrow(forceFaceACO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtA), subVecUpdated(forcePtA, forcePtC)))
-        force_general.add(ACO1arrow);
-
+        if (!globalVisibilityCheckboxParams.global) {
+            var ACO1arrow1 = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, formEdgePt3O3Material, 0.02, 0.05, 0.56);
+            force_general.add(ACO1arrow1);
+            var ACO1arrow12 = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, arrow_apply_outline, 0.025, 0.06, 0.56);
+            force_general.add(ACO1arrow12);
+        } else {
+            var ACO1arrow1Glob = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, arrow_applyGlob, 0.02, 0.05, 0.56);
+            force_general_global.add(ACO1arrow1Glob);
+            var ACO1arrow12Glob = createCylinderArrowMesh(endPtArrowACO1b2, endPtArrowACO1b1, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
+            force_general_global.add(ACO1arrow12Glob);
+        }
     } else {
-        var forceFaceACO1center = face_center(forcePtA, forcePtC, ForceO1);
-        const endforceFaceACO1a = subVecUpdated(formBtPt3, formPtO3new);
-        var endforceFaceACO1b = drawArrowfromVec(forceFaceACO1center, endforceFaceACO1a, 0.01)
-        const endPtArrowACO1b1 = addVectorAlongDir(forceFaceACO1center, endforceFaceACO1b, 0.01);
-        const endPtArrowACO1b2 = addVectorAlongDir(forceFaceACO1center, endforceFaceACO1b, 0.45);
-
-        var ACO1arrow1 = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, formEdgePt3O3Material, 0.02, 0.05, 0.56);
-        force_general.add(ACO1arrow1);
-        var ACO1arrow12 = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, arrow_apply_outline, 0.025, 0.06, 0.56);
-        force_general.add(ACO1arrow12);
-        var TXfaceNormal1 = createSpriteTextApply('n', "6", new THREE.Vector3(endPtArrowACO1b2.x, endPtArrowACO1b2.y, endPtArrowACO1b2.z + 0.1));
-        force_general.add(TXfaceNormal1);
-
-        var ACO1arrow1Glob = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, arrow_applyGlob, 0.02, 0.05, 0.56);
-        force_general_global.add(ACO1arrow1Glob);
-        var ACO1arrow12Glob = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        force_general_global.add(ACO1arrow12Glob);
-
-        var ACO1arrow = createCircleFaceArrow(forceFaceACO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtA), subVecUpdated(forcePtA, forcePtC)))
-        force_general.add(ACO1arrow);
+        if (!globalVisibilityCheckboxParams.global) {
+            var ACO1arrow1 = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, formEdgePt3O3Material, 0.02, 0.05, 0.56);
+            force_general.add(ACO1arrow1);
+            var ACO1arrow12 = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, arrow_apply_outline, 0.025, 0.06, 0.56);
+            force_general.add(ACO1arrow12);
+        } else {
+            var ACO1arrow1Glob = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, arrow_applyGlob, 0.02, 0.05, 0.56);
+            force_general_global.add(ACO1arrow1Glob);
+            var ACO1arrow12Glob = createCylinderArrowMesh(endPtArrowACO1b1, endPtArrowACO1b2, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
+            force_general_global.add(ACO1arrow12Glob);
+        }
     }
+    var TXfaceNormal1 = createSpriteTextApply('n', "6", new THREE.Vector3(endPtArrowACO1b2.x, endPtArrowACO1b2.y, endPtArrowACO1b2.z + 0.1));
+    force_general.add(TXfaceNormal1);
+    var ACO1arrow = createCircleFaceArrow(forceFaceACO1center, 0.15, cross(subVecUpdated(ForceO1, forcePtA), subVecUpdated(forcePtA, forcePtC)))
+    force_general.add(ACO1arrow);
 
     var edgeSize3 = areaACO1 * 0.02;
     edgeSize3 = THREE.MathUtils.clamp(edgeSize3, 0.01, 0.5);
@@ -2114,22 +2033,19 @@ function Redraw() {
     applyline_o1Bglob3.computeLineDistances();//compute
     form_general_global.add(applyline_o1Bglob3);
 
-
+    const endPtArrowVertice3 = addVectorAlongDir(formPtO3new, formBtPt3, 0.1);
+    const endPtArrowVertice32 = addVectorAlongDir(formPtO3new, formBtPt3, 0.45);
+    var apply_Rarrow32;
     if (ForceO1.z < 0) {
-        const endPtArrowVertice3 = addVectorAlongDir(formPtO3new, formBtPt3, 0.1);
-        const endPtArrowVertice32 = addVectorAlongDir(formPtO3new, formBtPt3, 0.45);
         var apply_Rarrow3 = createCylinderArrowMesh(endPtArrowVertice32, endPtArrowVertice3, arrow_applyGlob, 0.02, 0.05, 0.56);
         form_general_global.add(apply_Rarrow3);
-        var apply_Rarrow32 = createCylinderArrowMesh(endPtArrowVertice32, endPtArrowVertice3, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        form_general_global.add(apply_Rarrow32);
+        apply_Rarrow32 = createCylinderArrowMesh(endPtArrowVertice32, endPtArrowVertice3, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
     } else {
-        const endPtArrowVertice3 = addVectorAlongDir(formPtO3new, formBtPt3, 0.1);
-        const endPtArrowVertice32 = addVectorAlongDir(formPtO3new, formBtPt3, 0.45);
         var apply_Rarrow3 = createCylinderArrowMesh(endPtArrowVertice3, endPtArrowVertice32, arrow_applyGlob, 0.02, 0.05, 0.56);
         form_general_global.add(apply_Rarrow3);
-        var apply_Rarrow32 = createCylinderArrowMesh(endPtArrowVertice3, endPtArrowVertice32, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
-        form_general_global.add(apply_Rarrow32);
+        apply_Rarrow32 = createCylinderArrowMesh(endPtArrowVertice3, endPtArrowVertice32, arrow_apply_outlineGlob, 0.025, 0.06, 0.56);
     }
+    form_general_global.add(apply_Rarrow32);
     // triangle ADO1 - 3
     var normalADO1_a = subVec(ForceO1, forcePtD);
     var normalADO1_b = subVec(forcePtD, forcePtA);
