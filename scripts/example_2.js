@@ -141,9 +141,9 @@ const minkVisibilityCheckboxParams = {
 const minkVisibilityCheckbox = tab.pages[2].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
     tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
     tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
-    rightPane.children[0].disabled = !rightPane.children[0].disabled;
-    rightPane.children[1].disabled = !rightPane.children[1].disabled;
-    rightPane.children[2].disabled = !rightPane.children[2].disabled;
+    paneRight.children[0].disabled = !paneRight.children[0].disabled;
+    paneRight.children[1].disabled = !paneRight.children[1].disabled;
+    paneRight.children[2].disabled = !paneRight.children[2].disabled;
     if(ev.value) {
         paneLeft.importPreset(disableFaceTrial);
     }
@@ -172,7 +172,7 @@ const disableLeftPane = paneLeft.exportPreset();
 
 /************************* Right Panel *************************/
 
-const rightPane = new Tweakpane.Pane({
+const paneRight = new Tweakpane.Pane({
     container: document.getElementById('right_container'),
 });
 
@@ -180,7 +180,7 @@ const o1SizeSliderParams = {
     O1len: 2,
 };
 
-rightPane.addInput(o1SizeSliderParams, 'O1len', {
+paneRight.addInput(o1SizeSliderParams, 'O1len', {
     min: -1,
     max: 3,
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -192,7 +192,7 @@ const o2SizeSliderParams = {
     O2len: 2,
 };
 //make the plane size slider
-rightPane.addInput(o2SizeSliderParams, 'O2len', {
+paneRight.addInput(o2SizeSliderParams, 'O2len', {
     min: -1,
     max: 3,
 }).on('change', (ev) => { //on change, dispose old plane geometry and create new
@@ -205,7 +205,7 @@ const forceCheckboxParams = {
 };
 
 //make the checkbox
-const forceCheckbox = rightPane.addInput(forceCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
+const forceCheckbox = paneRight.addInput(forceCheckboxParams, 'force cell').on('change', (ev) => { //on change, dispose old plane geometry and create new
     tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
     tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
     tab.pages[2].children[0].disabled = !tab.pages[2].children[0].disabled;
@@ -219,7 +219,7 @@ const planeSizeSliderParams = {
     size: 0.7,
 };
 var forceCellScale = 0.7
-const forceCellSlider = rightPane.addInput(planeSizeSliderParams, 'size', {
+const forceCellSlider = paneRight.addInput(planeSizeSliderParams, 'size', {
     min: 0.5,
     max: 1,
 }).on('change', (ev) => {

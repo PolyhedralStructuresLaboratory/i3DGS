@@ -114,7 +114,7 @@ const minkVisibilityCheckboxParams = {
 const minkVisibilityCheckbox = tab.pages[1].addInput(minkVisibilityCheckboxParams, 'show').on('change', (ev) => { //on change, dispose old plane geometry and create new
     tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
     tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
-    rightPane.children[0].disabled = !rightPane.children[0].disabled;
+    paneRight.children[0].disabled = !paneRight.children[0].disabled;
     if (ev.value) {
         paneLeft.importPreset(minkPreset);
     }
@@ -145,7 +145,7 @@ paneLeft.refresh();
 
 /************************* Right Panel *************************/
 
-const rightPane = new Tweakpane.Pane({
+const paneRight = new Tweakpane.Pane({
     container: document.getElementById('right_container'),
 });
 
@@ -157,21 +157,21 @@ const stepSliderParams = {
     size: 1, //starts as double the size of the box's params
 };
 //make the checkbox
-const stepVisibilityCheckbox = rightPane.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
+const stepVisibilityCheckbox = paneRight.addInput(stepVisibilityCheckboxParams, 'steps').on('change', (ev) => { //on change, dispose old plane geometry and create new
     tab.pages[0].children[0].disabled = !tab.pages[0].children[0].disabled;
     tab.pages[0].children[1].disabled = !tab.pages[0].children[1].disabled;
     tab.pages[1].children[0].disabled = !tab.pages[1].children[0].disabled;
     if (ev.value) {
-        rightPane.importPreset(resetSizeTo1On);
+        paneRight.importPreset(resetSizeTo1On);
         paneLeft.importPreset(disableLeftPane);
     } else {
-        rightPane.importPreset(resetSizeTo1Off);
+        paneRight.importPreset(resetSizeTo1Off);
     }
     redrawStep();
 });
 
 //make the plane size slider
-const stepSlider = rightPane.addInput(stepSliderParams, 'size', {
+const stepSlider = paneRight.addInput(stepSliderParams, 'size', {
     min: 1, //min = double the size of the box's params
     max: 6, //max = quadruple the size of the box's params
     step: 1
@@ -336,9 +336,9 @@ stepVisibilityCheckbox.on('change', () => { //on change, change the hidden and v
     stepSlider.hidden = !stepSlider.hidden;
 });
 
-const resetSizeTo1On = rightPane.exportPreset();
+const resetSizeTo1On = paneRight.exportPreset();
 resetSizeTo1On.steps = true;
-const resetSizeTo1Off = rightPane.exportPreset();
+const resetSizeTo1Off = paneRight.exportPreset();
 
 var forceCellScale = 0.7
 
