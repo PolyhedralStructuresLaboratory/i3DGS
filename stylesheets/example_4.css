@@ -1933,3 +1933,9 @@ margin-top: 320px; */
     border-radius: 10px;
     border-width: 3px;
 }
+
+#home_button {
+    margin-left: 2%;
+    margin-top: 2%;
+    position: absolute;
+}

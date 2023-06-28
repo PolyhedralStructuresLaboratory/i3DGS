@@ -98,3 +98,9 @@ canvas {
 #credits a:hover {
     color: #a7a7a7;
 }
+
+#home_button {
+    margin-left: 2%;
+    margin-top: 2%;
+    position: absolute;
+}
