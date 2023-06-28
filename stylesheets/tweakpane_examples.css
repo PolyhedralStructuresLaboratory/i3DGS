@@ -104,3 +104,18 @@ canvas {
     margin-top: 2%;
     position: absolute;
 }
+
+@media (hover: none) {
+    #left_container_wrapper {
+        display: none;
+    }
+    #right_container_wrapper {
+        display: none;
+    }
+    #left_container_header {
+        display: none;
+    }
+    #right_container_header {
+        display: none;
+    }
+}
