@@ -3210,15 +3210,6 @@ var mesh_left_Cell4;
 
 function initModel() {
 
-
-    var geometry = new THREE.PlaneBufferGeometry(2, 2);
-    // var planeMaterial = new THREE.MeshLambertMaterial( { color: 0xdddddd } );
-    var planeMaterial = new THREE.MeshLambertMaterial({
-        color: 0x9a9b9c,
-        shading: THREE.SmoothShading,
-        side: THREE.DoubleSide
-    })
-
     //force
 
     L = 3;//scale
@@ -3749,7 +3740,7 @@ function initModel() {
     trfm_ctrl = new THREE.TransformControls(camera, renderer.domElement);
     trfm_ctrl.addEventListener('change', render);
 
-    trfm_ctrl.addEventListener('objectChange', function (e) {
+    trfm_ctrl.addEventListener('objectChange', function () {
 
         if (Math.abs(selectObj.position.x) <= 2 && Math.abs(selectObj.position.y) <= 2 && Math.abs(selectObj.position.z) <= 2) {
 
@@ -3759,8 +3750,6 @@ function initModel() {
             //          TubePoints1[1].y=selectObj.position.y;
             //          TubePoints1[1].z=selectObj.position.z;
 
-            //          console.log("TubePoints1="+TubePoints1[1].z);
-
             //     }
 
             //    if(selectObj.name.charAt(2)==='2')
@@ -3769,8 +3758,6 @@ function initModel() {
             //          TubePoints2[1].y=selectObj.position.y;
             //          TubePoints2[1].z=selectObj.position.z;
 
-            //          console.log("TubePoints2="+TubePoints2[1].z);
-
             //     }
             //     if(selectObj.name.charAt(2)==='3')
             //     {
@@ -3778,16 +3765,12 @@ function initModel() {
             //          TubePoints3[1].y=selectObj.position.y;
             //          TubePoints3[1].z=selectObj.position.z;
 
-            //          console.log("TubePoints3="+TubePoints3[1].z);
-
             //     }
             //     if(selectObj.name.charAt(2)==='4')
             //     {
             //          TubePoints4[1].x=selectObj.position.x;
             //          TubePoints4[1].y=selectObj.position.y;
             //          TubePoints4[1].z=selectObj.position.z;
-
-            //          console.log("TubePoints4="+TubePoints4[1].z);
 
             //     }
 
@@ -3840,7 +3823,7 @@ function initModel() {
         //render();
     });
 
-    trfm_ctrl.addEventListener('mouseDown', (evt) => {
+    trfm_ctrl.addEventListener('mouseDown', () => {
 
         orbit_ctrl.enabled = false;
         if (controls_scale.Pair_Control) {
@@ -3886,7 +3869,7 @@ function initModel() {
 
 
     });
-    trfm_ctrl.addEventListener('mouseUp', (evt) => {
+    trfm_ctrl.addEventListener('mouseUp', () => {
 
         orbit_ctrl.enabled = true;
     });
@@ -3990,8 +3973,6 @@ function createCircleFaceArrow(centerPt, radius, arr_dir) {
     Vec_a.normalize();
     Vec_b.normalize();
 
-    // console.log("vec_a,vec_b",Vec_a,Vec_b);
-
     var points = [];
     var length = 20;
 
@@ -4017,8 +3998,6 @@ function createCircleFaceArrow(centerPt, radius, arr_dir) {
 
 
     var CircleMesh = new THREE.Line(geometrySpacedPoints, arcMaterial);
-
-    //console.log("points=",points[1],points[5]);
 
     CircleMesh.computeLineDistances();//compute
 
@@ -4068,8 +4047,6 @@ function createCircleFaceArrow2(centerPt, radius, arr_dir) {
     Vec_a.normalize();
     Vec_b.normalize();
 
-    // console.log("vec_a,vec_b",Vec_a,Vec_b);
-
     var points = [];
     var length = 20;
 
@@ -4095,8 +4072,6 @@ function createCircleFaceArrow2(centerPt, radius, arr_dir) {
 
 
     var CircleMesh = new THREE.Line(geometrySpacedPoints, arcMaterial);
-
-    //console.log("points=",points[1],points[5]);
 
     CircleMesh.computeLineDistances();//compute
 
@@ -4158,8 +4133,6 @@ function createCylinderMesh(pointX, pointY, material1, radius, radius2) {
     edge.position.y = (pointY.y + pointX.y) / 2;
     edge.position.z = (pointY.z + pointX.z) / 2;
 
-
-    //console.log("pos=", edge.position.x);
     return edge;
 }
 
@@ -4187,14 +4160,9 @@ function create_TriangleMesh(p1, p2, p3, direction, coreScale)//dir
     var direction1 = new THREE.Vector3().subVectors(coreScale, corepoint);
     var m = direction1.length();
 
-
     //var dis=distance(,);//dis
 
-    //console.log("m=",m);
-
-
     //var m=Math.sqrt((dis*dis)/(norm(unit_direction)*norm(unit_direction)));
-
 
     // var out1=new THREE.Vector3();
     // out1.x=corepoint.x+0.2*unit_direction.x;
@@ -4223,9 +4191,6 @@ function create_TriangleMesh(p1, p2, p3, direction, coreScale)//dir
     p3_1.x = p3.x + m * unit_direction.x;
     p3_1.y = p3.y + m * unit_direction.y;
     p3_1.z = p3.z + m * unit_direction.z;
-
-    //console.log("p1=",p1,"p2=",p2,"p3=",p3,"p1_1=",p1_1,"p2_1=",p2_1,"p3_1=",p3_1,"direction",direction,"dis",dis);
-
 
     //vector minkow
 
@@ -4271,11 +4236,8 @@ function create_TriangleMesh(p1, p2, p3, direction, coreScale)//dir
     ];
 
 
-    var mesh_tri = new THREE.SceneUtils.createMultiMaterialObject(geom_tri, materials_tri);
-
-
     //var polyhedron =createMesh(new THREE.PolyhedronGeometry(vertices,faces));
-    return mesh_tri;
+    return new THREE.SceneUtils.createMultiMaterialObject(geom_tri, materials_tri);
 
 }
 
@@ -4392,8 +4354,6 @@ function create_Tri_FaceMesh(p1, p2, p3, arr_face_dir, Is_First, arr_dir, text)/
             color: 0x000000//force face black
         });
 
-    var arr_material2;
-
     if (arr_dir < 0)//
     {
         arrow_material2 = new THREE.MeshPhongMaterial({
@@ -4486,8 +4446,6 @@ function create_Tri_FaceMesh(p1, p2, p3, arr_face_dir, Is_First, arr_dir, text)/
                 transparent: false,
                 side: THREE.BackSide
             });
-            var arrowN_O = createCylinderArrowMesh(corepoint, corepoint3, arrow_material_outline, 0.025, 0.05, 0.55);
-            //
         } else
             var arrow_material_outline = new THREE.MeshBasicMaterial({
                 color: "white",
@@ -4521,10 +4479,6 @@ function create_Tri_FaceMesh(p1, p2, p3, arr_face_dir, Is_First, arr_dir, text)/
         //var direction1 = new THREE.Vector3().subVectors(p1, p2);
         var length1 = 0.001;
         direction1.normalize();
-        var arrowHelper1 = new THREE.ArrowHelper(direction1, arrowpt, length1, "black", 0.1, 0.05);
-
-        //        mesh_tri.add(arrowHelper1);
-
 
         //cir arrow
 
@@ -4602,8 +4556,6 @@ function create_Tri_FaceMesh(p1, p2, p3, arr_face_dir, Is_First, arr_dir, text)/
                 transparent: false,
                 side: THREE.BackSide
             });
-            var arrowN_O = createCylinderArrowMesh(corepoint3, corepoint, arrow_material_outline, 0.025, 0.05, 0.55);
-            //
         } else
             var arrow_material_outline = new THREE.MeshBasicMaterial({
                 color: "white",
@@ -4637,10 +4589,6 @@ function create_Tri_FaceMesh(p1, p2, p3, arr_face_dir, Is_First, arr_dir, text)/
         //var direction1 = new THREE.Vector3().subVectors(p1, p2);
         var length1 = 0.001;
         direction1.normalize();
-        var arrowHelper1 = new THREE.ArrowHelper(direction1, arrowpt, length1, "black", 0.1, 0.1);
-
-        //            mesh_tri.add(arrowHelper1);
-
 
         //cir arrow
 
@@ -4677,14 +4625,7 @@ function create_Tri_FaceMesh(p1, p2, p3, arr_face_dir, Is_First, arr_dir, text)/
 
     //var dis=distance(,);//dis
 
-    //console.log("m=",m);
-
-
     //var m=Math.sqrt((dis*dis)/(norm(unit_direction)*norm(unit_direction)));
-
-
-    //console.log("p1=",p1,"p2=",p2,"p3=",p3,"p1_1=",p1_1,"p2_1=",p2_1,"p3_1=",p3_1,"direction",direction,"dis",dis);
-
 
     //vector minkow
 
@@ -5477,8 +5418,6 @@ function createCylinderArrowMesh(pointX, pointY, material, radius, radiusCone, e
 
     // edgeLengthRatio = edgeLengthRatio !== undefined ? edgeLengthRatio : 0.7 ;
 
-    var pointMid = new THREE.Vector3().addVectors(pointX, edgeLengthRatio * direction);
-
     var orientation = new THREE.Matrix4();
     orientation.lookAt(pointX, pointY, new THREE.Object3D().up);
     orientation.multiply(new THREE.Matrix4().set(1, 0, 0, 0,
@@ -5565,7 +5504,6 @@ function onMouseDown(event) {
 
 
         selectObj = intersects[0].object;
-        console.log("selectobj.name=" + intersects[0].object.name.charAt(2));
         //leftMouseDown = true;
         lastPosition = selectObj.position;
         //lastIntersection = getIntersection(event);
@@ -5623,7 +5561,7 @@ function onMouseDown(event) {
 }
 
 
-function onMouseUp(event) {
+function onMouseUp() {
     leftMouseDown = false;
     rightMouseDown = false;
     //document.removeEventListener('mousemove', onMouseMove);
@@ -5808,9 +5746,6 @@ function redraw_Faces6() {
         new THREE.Vector3(0, 0, 0), TubePoints1[1], TubePoints2[1], TubePoints3[1], TubePoints4[1]
     ];
 
-
-    //console.log("TubePoints1="+P_A.z);
-
     // for (i = 0;i<geom.faces.length;i++){
     //         var hex = Math.random() * 0xffffff;
     //         geom.faces[i].color.setHex(hex);
@@ -5944,13 +5879,6 @@ function redraw() {
     //dir
     var arr_direction = arrow_direction(TubePoints1[1], TubePoints2[1], TubePoints3[1], TubePoints4[1]);
 
-    console.log("n1=", TubePoints1[1], "n2=", TubePoints2[1], "n3=", TubePoints3[1], "n4=", TubePoints4[1]);
-
-    var arrow_material2 = new THREE.MeshPhongMaterial({
-        color: 0xC00000
-    });//color
-
-
     //formcenter
 
     Tube_group = new THREE.Group();
@@ -6011,23 +5939,6 @@ function redraw() {
     // ****************** New Construct *************************************************************************************************************************************************
 
 
-    var material_AL = [
-        //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
-        new THREE.MeshBasicMaterial({color: "black", wireframe: true, transparent: true, opacity: 0.4}),
-        new THREE.MeshPhongMaterial({
-            color: 0x009600, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false
-        })
-    ];
-
-
-    function create_offset_point_plane(point1, point2, point3, scale) {
-
-        var centroid = new THREE.Vector3((point1.x + point2.x + point3.x) / 3, (point1.y + point2.y + point3.y) / 3, (point1.z + point2.z + point3.z) / 3);
-        var scale_point = new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale);
-        return scale_point
-    }
-
-
     function create_force_apply_plane(vertice1, vertice2, vertice3) {
 
         var vertices = [
@@ -6051,8 +5962,7 @@ function redraw() {
             })
         ];
 
-        var Applied_loads_faces = THREE.SceneUtils.createMultiMaterialObject(geom, material_AL);
-        return Applied_loads_faces
+        return THREE.SceneUtils.createMultiMaterialObject(geom, material_AL)
 
     }
 
@@ -6082,37 +5992,8 @@ function redraw() {
             })
         ];
 
-        var trial_faces = THREE.SceneUtils.createMultiMaterialObject(geom, material_trial);
-        return trial_faces
+        return THREE.SceneUtils.createMultiMaterialObject(geom, material_trial)
 
-    }
-
-
-    function create_form_greenfaces(point1, point1b, point2b, point2) {
-        var vertices = [
-            point1, point1b, point2b, point2
-        ];
-
-        var faces = [
-            new THREE.Face3(2, 1, 0),
-            new THREE.Face3(3, 2, 0),
-
-        ];
-
-        var geom = new THREE.Geometry();
-        geom.vertices = vertices;
-        geom.faces = faces;
-        geom.computeFaceNormals();
-        var material_greenfaces = [
-            //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
-            new THREE.MeshBasicMaterial({color: "black", wireframe: false, transparent: true, opacity: 0.4}),
-            new THREE.MeshPhongMaterial({
-                color: 0x009600, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false
-            })
-        ];
-
-        var greenface = THREE.SceneUtils.createMultiMaterialObject(geom, material_greenfaces);
-        return greenface
     }
 
     function create_form_greenface_dashlines(point1, point1b) {
@@ -6167,28 +6048,8 @@ function redraw() {
 
         dir2.subVectors(point3, point4).normalize();
 
-        var intec = LinesSectPt(dir1, point1, dir2, point3);
-        return intec
+        return LinesSectPt(dir1, point1, dir2, point3)
     }
-
-
-    var material_trial_closingplane = [
-        //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
-        new THREE.MeshBasicMaterial({color: "black", wireframe: false, transparent: true, opacity: 0.4}),
-        new THREE.MeshPhongMaterial({
-            color: "darkgrey", transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false
-        })
-    ];
-
-
-    var material_step_1 = [
-        //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
-        new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
-        new THREE.MeshPhongMaterial({
-            color: "white", transparent: true, opacity: 0.6, side: THREE.DoubleSide, depthWrite: false
-        })
-    ];
-
 
     function create_force_plane(vertice1, vertice2) {
 
@@ -6213,19 +6074,16 @@ function redraw() {
             })
         ];
 
-        var trial_faces = THREE.SceneUtils.createMultiMaterialObject(geom, material_trial);
-        return trial_faces
+        return THREE.SceneUtils.createMultiMaterialObject(geom, material_trial)
 
     }
 
 
     function create_force_face_area(point1, point2, pointO) {
-        var face_area = new THREE.Vector3().crossVectors(
+        return new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(point1, pointO),
             new THREE.Vector3().subVectors(point2, pointO),
         ).length() / 2
-
-        return face_area
     }
 
 
@@ -6242,7 +6100,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -6254,7 +6112,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -6266,7 +6124,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -6301,7 +6159,7 @@ function redraw() {
 
         } else if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -6313,7 +6171,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -6325,204 +6183,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
-                var Colorbar_red_3 = new THREE.MeshPhongMaterial({
-                    color: 0x940041
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_3);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_3);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_3, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_3,0.02,0.05,0.6);
-            }
-
-            if (form_mesh >= 0.75) {
-                var Colorbar_red_4 = new THREE.MeshPhongMaterial({
-                    color: 0x80002F
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_4);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_4);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_4, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_4,0.02,0.05,0.6);
-            }
-            form_group.add(sp_Point);
-            form_group.add(sp_Point2);
-            form_group.add(tubeMesht);
-            // form_group.add(tube_arrow_3o2);
-            sp_Point.castShadow = true;
-            sp_Point2.castShadow = true;
-            tubeMesht.castShadow = true;
-
-        }
-
-
-    }
-
-    function create_form_tubes_t(face_area, face_area_max, scale, startPoint, targetPoint, PointO) {
-        var form_mesh = face_area / face_area_max
-        tt = scale * face_area
-
-        var Sphere_Point = new THREE.Sphere(new THREE.Vector3(targetPoint.x, targetPoint.y, targetPoint.z), 0.06);
-        var Close_Point = Sphere_Point.clampPoint(startPoint);
-
-        var Sphere_Point2 = new THREE.Sphere(new THREE.Vector3(startPoint.x, startPoint.y, startPoint.z), 0.06);
-        var Close_Point2 = Sphere_Point2.clampPoint(targetPoint);
-
-
-        if (PointO.z <= ForceP_B.z) {
-
-            if (form_mesh < 0.25 & form_mesh >= 0) {
-                var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
-                    color: 0x5B84AE
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_1);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_1);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
-                //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
-                var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
-                    color: 0x376D9B
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_2);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_2);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
-                // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
-                var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
-                    color: 0x05416D
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_3);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_3);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_3, tt, tt);
-                //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2,FormCP3,Colorbar_blue_3,0.02,0.05,0.6);
-            }
-
-            if (form_mesh >= 0.75) {
-                var Colorbar_blue_4 = new THREE.MeshPhongMaterial({
-                    color: 0x0F3150
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_4);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_4);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_4, tt, tt);
-                //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2,FormCP3,Colorbar_blue_4,0.02,0.05,0.6);
-            }
-            form_group.add(sp_Point);
-            form_group.add(sp_Point2);
-            form_group.add(tubeMesh);
-            // form_group.add(tube_arrow_3o2);
-            sp_Point.castShadow = true;
-            sp_Point2.castShadow = true;
-            tubeMesh.castShadow = true;
-
-        }
-
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
-
-            if (form_mesh < 0.25 & form_mesh >= 0) {
-                var Colorbar_red_1 = new THREE.MeshPhongMaterial({
-                    color: 0xD72F62
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_1);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_1);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
-                var Colorbar_red_2 = new THREE.MeshPhongMaterial({
-                    color: 0xCC0549
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_2);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_2);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
-                var Colorbar_red_3 = new THREE.MeshPhongMaterial({
-                    color: 0x940041
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_3);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_3);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_3, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_3,0.02,0.05,0.6);
-            }
-
-            if (form_mesh >= 0.75) {
-                var Colorbar_red_4 = new THREE.MeshPhongMaterial({
-                    color: 0x80002F
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_4);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_4);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_4, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_4,0.02,0.05,0.6);
-            }
-            form_group.add(sp_Point);
-            form_group.add(sp_Point2);
-            form_group.add(tubeMesht);
-            // form_group.add(tube_arrow_3o2);
-            sp_Point.castShadow = true;
-            sp_Point2.castShadow = true;
-            tubeMesht.castShadow = true;
-
-        }
-
-        if (PointO.z > ForceP_B.z) {
-
-            if (form_mesh < 0.25 & form_mesh >= 0) {
-                var Colorbar_red_1 = new THREE.MeshPhongMaterial({
-                    color: 0xD72F62
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_1);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_1);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
-                var Colorbar_red_2 = new THREE.MeshPhongMaterial({
-                    color: 0xCC0549
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_2);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_2);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -6573,7 +6234,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -6585,7 +6246,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -6597,7 +6258,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -6632,9 +6293,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -6646,7 +6307,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -6658,7 +6319,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -6693,9 +6354,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis1a >= dis1b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis1a >= dis1b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -6707,7 +6368,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -6719,7 +6380,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -6757,7 +6418,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -6769,7 +6430,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -6781,7 +6442,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -6832,7 +6493,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -6844,7 +6505,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -6856,7 +6517,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -6891,9 +6552,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -6905,7 +6566,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -6917,7 +6578,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -6952,9 +6613,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis2a >= dis2b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis2a >= dis2b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -6966,7 +6627,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -6978,7 +6639,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7016,7 +6677,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7028,7 +6689,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7040,7 +6701,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7091,7 +6752,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -7103,7 +6764,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -7115,7 +6776,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -7150,9 +6811,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7164,7 +6825,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7176,7 +6837,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7211,9 +6872,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis3a >= dis3b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis3a >= dis3b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7225,7 +6886,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7237,7 +6898,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7275,7 +6936,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7287,7 +6948,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7299,7 +6960,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7350,7 +7011,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -7362,7 +7023,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -7374,7 +7035,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -7409,9 +7070,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7423,7 +7084,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7435,7 +7096,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7470,9 +7131,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis4a >= dis4b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis4a >= dis4b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7484,7 +7145,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7496,7 +7157,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7534,7 +7195,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7546,7 +7207,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7558,7 +7219,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7609,7 +7270,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -7621,7 +7282,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -7633,7 +7294,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -7668,9 +7329,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7682,7 +7343,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7694,7 +7355,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7729,9 +7390,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis5a >= dis5b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis5a >= dis5b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7743,7 +7404,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7755,7 +7416,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7793,7 +7454,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7805,7 +7466,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7817,7 +7478,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7868,7 +7529,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -7880,7 +7541,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -7892,7 +7553,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -7927,9 +7588,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -7941,7 +7602,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -7953,7 +7614,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -7988,9 +7649,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis6a >= dis6b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis6a >= dis6b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8002,7 +7663,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8014,7 +7675,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8052,7 +7713,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8064,7 +7725,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8076,7 +7737,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8128,7 +7789,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -8140,7 +7801,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -8152,7 +7813,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -8187,9 +7848,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8201,7 +7862,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8213,7 +7874,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8248,9 +7909,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis7a >= dis7b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis7a >= dis7b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8262,7 +7923,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8274,7 +7935,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8312,7 +7973,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8324,7 +7985,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8336,7 +7997,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8387,7 +8048,7 @@ function redraw() {
 
         if (PointO.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                     color: 0x5B84AE
                 });
@@ -8399,7 +8060,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
                 //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                     color: 0x376D9B
                 });
@@ -8411,7 +8072,7 @@ function redraw() {
                 var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
                 // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                     color: 0x05416D
                 });
@@ -8446,9 +8107,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z > 0) {
+        if (PointO.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8460,7 +8121,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8472,7 +8133,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8507,9 +8168,9 @@ function redraw() {
 
         }
 
-        if (PointO.z <= ForceP_B.z & cp4.z <= 0 & dis8a >= dis8b) {
+        if (PointO.z <= ForceP_B.z & cp4.z <= 0 && dis8a >= dis8b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8521,7 +8182,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8533,7 +8194,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8571,7 +8232,7 @@ function redraw() {
 
         if (PointO.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                     color: 0xD72F62
                 });
@@ -8583,7 +8244,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                     color: 0xCC0549
                 });
@@ -8595,7 +8256,7 @@ function redraw() {
                 var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
                 //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
             }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                     color: 0x940041
                 });
@@ -8795,8 +8456,6 @@ function redraw() {
     var FormP_1a_temp = new THREE.Vector3(FormP_4a_temp.x - Dlen1.l * Vec_BC.x, FormP_4a_temp.y - Dlen1.l * Vec_BC.y, FormP_4a_temp.z - Dlen1.l * Vec_BC.z);
     var FormP_3a_temp = new THREE.Vector3(FormP_4a_temp.x - cp4.z * Vec_tri_CBCb.x, FormP_4a_temp.y - cp4.z * Vec_tri_CBCb.y, FormP_4a_temp.z - cp4.z * Vec_tri_CBCb.z);
     var FormP_3a_b = new THREE.Vector3(FormP_3a_temp.x, FormP_3a_temp.y, -1.5)
-    var FormP_2a_temp = new THREE.Vector3(FormP_3a_temp.x - Dlen1.l * Vec_BC.x, FormP_3a_temp.y - Dlen1.l * Vec_BC.y, FormP_3a_temp.z - Dlen1.l * Vec_BC.z);
-
 
     //create form
     //find divided points
@@ -8841,9 +8500,13 @@ function redraw() {
     var FormP_1a = new THREE.Vector3(FormP_4a1a_8.x - Dlen1.l * Vec_force_mid_len.x, FormP_4a1a_8.y - Dlen1.l * Vec_force_mid_len.y, FormP_4a1a_8.z - Dlen1.l * Vec_force_mid_len.z);
     var FormP_2a = new THREE.Vector3(FormP_3a2a_8.x - Dlen1.l * Vec_force_mid_len.x, FormP_3a2a_8.y - Dlen1.l * Vec_force_mid_len.y, FormP_3a2a_8.z - Dlen1.l * Vec_force_mid_len.z);
 
-    var FormP_1a_b = new THREE.Vector3(FormP_1a.x, FormP_1a.y, -1.5);
-    var FormP_2a_b = new THREE.Vector3(FormP_2a.x, FormP_2a.y, -1.5);
+    var trialline_dash = new THREE.LineDashedMaterial({
+        color: "black",//color
+        dashSize: 0.1,
+        gapSize: 0.03,
+        linewidth: 1
 
+    });
 
     var trial_line4a1a = createdashline(FormP_4a_temp, FormP_1a, trialline_dash);
     var trial_line3a2a = createdashline(FormP_3a_temp, FormP_2a, trialline_dash);
@@ -9068,8 +8731,7 @@ function redraw() {
 
         var Vec = Cal_Vec_2(Forcepoint1, Forcepoint2, Forcepoint3, 1.2);
         var FormP_temp = new THREE.Vector3(startPoint.x - Vec.x, startPoint.y - Vec.y, startPoint.z - Vec.z);
-        var FormP_intec = create_form_intec(startPoint, FormP_temp, intecpoint1, intecpoint2)
-        return FormP_intec
+        return create_form_intec(startPoint, FormP_temp, intecpoint1, intecpoint2)
     }
 
     var FormP_4a1a_1_a = create_form_2d_intec(FormP_4a_temp, ForceP_C, ForceP_Cb, ForceP_N, FormP_4a1a_1, FormP_3a2a_1)
@@ -9115,43 +8777,43 @@ function redraw() {
     var FormP_1a_b = new THREE.Vector3(FormP_1a.x, FormP_1a.y, -1.5);
     var FormP_2a_b = new THREE.Vector3(FormP_2a.x, FormP_2a.y, -1.5);
 
-    var Form_4a1a_1_a_Node = create_form_node(FormP_4a1a_1_a, 0.02);
-    var Form_4a1a_2_a_Node = create_form_node(FormP_4a1a_2_a, 0.02);
-    var Form_4a1a_3_a_Node = create_form_node(FormP_4a1a_3_a, 0.02);
-    var Form_4a1a_4_a_Node = create_form_node(FormP_4a1a_4_a, 0.02);
-    var Form_4a1a_5_a_Node = create_form_node(FormP_4a1a_5_a, 0.02);
-    var Form_4a1a_6_a_Node = create_form_node(FormP_4a1a_6_a, 0.02);
-    var Form_4a1a_7_a_Node = create_form_node(FormP_4a1a_7_a, 0.02);
-    var Form_4a1a_8_a_Node = create_form_node(FormP_4a1a_8_a, 0.02);
+    create_form_node(FormP_4a1a_1_a, 0.02);
+    create_form_node(FormP_4a1a_2_a, 0.02);
+    create_form_node(FormP_4a1a_3_a, 0.02);
+    create_form_node(FormP_4a1a_4_a, 0.02);
+    create_form_node(FormP_4a1a_5_a, 0.02);
+    create_form_node(FormP_4a1a_6_a, 0.02);
+    create_form_node(FormP_4a1a_7_a, 0.02);
+    create_form_node(FormP_4a1a_8_a, 0.02);
 
-    var Form_3a2a_1_a_Node = create_form_node(FormP_3a2a_1_a, 0.02);
-    var Form_3a2a_2_a_Node = create_form_node(FormP_3a2a_2_a, 0.02);
-    var Form_3a2a_3_a_Node = create_form_node(FormP_3a2a_3_a, 0.02);
-    var Form_3a2a_4_a_Node = create_form_node(FormP_3a2a_4_a, 0.02);
-    var Form_3a2a_5_a_Node = create_form_node(FormP_3a2a_5_a, 0.02);
-    var Form_3a2a_6_a_Node = create_form_node(FormP_3a2a_6_a, 0.02);
-    var Form_3a2a_7_a_Node = create_form_node(FormP_3a2a_7_a, 0.02);
-    var Form_3a2a_8_a_Node = create_form_node(FormP_3a2a_8_a, 0.02);
+    create_form_node(FormP_3a2a_1_a, 0.02);
+    create_form_node(FormP_3a2a_2_a, 0.02);
+    create_form_node(FormP_3a2a_3_a, 0.02);
+    create_form_node(FormP_3a2a_4_a, 0.02);
+    create_form_node(FormP_3a2a_5_a, 0.02);
+    create_form_node(FormP_3a2a_6_a, 0.02);
+    create_form_node(FormP_3a2a_7_a, 0.02);
+    create_form_node(FormP_3a2a_8_a, 0.02);
 
     //  var Form_arrow_G3 = create_form_applyload(FormG_3);
 
-    var Form_4a1a_1_a_arrow = create_form_applyload(FormP_4a1a_1_a);
-    var Form_4a1a_2_a_arrow = create_form_applyload(FormP_4a1a_2_a);
-    var Form_4a1a_3_a_arrow = create_form_applyload(FormP_4a1a_3_a);
-    var Form_4a1a_4_a_arrow = create_form_applyload(FormP_4a1a_4_a);
-    var Form_4a1a_5_a_arrow = create_form_applyload(FormP_4a1a_5_a);
-    var Form_4a1a_6_a_arrow = create_form_applyload(FormP_4a1a_6_a);
-    var Form_4a1a_7_a_arrow = create_form_applyload(FormP_4a1a_7_a);
-    var Form_4a1a_8_a_arrow = create_form_applyload(FormP_4a1a_8_a);
+    create_form_applyload(FormP_4a1a_1_a);
+    create_form_applyload(FormP_4a1a_2_a);
+    create_form_applyload(FormP_4a1a_3_a);
+    create_form_applyload(FormP_4a1a_4_a);
+    create_form_applyload(FormP_4a1a_5_a);
+    create_form_applyload(FormP_4a1a_6_a);
+    create_form_applyload(FormP_4a1a_7_a);
+    create_form_applyload(FormP_4a1a_8_a);
 
-    var Form_3a2a_1_a_arrow = create_form_applyload(FormP_3a2a_1_a);
-    var Form_3a2a_2_a_arrow = create_form_applyload(FormP_3a2a_2_a);
-    var Form_3a2a_3_a_arrow = create_form_applyload(FormP_3a2a_3_a);
-    var Form_3a2a_4_a_arrow = create_form_applyload(FormP_3a2a_4_a);
-    var Form_3a2a_5_a_arrow = create_form_applyload(FormP_3a2a_5_a);
-    var Form_3a2a_6_a_arrow = create_form_applyload(FormP_3a2a_6_a);
-    var Form_3a2a_7_a_arrow = create_form_applyload(FormP_3a2a_7_a);
-    var Form_3a2a_8_a_arrow = create_form_applyload(FormP_3a2a_8_a);
+    create_form_applyload(FormP_3a2a_1_a);
+    create_form_applyload(FormP_3a2a_2_a);
+    create_form_applyload(FormP_3a2a_3_a);
+    create_form_applyload(FormP_3a2a_4_a);
+    create_form_applyload(FormP_3a2a_5_a);
+    create_form_applyload(FormP_3a2a_6_a);
+    create_form_applyload(FormP_3a2a_7_a);
+    create_form_applyload(FormP_3a2a_8_a);
 
     //tension
 
@@ -9208,35 +8870,34 @@ function redraw() {
         form_tube.castShadow = true;
     }
 
-    var Form_4a1a_3a2a_1 = create_form_2d_tubes(FormP_4a1a_1_a, FormP_3a2a_1_a, 0.015);
-    var Form_4a1a_3a2a_2 = create_form_2d_tubes(FormP_4a1a_2_a, FormP_3a2a_2_a, 0.015);
-    var Form_4a1a_3a2a_3 = create_form_2d_tubes(FormP_4a1a_3_a, FormP_3a2a_3_a, 0.015);
-    var Form_4a1a_3a2a_4 = create_form_2d_tubes(FormP_4a1a_4_a, FormP_3a2a_4_a, 0.015);
-    var Form_4a1a_3a2a_5 = create_form_2d_tubes(FormP_4a1a_5_a, FormP_3a2a_5_a, 0.015);
-    var Form_4a1a_3a2a_6 = create_form_2d_tubes(FormP_4a1a_6_a, FormP_3a2a_6_a, 0.015);
-    var Form_4a1a_3a2a_7 = create_form_2d_tubes(FormP_4a1a_7_a, FormP_3a2a_7_a, 0.015);
-    var Form_4a1a_3a2a_8 = create_form_2d_tubes(FormP_4a1a_8_a, FormP_3a2a_8_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_1_a, FormP_3a2a_1_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_2_a, FormP_3a2a_2_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_3_a, FormP_3a2a_3_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_4_a, FormP_3a2a_4_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_5_a, FormP_3a2a_5_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_6_a, FormP_3a2a_6_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_7_a, FormP_3a2a_7_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_8_a, FormP_3a2a_8_a, 0.015);
 
-    var Form_4a1a_1 = create_form_2d_tubes(FormP_4a_temp, FormP_4a1a_1_a, 0.015);
-    var Form_4a1a_2 = create_form_2d_tubes(FormP_4a1a_1_a, FormP_4a1a_2_a, 0.015);
-    var Form_4a1a_3 = create_form_2d_tubes(FormP_4a1a_2_a, FormP_4a1a_3_a, 0.015);
-    var Form_4a1a_4 = create_form_2d_tubes(FormP_4a1a_3_a, FormP_4a1a_4_a, 0.015);
-    var Form_4a1a_5 = create_form_2d_tubes(FormP_4a1a_4_a, FormP_4a1a_8_a, 0.015);
-    var Form_4a1a_6 = create_form_2d_tubes(FormP_4a1a_5_a, FormP_4a1a_6_a, 0.015);
-    var Form_4a1a_7 = create_form_2d_tubes(FormP_4a1a_6_a, FormP_4a1a_7_a, 0.015);
-    var Form_4a1a_8 = create_form_2d_tubes(FormP_4a1a_7_a, FormP_4a1a_8_a, 0.015);
-    var Form_4a1a_9 = create_form_2d_tubes(FormP_4a1a_5_a, FormP_1a, 0.015);
+    create_form_2d_tubes(FormP_4a_temp, FormP_4a1a_1_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_1_a, FormP_4a1a_2_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_2_a, FormP_4a1a_3_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_3_a, FormP_4a1a_4_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_4_a, FormP_4a1a_8_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_5_a, FormP_4a1a_6_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_6_a, FormP_4a1a_7_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_7_a, FormP_4a1a_8_a, 0.015);
+    create_form_2d_tubes(FormP_4a1a_5_a, FormP_1a, 0.015);
 
-
-    var Form_3a2a_1 = create_form_2d_tubes(FormP_3a_temp, FormP_3a2a_1_a, 0.015);
-    var Form_3a2a_2 = create_form_2d_tubes(FormP_3a2a_1_a, FormP_3a2a_2_a, 0.015);
-    var Form_3a2a_3 = create_form_2d_tubes(FormP_3a2a_2_a, FormP_3a2a_3_a, 0.015);
-    var Form_3a2a_4 = create_form_2d_tubes(FormP_3a2a_3_a, FormP_3a2a_4_a, 0.015);
-    var Form_3a2a_5 = create_form_2d_tubes(FormP_3a2a_4_a, FormP_3a2a_8_a, 0.015);
-    var Form_3a2a_6 = create_form_2d_tubes(FormP_3a2a_5_a, FormP_3a2a_6_a, 0.015);
-    var Form_3a2a_7 = create_form_2d_tubes(FormP_3a2a_6_a, FormP_3a2a_7_a, 0.015);
-    var Form_3a2a_8 = create_form_2d_tubes(FormP_3a2a_7_a, FormP_3a2a_8_a, 0.015);
-    var Form_3a2a_9 = create_form_2d_tubes(FormP_3a2a_5_a, FormP_2a, 0.015);
+    create_form_2d_tubes(FormP_3a_temp, FormP_3a2a_1_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_1_a, FormP_3a2a_2_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_2_a, FormP_3a2a_3_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_3_a, FormP_3a2a_4_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_4_a, FormP_3a2a_8_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_5_a, FormP_3a2a_6_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_6_a, FormP_3a2a_7_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_7_a, FormP_3a2a_8_a, 0.015);
+    create_form_2d_tubes(FormP_3a2a_5_a, FormP_2a, 0.015);
 
 
     //trial force diagram
@@ -9291,7 +8952,6 @@ function redraw() {
     //Trial form
 
     var trial_S1 = new THREE.Vector3(FormP_4a_temp.x, FormP_4a_temp.y, triP3.z)
-    var trial_S2 = new THREE.Vector3(FormP_3a_temp.x, FormP_3a_temp.y, triP3.z)
 
     var trial_LP1 = create_trial_intec(trial_S1, ForceP_N, TrialP_O, ForceP_C, FormP_4a1a_1_a, FormP_4a1a_1_b);
     var trial_LP2 = create_trial_intec(trial_LP1, ForceP_N, TrialP_O, ForceP_CB_1, FormP_4a1a_2_a, FormP_4a1a_2_b);
@@ -9345,7 +9005,7 @@ function redraw() {
     var trial_mesh_L6R6 = createCylinderMesh(trial_LP6, trial_RP6, DragPointMat, 0.02, 0.02);
     var trial_mesh_L7R7 = createCylinderMesh(trial_LP7, trial_RP7, DragPointMat, 0.02, 0.02);
     var trial_mesh_L8R8 = createCylinderMesh(trial_LP8, trial_RP8, DragPointMat, 0.02, 0.02);
-    var trial_mesh_L9R9 = createCylinderMesh(trial_LP9, trial_RP9, DragPointMat, 0.02, 0.02);
+    createCylinderMesh(trial_LP9, trial_RP9, DragPointMat, 0.02, 0.02);
 
 
     form_trial.add(trial_mesh_L1)
@@ -9777,56 +9437,52 @@ function redraw() {
     var Form_RP7 = create_trial_intec(Form_RP6, ForceP_M, ForceO1, ForceP_BC_2, FormP_3a2a_7_a, FormP_3a2a_7_b);
     var Form_RP8 = create_trial_intec(Form_RP7, ForceP_M, ForceO1, ForceP_BC_3, FormP_3a2a_8_a, FormP_3a2a_8_b);
 
+    create_form_tubes(Force_area_NC, max, 0.01, FormCP4, Form_LP1, ForceO1);
+    create_form_tubes(Force_area_NCB1, max, 0.01, Form_LP1, Form_LP2, ForceO1);
+    create_form_tubes(Force_area_NCB2, max, 0.01, Form_LP2, Form_LP3, ForceO1);
+    create_form_tubes(Force_area_NCB3, max, 0.01, Form_LP3, Form_LP4, ForceO1);
+    create_form_tubes(Force_area_NBCm, max, 0.01, Form_LP4, Form_LP8, ForceO1);
+    create_form_tubes(Force_area_NBC3, max, 0.01, Form_LP8, Form_LP7, ForceO1);
+    create_form_tubes(Force_area_NBC2, max, 0.01, Form_LP7, Form_LP6, ForceO1);
+    create_form_tubes(Force_area_NBC1, max, 0.01, Form_LP6, Form_LP5, ForceO1);
+    create_form_tubes(Force_area_NB, max, 0.01, Form_LP5, FormCP1, ForceO1);
 
-    var Form_mesh_L1 = create_form_tubes(Force_area_NC, max, 0.01, FormCP4, Form_LP1, ForceO1);
-    var Form_mesh_L2 = create_form_tubes(Force_area_NCB1, max, 0.01, Form_LP1, Form_LP2, ForceO1);
-    var Form_mesh_L3 = create_form_tubes(Force_area_NCB2, max, 0.01, Form_LP2, Form_LP3, ForceO1);
-    var Form_mesh_L4 = create_form_tubes(Force_area_NCB3, max, 0.01, Form_LP3, Form_LP4, ForceO1);
-    var Form_mesh_L5 = create_form_tubes(Force_area_NBCm, max, 0.01, Form_LP4, Form_LP8, ForceO1);
-    var Form_mesh_L6 = create_form_tubes(Force_area_NBC3, max, 0.01, Form_LP8, Form_LP7, ForceO1);
-    var Form_mesh_L7 = create_form_tubes(Force_area_NBC2, max, 0.01, Form_LP7, Form_LP6, ForceO1);
-    var Form_mesh_L8 = create_form_tubes(Force_area_NBC1, max, 0.01, Form_LP6, Form_LP5, ForceO1);
-    var Form_mesh_L9 = create_form_tubes(Force_area_NB, max, 0.01, Form_LP5, FormCP1, ForceO1);
+    create_form_tubes(Force_area_MC, max, 0.01, FormCP3, Form_RP1, ForceO1);
+    create_form_tubes(Force_area_MCB1, max, 0.01, Form_RP1, Form_RP2, ForceO1);
+    create_form_tubes(Force_area_MCB2, max, 0.01, Form_RP2, Form_RP3, ForceO1);
+    create_form_tubes(Force_area_MCB3, max, 0.01, Form_RP3, Form_RP4, ForceO1);
+    create_form_tubes(Force_area_MBCm, max, 0.01, Form_RP4, Form_RP8, ForceO1);
+    create_form_tubes(Force_area_MBC3, max, 0.01, Form_RP8, Form_RP7, ForceO1);
+    create_form_tubes(Force_area_MBC2, max, 0.01, Form_RP7, Form_RP6, ForceO1);
+    create_form_tubes(Force_area_MBC1, max, 0.01, Form_RP6, Form_RP5, ForceO1);
+    create_form_tubes(Force_area_MB, max, 0.01, Form_RP5, FormCP2, ForceO1);
 
-    var Form_mesh_R1 = create_form_tubes(Force_area_MC, max, 0.01, FormCP3, Form_RP1, ForceO1);
-    var Form_mesh_R2 = create_form_tubes(Force_area_MCB1, max, 0.01, Form_RP1, Form_RP2, ForceO1);
-    var Form_mesh_R3 = create_form_tubes(Force_area_MCB2, max, 0.01, Form_RP2, Form_RP3, ForceO1);
-    var Form_mesh_R4 = create_form_tubes(Force_area_MCB3, max, 0.01, Form_RP3, Form_RP4, ForceO1);
-    var Form_mesh_R5 = create_form_tubes(Force_area_MBCm, max, 0.01, Form_RP4, Form_RP8, ForceO1);
-    var Form_mesh_R6 = create_form_tubes(Force_area_MBC3, max, 0.01, Form_RP8, Form_RP7, ForceO1);
-    var Form_mesh_R7 = create_form_tubes(Force_area_MBC2, max, 0.01, Form_RP7, Form_RP6, ForceO1);
-    var Form_mesh_R8 = create_form_tubes(Force_area_MBC1, max, 0.01, Form_RP6, Form_RP5, ForceO1);
-    var Form_mesh_R9 = create_form_tubes(Force_area_MB, max, 0.01, Form_RP5, FormCP2, ForceO1);
+    create_form_tubes_t_1(Force_area_CCB1, max, 0.04, Form_LP1, Form_RP1, ForceO1);
+    create_form_tubes_t_2(Force_area_CB1CB2, max, 0.04, Form_LP2, Form_RP2, ForceO1);
+    create_form_tubes_t_3(Force_area_CB2CB3, max, 0.04, Form_LP3, Form_RP3, ForceO1);
+    create_form_tubes_t_4(Force_area_CB3CBm, max, 0.04, Form_LP4, Form_RP4, ForceO1);
+    create_form_tubes_t_5(Force_area_CBmBC3, max, 0.04, Form_LP5, Form_RP5, ForceO1);
+    create_form_tubes_t_6(Force_area_BC3BC2, max, 0.04, Form_LP6, Form_RP6, ForceO1);
+    create_form_tubes_t_7(Force_area_BC2BC1, max, 0.04, Form_LP7, Form_RP7, ForceO1);
+    create_form_tubes_t_8(Force_area_BC1B, max, 0.04, Form_LP8, Form_RP8, ForceO1);
 
+    create_form_node(Form_LP1, 0.03);
+    create_form_node(Form_LP2, 0.03);
+    create_form_node(Form_LP3, 0.03);
+    create_form_node(Form_LP4, 0.03);
+    create_form_node(Form_LP5, 0.03);
+    create_form_node(Form_LP6, 0.03);
+    create_form_node(Form_LP7, 0.03);
+    create_form_node(Form_LP8, 0.03);
 
-    var Form_mesh_L1R1 = create_form_tubes_t_1(Force_area_CCB1, max, 0.04, Form_LP1, Form_RP1, ForceO1);
-    var Form_mesh_L2R2 = create_form_tubes_t_2(Force_area_CB1CB2, max, 0.04, Form_LP2, Form_RP2, ForceO1);
-    var Form_mesh_L3R3 = create_form_tubes_t_3(Force_area_CB2CB3, max, 0.04, Form_LP3, Form_RP3, ForceO1);
-    var Form_mesh_L4R4 = create_form_tubes_t_4(Force_area_CB3CBm, max, 0.04, Form_LP4, Form_RP4, ForceO1);
-    var Form_mesh_L5R5 = create_form_tubes_t_5(Force_area_CBmBC3, max, 0.04, Form_LP5, Form_RP5, ForceO1);
-    var Form_mesh_L6R6 = create_form_tubes_t_6(Force_area_BC3BC2, max, 0.04, Form_LP6, Form_RP6, ForceO1);
-    var Form_mesh_L7R7 = create_form_tubes_t_7(Force_area_BC2BC1, max, 0.04, Form_LP7, Form_RP7, ForceO1);
-    var Form_mesh_L8R8 = create_form_tubes_t_8(Force_area_BC1B, max, 0.04, Form_LP8, Form_RP8, ForceO1);
-
-    var Form_LP1_Node = create_form_node(Form_LP1, 0.03);
-    var Form_LP2_Node = create_form_node(Form_LP2, 0.03);
-    var Form_LP3_Node = create_form_node(Form_LP3, 0.03);
-    var Form_LP4_Node = create_form_node(Form_LP4, 0.03);
-    var Form_LP5_Node = create_form_node(Form_LP5, 0.03);
-    var Form_LP6_Node = create_form_node(Form_LP6, 0.03);
-    var Form_LP7_Node = create_form_node(Form_LP7, 0.03);
-    var Form_LP8_Node = create_form_node(Form_LP8, 0.03);
-
-
-    var Form_RP1_Node = create_form_node(Form_RP1, 0.03);
-    var Form_RP2_Node = create_form_node(Form_RP2, 0.03);
-    var Form_RP3_Node = create_form_node(Form_RP3, 0.03);
-    var Form_RP4_Node = create_form_node(Form_RP4, 0.03);
-    var Form_RP5_Node = create_form_node(Form_RP5, 0.03);
-    var Form_RP6_Node = create_form_node(Form_RP6, 0.03);
-    var Form_RP7_Node = create_form_node(Form_RP7, 0.03);
-    var Form_RP8_Node = create_form_node(Form_RP8, 0.03);
-
+    create_form_node(Form_RP1, 0.03);
+    create_form_node(Form_RP2, 0.03);
+    create_form_node(Form_RP3, 0.03);
+    create_form_node(Form_RP4, 0.03);
+    create_form_node(Form_RP5, 0.03);
+    create_form_node(Form_RP6, 0.03);
+    create_form_node(Form_RP7, 0.03);
+    create_form_node(Form_RP8, 0.03);
 
     // add form R arrow
     var arrow_r = new THREE.MeshPhongMaterial({color: 0x009600});
@@ -9840,26 +9496,21 @@ function redraw() {
     var R_closeP1 = R_arrow_P1.clampPoint(FormCP1);
     var R_vec1 = new THREE.Vector3(R_closeP1.x - Form_LP5.x, R_closeP1.y - Form_LP5.y, R_closeP1.z - Form_LP5.z);
     var R_arrow_1_a = new THREE.Vector3(FormCP1.x + 2.5 * R_vec1.x, FormCP1.y + 2.5 * R_vec1.y, FormCP1.z + 2.5 * R_vec1.z)
-    var R_arrow_1_b = new THREE.Vector3(FormCP1.x + 2.1 * R_vec1.x, FormCP1.y + 2.1 * R_vec1.y, FormCP1.z + 2.1 * R_vec1.z)
 
     var R_arrow_P2 = new THREE.Sphere(new THREE.Vector3(Form_RP5.x, Form_RP5.y, Form_RP5.z), 0.1);
     var R_closeP2 = R_arrow_P2.clampPoint(FormCP2);
     var R_vec2 = new THREE.Vector3(R_closeP2.x - Form_RP5.x, R_closeP2.y - Form_RP5.y, R_closeP2.z - Form_RP5.z);
     var R_arrow_2_a = new THREE.Vector3(FormCP2.x + 2.5 * R_vec2.x, FormCP2.y + 2.5 * R_vec2.y, FormCP2.z + 2.5 * R_vec2.z)
-    var R_arrow_2_b = new THREE.Vector3(FormCP2.x + 2.1 * R_vec2.x, FormCP2.y + 2.1 * R_vec2.y, FormCP2.z + 2.1 * R_vec2.z)
 
     var R_arrow_P3 = new THREE.Sphere(new THREE.Vector3(Form_RP1.x, Form_RP1.y, Form_RP1.z), 0.1);
     var R_closeP3 = R_arrow_P3.clampPoint(FormCP3);
     var R_vec3 = new THREE.Vector3(R_closeP3.x - Form_RP1.x, R_closeP3.y - Form_RP1.y, R_closeP3.z - Form_RP1.z);
     var R_arrow_3_a = new THREE.Vector3(FormCP3.x + 2.5 * R_vec3.x, FormCP3.y + 2.5 * R_vec3.y, FormCP3.z + 2.5 * R_vec3.z)
-    var R_arrow_3_b = new THREE.Vector3(FormCP3.x + 2.1 * R_vec3.x, FormCP3.y + 2.1 * R_vec3.y, FormCP3.z + 2.1 * R_vec3.z)
 
     var R_arrow_P4 = new THREE.Sphere(new THREE.Vector3(Form_LP1.x, Form_LP1.y, Form_LP1.z), 0.1);
     var R_closeP4 = R_arrow_P4.clampPoint(FormCP4);
     var R_vec4 = new THREE.Vector3(R_closeP4.x - Form_LP1.x, R_closeP4.y - Form_LP1.y, R_closeP4.z - Form_LP1.z);
     var R_arrow_4_a = new THREE.Vector3(FormCP4.x + 2.5 * R_vec4.x, FormCP4.y + 2.5 * R_vec4.y, FormCP4.z + 2.5 * R_vec4.z)
-    var R_arrow_4_b = new THREE.Vector3(FormCP4.x + 2.1 * R_vec4.x, FormCP4.y + 2.1 * R_vec4.y, FormCP4.z + 2.1 * R_vec4.z)
-
 
     if (ForceO1.z <= ForceP_B.z) {
         var R_arrow1 = createCylinderArrowMesh(R_arrow_1_a, FormCP1, arrow_r2, 0.015, 0.035, 0.6);
@@ -9968,8 +9619,8 @@ function redraw() {
     //Form trial closing plane
 
     //   trial_S1,trial_RP0,trial_LP9,trial_RP9
-    x1_closeP1, x1_closeP2
-    ForceO1_closeP1, ForceO1_closeP2
+    // x1_closeP1, x1_closeP2
+    // ForceO1_closeP1, ForceO1_closeP2
 
     var TXMesht1 = create_trial_Text_P_2("1''", trial_LP9);
     var TXMesht2 = create_trial_Text_P_2("2''", trial_RP9);
@@ -10364,9 +10015,6 @@ function redraw() {
 
         var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
 
-
-        var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
-
         var vertices = [
             scale_point1, scale_point2, scale_point3
         ];
@@ -10407,10 +10055,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -10429,7 +10073,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10440,7 +10084,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -10452,7 +10096,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10476,7 +10120,7 @@ function redraw() {
             }
         } else if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10487,7 +10131,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10537,10 +10181,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -10559,7 +10199,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10570,7 +10210,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -10582,7 +10222,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10608,7 +10248,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10619,7 +10259,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10630,7 +10270,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10653,9 +10293,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10666,7 +10306,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10677,7 +10317,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10700,9 +10340,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis1a >= dis1b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis1a >= dis1b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10713,7 +10353,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10724,7 +10364,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10763,10 +10403,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -10785,7 +10421,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10796,7 +10432,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -10808,7 +10444,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10834,7 +10470,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10845,7 +10481,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10856,7 +10492,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10879,9 +10515,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10892,7 +10528,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10903,7 +10539,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10926,9 +10562,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis2a >= dis2b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis2a >= dis2b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10939,7 +10575,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10950,7 +10586,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -10990,10 +10626,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -11012,7 +10644,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11035,7 +10667,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11061,7 +10693,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11072,7 +10704,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11083,7 +10715,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11106,9 +10738,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11119,7 +10751,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11130,7 +10762,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11153,9 +10785,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis3a >= dis3b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis3a >= dis3b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11166,7 +10798,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11177,7 +10809,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11217,10 +10849,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -11239,7 +10867,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11250,7 +10878,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -11262,7 +10890,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11288,7 +10916,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11299,7 +10927,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11310,7 +10938,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11333,9 +10961,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11346,7 +10974,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11357,7 +10985,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11380,9 +11008,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis4a >= dis4b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis4a >= dis4b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11393,7 +11021,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11404,7 +11032,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11444,10 +11072,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -11466,7 +11090,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11477,7 +11101,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -11489,7 +11113,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11515,7 +11139,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11526,7 +11150,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11537,7 +11161,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11560,9 +11184,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11573,7 +11197,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11584,7 +11208,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11607,9 +11231,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis8a >= dis8b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis8a >= dis8b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11620,7 +11244,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11631,7 +11255,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11671,10 +11295,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -11693,7 +11313,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11704,7 +11324,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -11716,7 +11336,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11742,7 +11362,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11753,7 +11373,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11764,7 +11384,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11787,9 +11407,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11800,7 +11420,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11811,7 +11431,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11834,9 +11454,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis7a >= dis7b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis7a >= dis7b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11847,7 +11467,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11858,7 +11478,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11898,10 +11518,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -11920,7 +11536,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11931,7 +11547,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -11943,7 +11559,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11969,7 +11585,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11980,7 +11596,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -11991,7 +11607,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12014,9 +11630,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12027,7 +11643,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12038,7 +11654,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12061,9 +11677,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis6a >= dis6b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis6a >= dis6b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12074,7 +11690,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12085,7 +11701,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12125,10 +11741,6 @@ function redraw() {
 
         var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
 
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
         var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
 
         var vertices = [
@@ -12147,7 +11759,7 @@ function redraw() {
 
         if (ForceO1.z <= ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12158,7 +11770,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
 
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
@@ -12170,7 +11782,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12196,7 +11808,7 @@ function redraw() {
 
         if (ForceO1.z > ForceP_B.z) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12207,7 +11819,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12218,7 +11830,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12241,9 +11853,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z > 0) {
+        if (ForceO1.z <= ForceP_B.z && cp4.z > 0) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12254,7 +11866,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12265,7 +11877,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12288,9 +11900,9 @@ function redraw() {
             }
         }
 
-        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 & dis5a >= dis5b) {
+        if (ForceO1.z <= ForceP_B.z & cp4.z <= 0 && dis5a >= dis5b) {
 
-            if (form_mesh < 0.25 & form_mesh >= 0) {
+            if (form_mesh < 0.25 && form_mesh >= 0) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12301,7 +11913,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
+            if (form_mesh < 0.5 && form_mesh >= 0.25) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12312,7 +11924,7 @@ function redraw() {
                 var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
             }
 
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
+            if (form_mesh < 0.75 && form_mesh >= 0.5) {
                 var material_step_1 = [
                     //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
                     new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
@@ -12339,188 +11951,6 @@ function redraw() {
 
 
     }
-
-
-    function create_force_cell(point1, point2, point3, point4, scale) {
-
-        var centroid = new THREE.Vector3((point1.x + point2.x + point3.x + point4.x) / 4, (point1.y + point2.y + point3.y + point4.y) / 4, (point1.z + point2.z + point3.z + point4.z) / 4);
-
-
-        var scale_point1 = new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale);
-
-
-        var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
-
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
-        var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
-
-        var vertices = [
-            scale_point1, scale_point2, scale_point3, scale_point4
-        ];
-
-        var faces = [
-            new THREE.Face3(0, 1, 2),//ABO
-            new THREE.Face3(0, 1, 3),//BCO
-            new THREE.Face3(0, 2, 3),//ACO
-            new THREE.Face3(1, 2, 3),//ACO
-        ];
-
-        var geom = new THREE.Geometry();
-        geom.vertices = vertices;
-        geom.faces = faces;
-        geom.computeFaceNormals();
-        var material_step_1 = [
-            //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
-            new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
-            new THREE.MeshPhongMaterial({
-                color: "grey", transparent: true, opacity: 0.2, side: THREE.DoubleSide, depthWrite: false
-            })
-        ];
-
-        var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
-
-        return force_cell
-
-    }
-
-
-    function create_form_tubes(face_area, face_area_max, scale, startPoint, targetPoint, PointO) {
-        var form_mesh = face_area / face_area_max
-        tt = scale * face_area
-
-        var Sphere_Point = new THREE.Sphere(new THREE.Vector3(targetPoint.x, targetPoint.y, targetPoint.z), 0.06);
-        var Close_Point = Sphere_Point.clampPoint(startPoint);
-
-        var Sphere_Point2 = new THREE.Sphere(new THREE.Vector3(startPoint.x, startPoint.y, startPoint.z), 0.06);
-        var Close_Point2 = Sphere_Point2.clampPoint(targetPoint);
-
-
-        if (PointO.z <= ForceP_B.z) {
-
-            if (form_mesh < 0.25 & form_mesh >= 0) {
-                var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
-                    color: 0x5B84AE
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_1);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_1);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_1, tt, tt);
-                //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_1,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
-                var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
-                    color: 0x376D9B
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_2);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_2);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_2, tt, tt);
-                // var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2 ,FormCP3,Colorbar_blue_2,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
-                var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
-                    color: 0x05416D
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_3);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_3);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_3, tt, tt);
-                //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2,FormCP3,Colorbar_blue_3,0.02,0.05,0.6);
-            }
-
-            if (form_mesh >= 0.75) {
-                var Colorbar_blue_4 = new THREE.MeshPhongMaterial({
-                    color: 0x0F3150
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_blue_4);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_blue_4);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesh = createCylinderMesh(Close_Point2, Close_Point, Colorbar_blue_4, tt, tt);
-                //var tube_arrow_3o2=createCylinderArrowMesh(newArrowP3O2,FormCP3,Colorbar_blue_4,0.02,0.05,0.6);
-            }
-            form_group.add(sp_Point);
-            form_group.add(sp_Point2);
-            form_group.add(tubeMesh);
-            // form_group.add(tube_arrow_3o2);
-            sp_Point.castShadow = true;
-            sp_Point2.castShadow = true;
-            tubeMesh.castShadow = true;
-
-        } else if (PointO.z > ForceP_B.z) {
-
-            if (form_mesh < 0.25 & form_mesh >= 0) {
-                var Colorbar_red_1 = new THREE.MeshPhongMaterial({
-                    color: 0xD72F62
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_1);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_1);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_1, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_1,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.5 & form_mesh >= 0.25) {
-                var Colorbar_red_2 = new THREE.MeshPhongMaterial({
-                    color: 0xCC0549
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_2);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_2);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_2, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_2,0.02,0.05,0.6);
-            }
-            if (form_mesh < 0.75 & form_mesh >= 0.5) {
-                var Colorbar_red_3 = new THREE.MeshPhongMaterial({
-                    color: 0x940041
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_3);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_3);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_3, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_3,0.02,0.05,0.6);
-            }
-
-            if (form_mesh >= 0.75) {
-                var Colorbar_red_4 = new THREE.MeshPhongMaterial({
-                    color: 0x80002F
-                });
-                var spGeom_Point = new THREE.SphereGeometry(tt - 0.001);
-                var sp_Point = new THREE.Mesh(spGeom_Point, Colorbar_red_4);
-                var sp_Point2 = new THREE.Mesh(spGeom_Point, Colorbar_red_4);
-                sp_Point.position.copy(Close_Point);
-                sp_Point2.position.copy(Close_Point2);
-                var tubeMesht = createCylinderMesh(Close_Point2, Close_Point, Colorbar_red_4, tt, tt);
-                //var tube_arrow2=createCylinderArrowMesh(TubePoints2[1],new THREE.Vector3(1.22*TubePoints2[1].x,1.22*TubePoints2[1].y,1.22*TubePoints2[1].z),Colorbar_red_4,0.02,0.05,0.6);
-            }
-            form_group.add(sp_Point);
-            form_group.add(sp_Point2);
-            form_group.add(tubeMesht);
-            // form_group.add(tube_arrow_3o2);
-            sp_Point.castShadow = true;
-            sp_Point2.castShadow = true;
-            tubeMesht.castShadow = true;
-
-        }
-
-
-    }
-
 
     function create_trial_intec(startpoint, forceP1, forceP2, forceP3, intecP1, intecP1B) {
 
@@ -12537,22 +11967,11 @@ function redraw() {
 
         dirto.subVectors(intecP1, intecP1B).normalize();
 
-        var trial_intec = LinesSectPt(dirtsP, startpoint, dirto, intecP1);
-        return trial_intec
+        return LinesSectPt(dirtsP, startpoint, dirto, intecP1)
 
     }
 
-
-    var trialline_dash = new THREE.LineDashedMaterial({
-        color: "black",//color
-        dashSize: 0.1,
-        gapSize: 0.03,
-        linewidth: 1
-
-    });
-
-
-    function createdashline(point1, point2, trialline_dash) {
+    function createdashline(point1, point2) {
 
         var dashline = [];
         dashline.push(point1);
@@ -12574,7 +11993,7 @@ function redraw() {
         return dashline_edges
     }
 
-    function createdashline_2d_trial(point1, point2, trialline_dash) {
+    function createdashline_2d_trial(point1, point2) {
 
         var dashline = [];
         dashline.push(point1);
@@ -12617,105 +12036,28 @@ function redraw() {
         return line_edges
     }
 
-
-    //define function mesh IntersectPoint
-    function Cal_Plane_Line_Intersect_Point(Point_online, LineVec, Point_onPlane, PlaneVec) {
-
-        var IntersectPoint = new THREE.Vector3(
-            //x
-            Point_online.x + LineVec.x * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
-            //y
-            Point_online.y + LineVec.y * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
-            //z
-            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z))
-
-        return IntersectPoint;
-    }
-
-    //define intersection point x1
-
-
-    function create_force_cell(point1, point2, point3, point4, scale) {
-
-        var centroid = new THREE.Vector3((point1.x + point2.x + point3.x + point4.x) / 4, (point1.y + point2.y + point3.y + point4.y) / 4, (point1.z + point2.z + point3.z + point4.z) / 4);
-
-
-        var scale_point1 = new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale);
-
-
-        var scale_point2 = new THREE.Vector3(centroid.x + (point2.x - centroid.x) * scale, centroid.y + (point2.y - centroid.y) * scale, centroid.z + (point2.z - centroid.z) * scale);
-
-
-        var scale_point3 = new THREE.Vector3(centroid.x + (point3.x - centroid.x) * scale, centroid.y + (point3.y - centroid.y) * scale, centroid.z + (point3.z - centroid.z) * scale);
-
-
-        var scale_point4 = new THREE.Vector3(centroid.x + (point4.x - centroid.x) * scale, centroid.y + (point4.y - centroid.y) * scale, centroid.z + (point4.z - centroid.z) * scale);
-
-        var vertices = [
-            scale_point1, scale_point2, scale_point3, scale_point4
-        ];
-
-        var faces = [
-            new THREE.Face3(0, 1, 2),//ABO
-            new THREE.Face3(0, 1, 3),//BCO
-            new THREE.Face3(0, 2, 3),//ACO
-            new THREE.Face3(1, 2, 3),//ACO
-        ];
-
-        var geom = new THREE.Geometry();
-        geom.vertices = vertices;
-        geom.faces = faces;
-        geom.computeFaceNormals();
-        var material_step_1 = [
-            //new THREE.MeshLambertMaterial({color: 0x4d4dff, transparent: true}),
-            new THREE.MeshBasicMaterial({color: "white", wireframe: true, transparent: true, opacity: 0.1}),
-            new THREE.MeshPhongMaterial({
-                color: "grey", transparent: true, opacity: 0.2, side: THREE.DoubleSide, depthWrite: false
-            })
-        ];
-
-        var force_cell = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
-
-        return force_cell
-
-    }
-
-
-    function create_offset_point(point1, point2, point3, point4, scale) {
-
-        var centroid = new THREE.Vector3((point1.x + point2.x + point3.x + point4.x) / 4, (point1.y + point2.y + point3.y + point4.y) / 4, (point1.z + point2.z + point3.z + point4.z) / 4);
-        var scale_point = new THREE.Vector3(centroid.x + (point1.x - centroid.x) * scale, centroid.y + (point1.y - centroid.y) * scale, centroid.z + (point1.z - centroid.z) * scale);
-        return scale_point
-    }
-
     function Cal_Vec_2(vec1, vec2, vec3, n) {
 
-        cb = new THREE.Vector3(),
-            ab = new THREE.Vector3(),
-            normal = new THREE.Vector3(),
-            cb.subVectors(vec1, vec2);
+        var cb = new THREE.Vector3(), ab = new THREE.Vector3(), normal = new THREE.Vector3();
+        cb.subVectors(vec1, vec2);
         ab.subVectors(vec3, vec2);
         ab.cross(cb);
         normal.copy(ab).normalize();
 
-
-        var newPoint = new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
-        return newPoint;
+        return new THREE.Vector3(n * normal.x, n * normal.y, n * normal.z);
     }
 
 
     //define function mesh IntersectPoint
     function Cal_Plane_Line_Intersect_Point(Point_online, LineVec, Point_onPlane, PlaneVec) {
 
-        var IntersectPoint = new THREE.Vector3(
+        return new THREE.Vector3(
             //x
             Point_online.x + LineVec.x * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
             //y
             Point_online.y + LineVec.y * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z),
             //z
-            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z))
-
-        return IntersectPoint;
+            Point_online.z + LineVec.z * ((Point_onPlane.x - Point_online.x) * PlaneVec.x + (Point_onPlane.y - Point_online.y) * PlaneVec.y + (Point_onPlane.z - Point_online.z) * PlaneVec.z) / (PlaneVec.x * LineVec.x + PlaneVec.y * LineVec.y + PlaneVec.z * LineVec.z));
     }
 
 
@@ -12753,8 +12095,6 @@ function redraw() {
     var PointClose1 = SphereTest.clampPoint(TubePoints2[1]);
     var SphereTest2 = new THREE.Sphere(PointClose1, 0.05);
     var PointClose2 = SphereTest2.clampPoint(TubePoints2[1]);
-    var SphereTest3 = new THREE.Sphere(PointClose2, 0.045);
-
     var arrow_apply_1 = new THREE.MeshPhongMaterial({
         color: 0x009600//green
     });
@@ -12762,7 +12102,7 @@ function redraw() {
 
     var SphereTest4 = new THREE.Sphere(new THREE.Vector3(TubePoints1[0].x, TubePoints1[0].y, TubePoints1[0].z), 0.75);
     var PointClose3 = SphereTest4.clampPoint(TubePoints1[1]);
-    var tubeMesh_apply_1 = createCylinderMesh(PointClose3, TubePoints1[1], arrow_apply_1, 0.01, 0.01);
+    createCylinderMesh(PointClose3, TubePoints1[1], arrow_apply_1, 0.01, 0.01);
     //Tube_group.add(tubeMesh_apply_1);
     var apply_1 = [];
     apply_1.push(new THREE.Vector3(0, 0, -1.5));
@@ -12823,9 +12163,6 @@ function redraw() {
     //    var tubeMesh_pj_4=createCylinderMesh(TubePoints2[0],new THREE.Vector3(0,0,TubePoints2[1].z),arrow_apply_1,0.004,0.004);
     //    Tube_group.add(tubeMesh_pj_4);
 
-    var trailp1 = new THREE.Vector3(TubePoints2[1].x, TubePoints2[1].y, 0.5);
-    var trailp2 = new THREE.Vector3(TubePoints3[1].x, TubePoints3[1].y, 0.2);
-    var trailp3 = new THREE.Vector3(TubePoints4[1].x, TubePoints4[1].y, 0.8);
     var vertices = [
         TubePoints2[1], TubePoints3[1], TubePoints4[1]
     ];
@@ -12847,10 +12184,6 @@ function redraw() {
             color: "black", transparent: true, opacity: 0.3, side: THREE.DoubleSide
         })
     ];
-
-    var trail = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
-    //step_group_1.add(trail);
-
 
     var cb = new THREE.Vector3(),
         ab = new THREE.Vector3(),
@@ -12876,7 +12209,7 @@ function redraw() {
     var step1_arr2 = new THREE.MeshPhongMaterial({color: "darkblue"});
     var step1_arr3 = new THREE.MeshPhongMaterial({color: "red"});
 
-    var spacedivide_geo1a1 = createCylinderArrowMesh(P_D, nn, step1_arr2, 0.01, 0.02, 0.6);
+    createCylinderArrowMesh(P_D, nn, step1_arr2, 0.01, 0.02, 0.6);
     //step_group_1_1.add(spacedivide_geo1a1);
 
     L = 3;//scale
@@ -13025,7 +12358,7 @@ function redraw() {
 
     var trailMaterial = new THREE.MeshBasicMaterial({color: "black", transparent: true, opacity: 0.5});
 
-    var newtubeMesh_tr = createCylinderMesh(newP_2, newPo, trailMaterial, 0.02, 0.02);
+    createCylinderMesh(newP_2, newPo, trailMaterial, 0.02, 0.02);
     //step_group_1.add(newtubeMesh_tr);
 
     var cb4 = new THREE.Vector3(),
@@ -13054,7 +12387,7 @@ function redraw() {
 
     var trailMaterial = new THREE.MeshBasicMaterial({color: "black", transparent: true, opacity: 0.5});
 
-    var newtubeMesh_tr2 = createCylinderMesh(newPo_2, newPo, trailMaterial, 0.02, 0.02);
+    createCylinderMesh(newPo_2, newPo, trailMaterial, 0.02, 0.02);
     //step_group_1.add(newtubeMesh_tr2);
 
     var cb5 = new THREE.Vector3(),
@@ -13083,7 +12416,7 @@ function redraw() {
 
     var trailMaterial = new THREE.MeshBasicMaterial({color: "black", transparent: true, opacity: 0.5});
 
-    var newtubeMesh_tr3 = createCylinderMesh(newPo_3, newPo, trailMaterial, 0.02, 0.02);
+    createCylinderMesh(newPo_3, newPo, trailMaterial, 0.02, 0.02);
     // step_group_1.add(newtubeMesh_tr3);
 
 
@@ -13107,12 +12440,9 @@ function redraw() {
         })
     ];
 
-    var trail = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
-    //step_group_1.add(trail);
-
     var facec = new THREE.Vector3((P_A_Right.x + P_B_Right.x + P_C_Right.x) / 3, (P_A_Right.y + P_B_Right.y + P_C_Right.y) / 3, (P_A_Right.z + P_B_Right.z + P_C_Right.z) / 3);
 
-    var newtubeMesh_tr4 = createCylinderMesh(P_tr, facec, trailMaterial, 0.02, 0.02);
+    createCylinderMesh(P_tr, facec, trailMaterial, 0.02, 0.02);
     //step_group_1_1.add(newtubeMesh_tr4);
 
     var tpoints = [];
@@ -13185,11 +12515,11 @@ function redraw() {
     var newP2 = LinesSectPt(dir1, new1, dir2, TubePoints1[0]);
 
     if (nn.z > P_A.z) {
-        var spacedivide_geo1a3 = createCylinderArrowMesh(TubePoints2[1], new1, step1_arr3, 0.02, 0.04, 0.6)
+        createCylinderArrowMesh(TubePoints2[1], new1, step1_arr3, 0.02, 0.04, 0.6)
         var spacedivide_geo1a3_ol = createCylinderArrowMesh(TubePoints2[1], new1, arrow_material_outline, 0.023, 0.04, 0.58)
     }
     if (nn.z < P_A.z) {
-        var spacedivide_geo1a3 = createCylinderArrowMesh(new1_1, TubePoints2[1], step1_arr2, 0.02, 0.04, 0.6)
+        createCylinderArrowMesh(new1_1, TubePoints2[1], step1_arr2, 0.02, 0.04, 0.6)
         var spacedivide_geo1a3_ol = createCylinderArrowMesh(new1_1, TubePoints2[1], arrow_material_outline, 0.023, 0.04, 0.58)
     }
 
@@ -13240,14 +12570,14 @@ function redraw() {
     // step_group_1.add(new_sp2);
     // step_group_1.add(new_sp3);
 
-    var newtubeMesh1 = createCylinderMesh(TubePoints2[1], newPointClose, material, 0.05, 0.05);
-    var newtubeMesh2 = createCylinderMesh(TubePoints3[1], newPointClose2, material, 0.05, 0.05);
-    var newtubeMesh3 = createCylinderMesh(TubePoints4[1], newPointClose3, material, 0.05, 0.05);
+    createCylinderMesh(TubePoints2[1], newPointClose, material, 0.05, 0.05);
+    createCylinderMesh(TubePoints3[1], newPointClose2, material, 0.05, 0.05);
+    createCylinderMesh(TubePoints4[1], newPointClose3, material, 0.05, 0.05);
     // step_group_1.add(newtubeMesh1);
     // step_group_1.add(newtubeMesh2);
     // step_group_1.add(newtubeMesh3);
 
-    var new_geo1a1 = createCylinderArrowMesh(newP2, TubePoints2[1], step1_arr2, 0.01, 0.02, 0.6);
+    createCylinderArrowMesh(newP2, TubePoints2[1], step1_arr2, 0.01, 0.02, 0.6);
     //step_group_1.add(new_geo1a1);
 
 
@@ -13275,9 +12605,6 @@ function redraw() {
             color: 0x009600, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false
         })
     ];
-
-    var step_1_face_1 = THREE.SceneUtils.createMultiMaterialObject(geom, material_step_1);
-    //step_group_1.add(step_1_face_1);
 
     var step_1_face_cor3 = new THREE.Vector3(TubePoints3[1].x, TubePoints3[1].y, TubePoints1[1].z);
     var step_1_face_cor4 = new THREE.Vector3(0, 0, -1.5);
@@ -13348,11 +12675,9 @@ function redraw() {
         let newGeometry = new THREE.BufferGeometry();
 
         if (points === undefined) {
-            console.log("RoundedCornerLine: 'points' is undefined");
             return newGeometry;
         }
         if (points.length < 3) {
-            console.log("RoundedCornerLine: 'points' has insufficient length (should be equal or greater than 3)");
             return newGeometry.setFromPoints(points);
         }
 
@@ -13379,7 +12704,6 @@ function redraw() {
         if (!closed) {
             positions.push(points[0].clone())
         }
-        ;
 
         for (let i = startIndex; i <= endIndex; i++) {
 
@@ -13434,42 +12758,12 @@ function redraw() {
 
     }
 
-    function getCurveGeometry(points, smoothness, weight) {
-        var nurbsControlPoints = [];
-        var nurbsKnots = [];
-        var nurbsDegree = 2;
-        for (let i = 0; i <= nurbsDegree; i++) {
-            nurbsKnots.push(0);
-        }
-        for (let i = 0, j = points.length; i < j; i++) {
-            nurbsControlPoints.push(
-                new THREE.Vector4(
-                    points[i].x,
-                    points[i].y,
-                    points[i].z,
-                    i === 1 ? weight : 1
-                )
-            );
-            let knot = (i + 1) / (j - nurbsDegree);
-            nurbsKnots.push(THREE.Math.clamp(knot, 0, 1));
-        }
-        let nurbsCurve = new THREE.NURBSCurve(nurbsDegree, nurbsKnots, nurbsControlPoints);
-        return new THREE.BufferGeometry().setFromPoints(nurbsCurve.getPoints(smoothness));
-    }
-
-
     // offset test
 
     var Sphere_offset_1 = new THREE.Sphere(new THREE.Vector3(TubePoints1[1].x, TubePoints1[1].y, TubePoints1[1].z), 0.12);
     var Point_offset_1_1 = Sphere_offset_1.clampPoint(new THREE.Vector3(TubePoints2[1].x, TubePoints2[1].y, TubePoints1[1].z));
     var Point_offset_1_2 = Sphere_offset_1.clampPoint(new THREE.Vector3(TubePoints4[1].x, TubePoints4[1].y, TubePoints1[1].z));
     var offset_mid_1 = new THREE.Vector3((Point_offset_1_1.x + Point_offset_1_2.x) / 2, (Point_offset_1_1.y + Point_offset_1_2.y) / 2, (Point_offset_1_1.z + Point_offset_1_2.z) / 2);
-    var offset_mid_geo1 = new THREE.SphereGeometry(0.02);
-    var offset_midpoint = new THREE.Mesh(offset_mid_geo1, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //  offset_midpoint.position.copy(offset_mid_1);
     //  step_group_1.add(offset_midpoint);
@@ -13479,11 +12773,6 @@ function redraw() {
     var Point_offset_2_2 = Sphere_offset_2.clampPoint(new THREE.Vector3(TubePoints4[1].x, TubePoints4[1].y, TubePoints1[1].z));
     var offset_mid_2 = new THREE.Vector3((Point_offset_2_1.x + Point_offset_2_2.x) / 2, (Point_offset_2_1.y + Point_offset_2_2.y) / 2, (Point_offset_2_1.z + Point_offset_2_2.z) / 2);
     var offset_mid_geo2 = new THREE.SphereGeometry(0.02);
-    var offset_midpoint2 = new THREE.Mesh(offset_mid_geo2, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //    offset_midpoint2.position.copy(offset_mid_2);
     //    step_group_1.add(offset_midpoint2);
@@ -13493,11 +12782,6 @@ function redraw() {
     var Point_offset_3_2 = Sphere_offset_3.clampPoint(new THREE.Vector3(TubePoints2[1].x, TubePoints2[1].y, TubePoints1[1].z));
     var offset_mid_3 = new THREE.Vector3((Point_offset_3_1.x + Point_offset_3_2.x) / 2, (Point_offset_3_1.y + Point_offset_3_2.y) / 2, (Point_offset_3_1.z + Point_offset_3_2.z) / 2);
     var offset_mid_geo3 = new THREE.SphereGeometry(0.02);
-    var offset_midpoint3 = new THREE.Mesh(offset_mid_geo3, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //    offset_midpoint3.position.copy(offset_mid_3);
     //    step_group_1.add(offset_midpoint3);
@@ -13531,25 +12815,14 @@ function redraw() {
     var Point_offset_1_22 = Sphere_offset_12.clampPoint(new THREE.Vector3(TubePoints3[1].x, TubePoints3[1].y, TubePoints1[1].z));
     var offset_mid_12 = new THREE.Vector3((Point_offset_1_12.x + Point_offset_1_22.x) / 2, (Point_offset_1_12.y + Point_offset_1_22.y) / 2, (Point_offset_1_12.z + Point_offset_1_22.z) / 2);
     var offset_mid_geo12 = new THREE.SphereGeometry(0.02);
-    var offset_2midpoint = new THREE.Mesh(offset_mid_geo12, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //  offset_midpoint.position.copy(offset_mid_1);
     //  step_group_1.add(offset_midpoint);
 
-    var Sphere_offset_22 = new THREE.Sphere(new THREE.Vector3(TubePoints2[1].x, TubePoints2[1].y, TubePoints1[1].z), 0.2);
     var Point_offset_2_12 = Sphere_offset_2.clampPoint(new THREE.Vector3(TubePoints1[1].x, TubePoints1[1].y, TubePoints1[1].z));
     var Point_offset_2_22 = Sphere_offset_2.clampPoint(new THREE.Vector3(TubePoints3[1].x, TubePoints3[1].y, TubePoints1[1].z));
     var offset_mid_22 = new THREE.Vector3((Point_offset_2_12.x + Point_offset_2_22.x) / 2, (Point_offset_2_12.y + Point_offset_2_22.y) / 2, (Point_offset_2_12.z + Point_offset_2_22.z) / 2);
     var offset_mid_geo22 = new THREE.SphereGeometry(0.02);
-    var offset_2midpoint2 = new THREE.Mesh(offset_mid_geo22, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //    offset_midpoint2.position.copy(offset_mid_2);
     //    step_group_1.add(offset_midpoint2);
@@ -13559,11 +12832,6 @@ function redraw() {
     var Point_offset_3_22 = Sphere_offset_32.clampPoint(new THREE.Vector3(TubePoints2[1].x, TubePoints2[1].y, TubePoints1[1].z));
     var offset_mid_32 = new THREE.Vector3((Point_offset_3_12.x + Point_offset_3_22.x) / 2, (Point_offset_3_12.y + Point_offset_3_22.y) / 2, (Point_offset_3_12.z + Point_offset_3_22.z) / 2);
     var offset_mid_geo32 = new THREE.SphereGeometry(0.02);
-    var offset_2midpoint3 = new THREE.Mesh(offset_mid_geo32, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //    offset_midpoint3.position.copy(offset_mid_3);
     //    step_group_1.add(offset_midpoint3);
@@ -13596,11 +12864,6 @@ function redraw() {
     var Point_offset_1_23 = Sphere_offset_13.clampPoint(new THREE.Vector3(TubePoints3[1].x, TubePoints3[1].y, TubePoints1[1].z));
     var offset_mid_13 = new THREE.Vector3((Point_offset_1_13.x + Point_offset_1_23.x) / 2, (Point_offset_1_13.y + Point_offset_1_23.y) / 2, (Point_offset_1_13.z + Point_offset_1_23.z) / 2);
     var offset_mid_geo13 = new THREE.SphereGeometry(0.02);
-    var offset_3midpoint = new THREE.Mesh(offset_mid_geo13, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //  offset_midpoint.position.copy(offset_mid_1);
     //  step_group_1.add(offset_midpoint);
@@ -13610,11 +12873,6 @@ function redraw() {
     var Point_offset_2_23 = Sphere_offset_23.clampPoint(new THREE.Vector3(TubePoints4[1].x, TubePoints4[1].y, TubePoints1[1].z));
     var offset_mid_23 = new THREE.Vector3((Point_offset_2_13.x + Point_offset_2_23.x) / 2, (Point_offset_2_13.y + Point_offset_2_23.y) / 2, (Point_offset_2_13.z + Point_offset_2_23.z) / 2);
     var offset_mid_geo23 = new THREE.SphereGeometry(0.02);
-    var offset_3midpoint2 = new THREE.Mesh(offset_mid_geo23, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
 
     //    offset_midpoint2.position.copy(offset_mid_2);
     //    step_group_1.add(offset_midpoint2);
@@ -13623,16 +12881,6 @@ function redraw() {
     var Point_offset_3_13 = Sphere_offset_33.clampPoint(new THREE.Vector3(TubePoints1[1].x, TubePoints1[1].y, TubePoints1[1].z));
     var Point_offset_3_23 = Sphere_offset_33.clampPoint(new THREE.Vector3(TubePoints3[1].x, TubePoints3[1].y, TubePoints1[1].z));
     var offset_mid_33 = new THREE.Vector3((Point_offset_3_13.x + Point_offset_3_23.x) / 2, (Point_offset_3_13.y + Point_offset_3_23.y) / 2, (Point_offset_3_13.z + Point_offset_3_23.z) / 2);
-    var offset_mid_geo33 = new THREE.SphereGeometry(0.02);
-    var offset_3midpoint3 = new THREE.Mesh(offset_mid_geo33, new THREE.MeshPhongMaterial({
-        color: "black",
-        transparent: true,
-        opacity: 0.7
-    }));
-
-    //    offset_midpoint3.position.copy(offset_mid_3);
-    //    step_group_1.add(offset_midpoint3);
-
 
     var points_offset3 = [
         new THREE.Vector3(offset_mid_13.x, offset_mid_13.y, offset_mid_13.z),
@@ -13695,7 +12943,6 @@ function redraw() {
     step_group_1.add(TXMeshS2);
 
     var midpoint_34 = new THREE.Vector3((point4z.x + point3z.x) / 2, (point4z.y + point3z.y) / 2, (point4z.z + point3z.z) / 2);
-    var Sphere_step_3 = new THREE.Sphere(new THREE.Vector3(0, 0, TubePoints1[1].z), 0.4);
     var Point_step_3 = Sphere_step_2.clampPoint(midpoint_34);
     var spGeom_step_3 = new THREE.SphereGeometry(0.02);
     var sp_step_3 = new THREE.Mesh(spGeom_step_3, new THREE.MeshPhongMaterial({
@@ -13748,8 +12995,6 @@ function redraw() {
 
     //tween1.start();
 
-
-    var step_1_line = new THREE.Geometry();
 
     P_A_Right = Pnt_copy(P_A);
     P_B_Right = Pnt_copy(P_B);
@@ -13928,12 +13173,6 @@ function redraw() {
         })
     ];
 
-
-    var step_2_face_1 = THREE.SceneUtils.createMultiMaterialObject(geom_step_21, material_step_21);
-    //          var material_step_3 = new THREE.MeshPhongMaterial({color: 0x009600, transparent: true, opacity:0.3, side: THREE.DoubleSide});
-    //          var step_1_face_3 = new THREE.Mesh(geom,material_step_3);
-    //step_group_2.add(step_2_face_1);
-
     var face_step_22 = [
         new THREE.Face3(0, 2, 3),
     ]
@@ -13950,12 +13189,6 @@ function redraw() {
         })
     ];
 
-
-    var step_2_face_2 = THREE.SceneUtils.createMultiMaterialObject(geom_step_22, material_step_22);
-    //          var material_step_3 = new THREE.MeshPhongMaterial({color: 0x009600, transparent: true, opacity:0.3, side: THREE.DoubleSide});
-    //          var step_1_face_3 = new THREE.Mesh(geom,material_step_3);
-    //step_group_2.add(step_2_face_2);
-
     var face_step_23 = [
         new THREE.Face3(0, 2, 4),
     ]
@@ -13971,12 +13204,6 @@ function redraw() {
             color: "grey", transparent: true, opacity: 0.7, side: THREE.DoubleSide, depthWrite: false
         })
     ];
-
-
-    var step_2_face_3 = THREE.SceneUtils.createMultiMaterialObject(geom_step_23, material_step_23);
-    //          var material_step_3 = new THREE.MeshPhongMaterial({color: 0x009600, transparent: true, opacity:0.3, side: THREE.DoubleSide});
-    //          var step_1_face_3 = new THREE.Mesh(geom,material_step_3);
-    //  step_group_2.add(step_2_face_3);
 
     var points4 = [
         Point_step_2_1,
@@ -14047,7 +13274,7 @@ function redraw() {
 
     var SphereTest6 = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 0.45);
     var PointClose5 = SphereTest6.clampPoint(TubePoints1[1]);
-    var tubeMesh_apply_2 = createCylinderMesh(PointClose4, PointClose5, arrow_apply_1, 0.01, 0.01);
+    createCylinderMesh(PointClose4, PointClose5, arrow_apply_1, 0.01, 0.01);
     //Tube_group.add(tubeMesh_apply_2);
 
     var SphereTest7 = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 0.4);
@@ -14055,7 +13282,7 @@ function redraw() {
 
     var SphereTest8 = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 0.1);
     var PointClose7 = SphereTest8.clampPoint(TubePoints1[1]);
-    var tubeMesh_apply_3 = createCylinderMesh(PointClose6, PointClose7, arrow_apply_1, 0.01, 0.01);
+    createCylinderMesh(PointClose6, PointClose7, arrow_apply_1, 0.01, 0.01);
     //Tube_group.add(tubeMesh_apply_3);
 
 
@@ -14172,21 +13399,6 @@ function redraw() {
         P_C_Right = Pnt_copy(P_C);
         P_D_Right = Pnt_copy(P_D);
 
-
-        var vertices = [
-            P_A_Right, P_B_Right, P_C_Right, P_D_Right
-        ];
-
-        var face_bar_1 = [
-            new THREE.Face3(0, 2, 3),
-        ]
-        var face_bar_2 = [
-            new THREE.Face3(0, 1, 3),
-        ]
-        var face_bar_3 = [
-            new THREE.Face3(1, 2, 3),
-        ]
-
         var face_bar_1_area = new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(P_C_Right, P_A_Right),
             new THREE.Vector3().subVectors(P_D_Right, P_A_Right),
@@ -14207,7 +13419,7 @@ function redraw() {
 
         tt = 0.5 * tubethick.v * face_bar_1_area;
 
-        if (tubeMesh2_p1 < 0.25 & tubeMesh2_p1 >= 0) {
+        if (tubeMesh2_p1 < 0.25 && tubeMesh2_p1 >= 0) {
             var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                 color: 0x5B84AE
             });
@@ -14216,7 +13428,7 @@ function redraw() {
             var tubeMesh2 = createCylinderMesh(TubePoints2[1], PointClose2, Colorbar_blue_1, tt, tt);
             var tube_arrow2 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), TubePoints2[1], Colorbar_blue_1, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh2_p1 < 0.5 & tubeMesh2_p1 >= 0.25) {
+        if (tubeMesh2_p1 < 0.5 && tubeMesh2_p1 >= 0.25) {
             var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                 color: 0x376D9B
             });
@@ -14225,7 +13437,7 @@ function redraw() {
             var tubeMesh2 = createCylinderMesh(TubePoints2[1], PointClose2, Colorbar_blue_2, tt, tt);
             var tube_arrow2 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), TubePoints2[1], Colorbar_blue_2, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh2_p1 < 0.75 & tubeMesh2_p1 >= 0.5) {
+        if (tubeMesh2_p1 < 0.75 && tubeMesh2_p1 >= 0.5) {
             var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                 color: 0x05416D
             });
@@ -14254,21 +13466,6 @@ function redraw() {
         P_C_Right = Pnt_copy(P_C);
         P_D_Right = Pnt_copy(P_D);
 
-
-        var vertices = [
-            P_A_Right, P_B_Right, P_C_Right, P_D_Right
-        ];
-
-        var face_bar_1 = [
-            new THREE.Face3(0, 2, 3),
-        ]
-        var face_bar_2 = [
-            new THREE.Face3(0, 1, 3),
-        ]
-        var face_bar_3 = [
-            new THREE.Face3(1, 2, 3),
-        ]
-
         var face_bar_1_area = new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(P_C_Right, P_A_Right),
             new THREE.Vector3().subVectors(P_D_Right, P_A_Right),
@@ -14289,7 +13486,7 @@ function redraw() {
 
         tt = 0.5 * tubethick.v * face_bar_1_area;
 
-        if (tubeMesh2_t1 < 0.25 & tubeMesh2_t1 >= 0) {
+        if (tubeMesh2_t1 < 0.25 && tubeMesh2_t1 >= 0) {
             var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                 color: 0xD72F62
             });
@@ -14298,7 +13495,7 @@ function redraw() {
             var tubeMesh2 = createCylinderMesh(TubePoints2[1], PointClose2, Colorbar_red_1, tt, tt);
             var tube_arrow2 = createCylinderArrowMesh(TubePoints2[1], new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), Colorbar_red_1, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh2_t1 < 0.5 & tubeMesh2_t1 >= 0.25) {
+        if (tubeMesh2_t1 < 0.5 && tubeMesh2_t1 >= 0.25) {
             var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                 color: 0xCC0549
             });
@@ -14307,7 +13504,7 @@ function redraw() {
             var tubeMesh2 = createCylinderMesh(TubePoints2[1], PointClose2, Colorbar_red_2, tt, tt);
             var tube_arrow2 = createCylinderArrowMesh(TubePoints2[1], new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), Colorbar_red_2, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh2_t1 < 0.75 & tubeMesh2_t1 >= 0.5) {
+        if (tubeMesh2_t1 < 0.75 && tubeMesh2_t1 >= 0.5) {
             var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                 color: 0x940041
             });
@@ -14372,7 +13569,6 @@ function redraw() {
     var PointClose1_2 = SphereTest.clampPoint(TubePoints3[1]);
     var SphereTest2_2 = new THREE.Sphere(PointClose1_2, 0.05);
     var PointClose2_2 = SphereTest2_2.clampPoint(TubePoints3[1]);
-    var SphereTest3_2 = new THREE.Sphere(PointClose2_2, 0.045);
 
     //arrow
 
@@ -14382,21 +13578,6 @@ function redraw() {
         P_B_Right = Pnt_copy(P_B);
         P_C_Right = Pnt_copy(P_C);
         P_D_Right = Pnt_copy(P_D);
-
-
-        var vertices = [
-            P_A_Right, P_B_Right, P_C_Right, P_D_Right
-        ];
-
-        var face_bar_1 = [
-            new THREE.Face3(0, 2, 3),
-        ]
-        var face_bar_2 = [
-            new THREE.Face3(0, 1, 3),
-        ]
-        var face_bar_3 = [
-            new THREE.Face3(1, 2, 3),
-        ]
 
         var face_bar_1_area = new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(P_C_Right, P_A_Right),
@@ -14417,7 +13598,7 @@ function redraw() {
         var tubeMesh3_p2 = face_bar_2_area / max;
         tt = 0.5 * tubethick.v * face_bar_2_area;
 
-        if (tubeMesh3_p2 < 0.25 & tubeMesh3_p2 >= 0) {
+        if (tubeMesh3_p2 < 0.25 && tubeMesh3_p2 >= 0) {
             var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                 color: 0x5B84AE
             });
@@ -14426,7 +13607,7 @@ function redraw() {
             var tubeMesh3 = createCylinderMesh(TubePoints3[1], PointClose2_2, Colorbar_blue_1, tt, tt);
             var tube_arrow3 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), TubePoints3[1], Colorbar_blue_1, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh3_p2 < 0.5 & tubeMesh3_p2 >= 0.25) {
+        if (tubeMesh3_p2 < 0.5 && tubeMesh3_p2 >= 0.25) {
             var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                 color: 0x376D9B
             });
@@ -14435,7 +13616,7 @@ function redraw() {
             var tubeMesh3 = createCylinderMesh(TubePoints3[1], PointClose2_2, Colorbar_blue_2, tt, tt);
             var tube_arrow3 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), TubePoints3[1], Colorbar_blue_2, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh3_p2 < 0.75 & tubeMesh3_p2 >= 0.5) {
+        if (tubeMesh3_p2 < 0.75 && tubeMesh3_p2 >= 0.5) {
             var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                 color: 0x05416D
             });
@@ -14464,21 +13645,6 @@ function redraw() {
         P_C_Right = Pnt_copy(P_C);
         P_D_Right = Pnt_copy(P_D);
 
-
-        var vertices = [
-            P_A_Right, P_B_Right, P_C_Right, P_D_Right
-        ];
-
-        var face_bar_1 = [
-            new THREE.Face3(0, 2, 3),
-        ]
-        var face_bar_2 = [
-            new THREE.Face3(0, 1, 3),
-        ]
-        var face_bar_3 = [
-            new THREE.Face3(1, 2, 3),
-        ]
-
         var face_bar_1_area = new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(P_C_Right, P_A_Right),
             new THREE.Vector3().subVectors(P_D_Right, P_A_Right),
@@ -14498,7 +13664,7 @@ function redraw() {
         var tubeMesh3_t2 = face_bar_2_area / max;
         tt = 0.5 * tubethick.v * face_bar_2_area;
 
-        if (tubeMesh3_t2 < 0.25 & tubeMesh3_t2 >= 0) {
+        if (tubeMesh3_t2 < 0.25 && tubeMesh3_t2 >= 0) {
             var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                 color: 0xD72F62
             });
@@ -14507,7 +13673,7 @@ function redraw() {
             var tubeMesh3 = createCylinderMesh(TubePoints3[1], PointClose2_2, Colorbar_red_1, tt, tt);
             var tube_arrow3 = createCylinderArrowMesh(TubePoints3[1], new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), Colorbar_red_1, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh3_t2 < 0.5 & tubeMesh3_t2 >= 0.25) {
+        if (tubeMesh3_t2 < 0.5 && tubeMesh3_t2 >= 0.25) {
             var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                 color: 0xCC0549
             });
@@ -14516,7 +13682,7 @@ function redraw() {
             var tubeMesh3 = createCylinderMesh(TubePoints3[1], PointClose2_2, Colorbar_red_2, tt, tt);
             var tube_arrow3 = createCylinderArrowMesh(TubePoints3[1], new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), Colorbar_red_2, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh3_t2 < 0.75 & tubeMesh3_t2 >= 0.5) {
+        if (tubeMesh3_t2 < 0.75 && tubeMesh3_t2 >= 0.5) {
             var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                 color: 0x940041
             });
@@ -14581,7 +13747,6 @@ function redraw() {
     var PointClose1_3 = SphereTest.clampPoint(TubePoints4[1]);
     var SphereTest2_3 = new THREE.Sphere(PointClose1_3, 0.05);
     var PointClose2_3 = SphereTest2_3.clampPoint(TubePoints4[1]);
-    var SphereTest3_3 = new THREE.Sphere(PointClose2_3, 0.045);
 
     //arrow
 
@@ -14590,21 +13755,6 @@ function redraw() {
         P_B_Right = Pnt_copy(P_B);
         P_C_Right = Pnt_copy(P_C);
         P_D_Right = Pnt_copy(P_D);
-
-
-        var vertices = [
-            P_A_Right, P_B_Right, P_C_Right, P_D_Right
-        ];
-
-        var face_bar_1 = [
-            new THREE.Face3(0, 2, 3),
-        ]
-        var face_bar_2 = [
-            new THREE.Face3(0, 1, 3),
-        ]
-        var face_bar_3 = [
-            new THREE.Face3(1, 2, 3),
-        ]
 
         var face_bar_1_area = new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(P_C_Right, P_A_Right),
@@ -14625,7 +13775,7 @@ function redraw() {
         var tubeMesh4_p3 = face_bar_3_area / max;
         tt = 0.5 * tubethick.v * face_bar_3_area;
 
-        if (tubeMesh4_p3 < 0.25 & tubeMesh4_p3 >= 0) {
+        if (tubeMesh4_p3 < 0.25 && tubeMesh4_p3 >= 0) {
             var Colorbar_blue_1 = new THREE.MeshPhongMaterial({
                 color: 0x5B84AE
             });
@@ -14634,7 +13784,7 @@ function redraw() {
             var tubeMesh4 = createCylinderMesh(TubePoints4[1], PointClose2_3, Colorbar_blue_1, tt, tt);
             var tube_arrow4 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), TubePoints4[1], Colorbar_blue_1, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh4_p3 < 0.5 & tubeMesh4_p3 >= 0.25) {
+        if (tubeMesh4_p3 < 0.5 && tubeMesh4_p3 >= 0.25) {
             var Colorbar_blue_2 = new THREE.MeshPhongMaterial({
                 color: 0x376D9B
             });
@@ -14643,7 +13793,7 @@ function redraw() {
             var tubeMesh4 = createCylinderMesh(TubePoints4[1], PointClose2_3, Colorbar_blue_2, tt, tt);
             var tube_arrow4 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), TubePoints4[1], Colorbar_blue_2, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh4_p3 < 0.75 & tubeMesh4_p3 >= 0.5) {
+        if (tubeMesh4_p3 < 0.75 && tubeMesh4_p3 >= 0.5) {
             var Colorbar_blue_3 = new THREE.MeshPhongMaterial({
                 color: 0x05416D
             });
@@ -14671,21 +13821,6 @@ function redraw() {
         P_C_Right = Pnt_copy(P_C);
         P_D_Right = Pnt_copy(P_D);
 
-
-        var vertices = [
-            P_A_Right, P_B_Right, P_C_Right, P_D_Right
-        ];
-
-        var face_bar_1 = [
-            new THREE.Face3(0, 2, 3),
-        ]
-        var face_bar_2 = [
-            new THREE.Face3(0, 1, 3),
-        ]
-        var face_bar_3 = [
-            new THREE.Face3(1, 2, 3),
-        ]
-
         var face_bar_1_area = new THREE.Vector3().crossVectors(
             new THREE.Vector3().subVectors(P_C_Right, P_A_Right),
             new THREE.Vector3().subVectors(P_D_Right, P_A_Right),
@@ -14705,7 +13840,7 @@ function redraw() {
         var tubeMesh4_t3 = face_bar_3_area / max;
         tt = 0.5 * tubethick.v * face_bar_3_area;
 
-        if (tubeMesh4_t3 < 0.25 & tubeMesh4_t3 >= 0) {
+        if (tubeMesh4_t3 < 0.25 && tubeMesh4_t3 >= 0) {
             var Colorbar_red_1 = new THREE.MeshPhongMaterial({
                 color: 0xD72F62
             });
@@ -14714,7 +13849,7 @@ function redraw() {
             var tubeMesh4 = createCylinderMesh(TubePoints4[1], PointClose2_3, Colorbar_red_1, tt, tt);
             var tube_arrow4 = createCylinderArrowMesh(TubePoints4[1], new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), Colorbar_red_1, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh4_t3 < 0.5 & tubeMesh4_t3 >= 0.25) {
+        if (tubeMesh4_t3 < 0.5 && tubeMesh4_t3 >= 0.25) {
             var Colorbar_red_2 = new THREE.MeshPhongMaterial({
                 color: 0xCC0549
             });
@@ -14723,7 +13858,7 @@ function redraw() {
             var tubeMesh4 = createCylinderMesh(TubePoints4[1], PointClose2_3, Colorbar_red_2, tt, tt);
             var tube_arrow4 = createCylinderArrowMesh(TubePoints4[1], new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), Colorbar_red_2, 0.02, 0.05, 0.6);
         }
-        if (tubeMesh4_t3 < 0.75 & tubeMesh4_t3 >= 0.5) {
+        if (tubeMesh4_t3 < 0.75 && tubeMesh4_t3 >= 0.5) {
             var Colorbar_red_3 = new THREE.MeshPhongMaterial({
                 color: 0x940041
             });
@@ -14807,8 +13942,6 @@ function redraw() {
     corePoint_body.x = (P_A_Right.x + P_B_Right.x + P_C_Right.x + P_D_Right.x) / 4;
     corePoint_body.y = (P_A_Right.y + P_B_Right.y + P_C_Right.y + P_D_Right.y) / 4;
     corePoint_body.z = (P_A_Right.z + P_B_Right.z + P_C_Right.z + P_D_Right.z) / 4;
-
-    //console.log("TubePoints1="+P_A.z);
 
     // for (i = 0;i<geom.faces.length;i++){
     //         var hex = Math.random() * 0xffffff;
@@ -14898,9 +14031,9 @@ function redraw() {
     text_group2.add(TXMeshC);
     text_group2.add(TXMeshD);
 
-    var TXMeshA_2 = createSpriteText1("A", P_A);
-    var TXMeshB_2 = createSpriteText1("B", P_B);
-    var TXMeshC_2 = createSpriteText1("C", P_C);
+    createSpriteText1("A", P_A);
+    createSpriteText1("B", P_B);
+    createSpriteText1("C", P_C);
 
 
     //    scene2.add(TXMeshA_2);
@@ -14930,11 +14063,6 @@ function redraw() {
     scene2.add(text_force_2dtrial_group);
 
     //  scene2.add(text_group2);
-
-
-    // console.log("P_A=",P_A,"P_B=",P_B,"P_C=",P_C,"P_D=",P_D);
-
-
 }
 
 
@@ -14953,9 +14081,6 @@ function redraw_pair_base() {
     var arrow_material_p = new THREE.MeshPhongMaterial({
         color: 0x000080
     });
-
-    // console.log("n1=",TubePoints1[1],"n2=",TubePoints2[1],"n3=",TubePoints3[1],"n4=",TubePoints4[1]);
-
     var arrow_material2 = new THREE.MeshPhongMaterial({
         color: 0xC00000
     });//color
@@ -15025,9 +14150,9 @@ function redraw_pair_base() {
 
     if (TubePoints1[1].z >= 0)//arrow p
 
-        var tube_arrow1 = createCylinderArrowMesh(new THREE.Vector3(1.5 * TubePoints1[1].x, 1.5 * TubePoints1[1].y, 1.5 * TubePoints1[1].z), TubePoints1[1], arrow_material1, 0.02, 0.05, 0.7);
+        createCylinderArrowMesh(new THREE.Vector3(1.5 * TubePoints1[1].x, 1.5 * TubePoints1[1].y, 1.5 * TubePoints1[1].z), TubePoints1[1], arrow_material1, 0.02, 0.05, 0.7);
     else
-        var tube_arrow1 = createCylinderArrowMesh(TubePoints1[1], new THREE.Vector3(1.5 * TubePoints1[1].x, 1.5 * TubePoints1[1].y, 1.5 * TubePoints1[1].z), arrow_material1, 0.02, 0.05, 0.7);
+        createCylinderArrowMesh(TubePoints1[1], new THREE.Vector3(1.5 * TubePoints1[1].x, 1.5 * TubePoints1[1].y, 1.5 * TubePoints1[1].z), arrow_material1, 0.02, 0.05, 0.7);
 
     //        Tube_group_pair.add(tube_arrow1);
 
@@ -15060,10 +14185,10 @@ function redraw_pair_base() {
 
     if (arr_direction[0] >= 0)//arrow air
 
-        var tube_arrow2 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), TubePoints2[1], arrow_material_p, 0.02, 0.05, 0.6);
+        createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), TubePoints2[1], arrow_material_p, 0.02, 0.05, 0.6);
 
     else
-        var tube_arrow2 = createCylinderArrowMesh(TubePoints2[1], new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), arrow_material2, 0.02, 0.05, 0.6);
+        createCylinderArrowMesh(TubePoints2[1], new THREE.Vector3(1.22 * TubePoints2[1].x, 1.22 * TubePoints2[1].y, 1.22 * TubePoints2[1].z), arrow_material2, 0.02, 0.05, 0.6);
 
     //      Tube_group_pair.add(tube_arrow2);
 
@@ -15096,9 +14221,9 @@ function redraw_pair_base() {
 
     if (arr_direction[1] >= 0)
 
-        var tube_arrow3 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), TubePoints3[1], arrow_material_p, 0.02, 0.05, 0.6);
+        createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), TubePoints3[1], arrow_material_p, 0.02, 0.05, 0.6);
     else
-        var tube_arrow3 = createCylinderArrowMesh(TubePoints3[1], new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), arrow_material2, 0.02, 0.05, 0.6);
+        createCylinderArrowMesh(TubePoints3[1], new THREE.Vector3(1.22 * TubePoints3[1].x, 1.22 * TubePoints3[1].y, 1.22 * TubePoints3[1].z), arrow_material2, 0.02, 0.05, 0.6);
 
     //          Tube_group_pair.add(tube_arrow3);
 
@@ -15130,9 +14255,9 @@ function redraw_pair_base() {
     //arrow
 
     if (arr_direction[2] >= 0)
-        var tube_arrow4 = createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), TubePoints4[1], arrow_material_p, 0.02, 0.05, 0.6);
+        createCylinderArrowMesh(new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), TubePoints4[1], arrow_material_p, 0.02, 0.05, 0.6);
     else
-        var tube_arrow4 = createCylinderArrowMesh(TubePoints4[1], new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), arrow_material2, 0.02, 0.05, 0.6);
+        createCylinderArrowMesh(TubePoints4[1], new THREE.Vector3(1.22 * TubePoints4[1].x, 1.22 * TubePoints4[1].y, 1.22 * TubePoints4[1].z), arrow_material2, 0.02, 0.05, 0.6);
 
     //        Tube_group_pair.add(tube_arrow4);
 
@@ -15179,8 +14304,6 @@ function redraw_Force() {
     var vertices = [
         P_A_Left, P_B_Left, P_C_Left, P_D_Left
     ];
-
-    //console.log("TubePoints1="+P_A.z);
 
     // for (i = 0;i<geom.faces.length;i++){
     //         var hex = Math.random() * 0xffffff;
@@ -15341,15 +14464,11 @@ function Cal_ForcesPnt() {
     origin_N3.multiplyScalar(-1);
     origin_N4.multiplyScalar(-1);
 
-    var aa = new Array();
-    aa = Cal_Arrange_AA(origin_N1, origin_N2, origin_N3, origin_N4);
-
-    console.log("aa0", aa[0], "aa1", aa[1], "aa2", aa[2]);
+    var aa = Cal_Arrange_AA(origin_N1, origin_N2, origin_N3, origin_N4);
 
     origin_N1.normalize();
 
-    var L_AB = new THREE.Vector3(0, 0, 0);
-    L_AB = cross(origin_N1, aa[0]);
+    var L_AB = cross(origin_N1, aa[0]);
 
     P_A = new THREE.Vector3(0, 0, 0);
     //m=Math.sqrt()
@@ -15357,28 +14476,18 @@ function Cal_ForcesPnt() {
 
     P_B = new THREE.Vector3((P_A.x + m * L_AB.x), (P_A.y + m * L_AB.y), (P_A.z + m * L_AB.z));
 
-    var L_BC = new THREE.Vector3(0, 0, 0);
-    var L_CA = new THREE.Vector3(0, 0, 0);
-
-    L_BC = cross(origin_N1, aa[1]);
-    L_CA = cross(origin_N1, aa[2]);
+    var L_BC = cross(origin_N1, aa[1]);
+    var L_CA = cross(origin_N1, aa[2]);
 
     P_C = new THREE.Vector3(0, 0, 0);
     P_C = LinesSectPt(L_BC, P_B, L_CA, P_A);
 
-
-    var L_BD = new THREE.Vector3(0, 0, 0);
-    var L_DC = new THREE.Vector3(0, 0, 0);
-
-    L_BD = cross(aa[1], aa[0]);
-    L_DC = cross(aa[1], aa[2]);
+    var L_BD = cross(aa[1], aa[0]);
+    var L_DC = cross(aa[1], aa[2]);
 
     P_D = new THREE.Vector3(0, 0, 0);
 
     P_D = LinesSectPt(L_BD, P_B, L_DC, P_C);
-
-    console.log("P_ABCD", P_A, P_B, P_C, P_D);
-
 
     Change_BC = false;
 
@@ -15421,9 +14530,7 @@ function Cal_ForcesPnt() {
 
 
 function Force_move() {
-    var P_A_temp = new THREE.Vector3(0, 0, 0);
-
-    P_A_temp = Pnt_copy(P_A);
+    var P_A_temp = Pnt_copy(P_A);
 
     P_A = subVec(P_A, P_A_temp);
     P_B = subVec(P_B, P_A_temp);
@@ -15440,8 +14547,6 @@ function Force_move() {
     if (corePoint_temp.x === 0 && corePoint_temp.y === 0 && corePoint_temp.z === 0) {
         corePoint_temp = Pnt_copy(corePoint);
     }
-    ;
-
 
     P_A = subVec(P_A, corePoint_temp);
     P_B = subVec(P_B, corePoint_temp);
@@ -15453,9 +14558,7 @@ function Force_move() {
 
 function Force_move_left() {
 
-    var P_A_temp = new THREE.Vector3(0, 0, 0);
-
-    P_A_temp = Pnt_copy(P_A);
+    var P_A_temp = Pnt_copy(P_A);
 
     P_A = subVec(P_A, P_A_temp);
     P_B = subVec(P_B, P_A_temp);
@@ -15496,13 +14599,11 @@ function cross(n1, n2) {
 }
 
 function norm(n1) {
-    var nnorm = Math.sqrt(n1.x * n1.x + n1.y * n1.y + n1.z * n1.z);
-    return nnorm;
+    return Math.sqrt(n1.x * n1.x + n1.y * n1.y + n1.z * n1.z);
 }
 
 function distance(n1, n2) {
-    var distance1 = Math.sqrt((n1.x - n2.x) * (n1.x - n2.x) + (n1.y - n2.y) * (n1.y - n2.y) + (n1.z - n2.z) * (n1.z - n2.z));
-    return distance1;
+    return Math.sqrt((n1.x - n2.x) * (n1.x - n2.x) + (n1.y - n2.y) * (n1.y - n2.y) + (n1.z - n2.z) * (n1.z - n2.z));
 }
 
 function face_center(n1, n2, n3) {
@@ -15537,7 +14638,7 @@ function arrow_direction(n1, n2, n3, n4) {
 
     matr3_Inver.getInverse(matr3);
 
-    var arr_direct = new Array();
+    var arr_direct = [];
 
     var Ma3 = matr3_Inver.elements;
 
@@ -15572,10 +14673,6 @@ function Cal_Arrange_AA(n1, n2, n3, n4) {
 
 
     var CO = arrow_direction(n11, n22, n33, n44);
-
-    console.log("CO0", CO[0], "CO1", CO[1], "CO2", CO[2]);
-
-
     var AngV = Math.atan2(n22.y, n22.x);
 
 
@@ -15596,7 +14693,7 @@ function Cal_Arrange_AA(n1, n2, n3, n4) {
     }
 
 
-    var n22_ang = Rotate_Vec(n22, new THREE.Vector3(0, 0, 1), -AngV);//反向旋转
+    Rotate_Vec(n22, new THREE.Vector3(0, 0, 1), -AngV);//反向旋转
     var n33_ang = Rotate_Vec(n33, new THREE.Vector3(0, 0, 1), -AngV);
     var n44_ang = Rotate_Vec(n44, new THREE.Vector3(0, 0, 1), -AngV);
 
@@ -15611,10 +14708,7 @@ function Cal_Arrange_AA(n1, n2, n3, n4) {
     if (AngN4 < 0)
         AngN4 = AngN4 + 2.0 * Math.PI;
 
-
-    //console.log("AngV",AngV,"AngN3",AngN3,"AngN4",AngN4);
-
-    var AA = new Array();
+    var AA = [];
     AA.push(n22);
 
     if (AngN3 < AngN4) {
@@ -15633,11 +14727,8 @@ function Cal_Arrange_AA(n1, n2, n3, n4) {
 function Rotate_Vec(p1, R_V, Theta) {
     //  function [P2] = Rotate_Vec(P1, R_V, theta)
 
-    var vector = new THREE.Vector3(0, 0, 0);
-    var axis = new THREE.Vector3(0, 0, 0);
-
-    vector = Pnt_copy(p1);
-    axis = Pnt_copy(R_V);
+    var vector = Pnt_copy(p1);
+    var axis = Pnt_copy(R_V);
 
     vector.applyAxisAngle(axis, Theta);
     return vector;
@@ -15646,12 +14737,8 @@ function Rotate_Vec(p1, R_V, Theta) {
 
 function LinesSectPt(L1_dir, P1_pnt, L2_dir, P2_pnt) {
 
-    var L1_dir1 = new THREE.Vector3(0, 0, 0);
-    var L2_dir2 = new THREE.Vector3(0, 0, 0);
-
-    L1_dir1 = Pnt_copy(L1_dir);
-    L2_dir2 = Pnt_copy(L2_dir);
-
+    var L1_dir1 = Pnt_copy(L1_dir);
+    var L2_dir2 = Pnt_copy(L2_dir);
 
     L1_dir1.x = L1_dir.x / norm(L1_dir);
     L1_dir1.y = L1_dir.y / norm(L1_dir);
@@ -15716,17 +14803,16 @@ function LinesSectPt(L1_dir, P1_pnt, L2_dir, P2_pnt) {
 
 function Cal_Vec(vec1, vec2, vec3, n) {
 
-    cb = new THREE.Vector3(),
+    var cb = new THREE.Vector3(),
         ab = new THREE.Vector3(),
-        normal = new THREE.Vector3(),
+        normal = new THREE.Vector3();
         cb.subVectors(vec1, vec2);
     ab.subVectors(vec3, vec2);
     ab.cross(cb);
     normal.copy(ab).normalize();
 
 
-    var newPoint = new THREE.Vector3(vec2.x - n * normal.x, vec2.y - n * normal.y, vec2.z - n * normal.z);
-    return newPoint;
+    return new THREE.Vector3(vec2.x - n * normal.x, vec2.y - n * normal.y, vec2.z - n * normal.z);
 }
 
 
@@ -15736,10 +14822,7 @@ function generatePoints(points) {
     geometry.vertices.push(points[0]);
     geometry.vertices.push(points[1]);
 
-    var line = new THREE.Line(geometry, lattice_line_material);
-
-
-    return line;
+    return new THREE.Line(geometry, lattice_line_material);
 }
 
 
@@ -15770,15 +14853,12 @@ function render() {
     // if(intersects.length>0) {
 
     //     intersects[0].object.material.color.set(0xff00ff);
-    //     //console.log("selectobj.name="+intersects[0].object.name);
 
     // }
     if (intersects.length > 0) {
 
         //geom.faces[0].color.set(0xff00ff);
         //mesh.materials[1].color.set(0xff00ff);
-
-        //console.log("selectobj.name="+intersects[0].object.name);
         if (INTERSECTED != intersects[0].object) {
 
             if (INTERSECTED) {
@@ -15796,9 +14876,6 @@ function render() {
                     mesh.children[1].geometry.facesNeedUpdate = true;
                     mesh.children[1].geometry.elementsNeedUpdate = true;
                     mesh.children[1].geometry.computeFaceNormals();
-
-
-                    //console.log("selectobj2.name113="+INTERSECTED.name);
                 } else if (INTERSECTED.name.charAt(0) === 't') {
                     var num2 = Number(INTERSECTED.name.charAt(2)) - 1;
                     if (num2 > 0) {
@@ -15838,12 +14915,8 @@ function render() {
                 mesh.children[1].geometry.facesNeedUpdate = true;
                 mesh.children[1].geometry.elementsNeedUpdate = true;
                 mesh.children[1].geometry.computeFaceNormals();
-
-                // console.log("selectobj2.name12="+INTERSECTED.name);
                 //mesh.children[1].material.color.set(0xFF6347);
             } else if (INTERSECTED.name.charAt(0) === 't') {
-
-                //console.log("INTERSECTED.name=",INTERSECTED.name);
 
                 mesh.children[1].geometry.faces[Number(INTERSECTED.name.charAt(2)) - 1].color.set(0xFF6347);
 
@@ -15852,10 +14925,6 @@ function render() {
                 mesh.children[1].geometry.facesNeedUpdate = true;
                 mesh.children[1].geometry.elementsNeedUpdate = true;
                 mesh.children[1].geometry.computeFaceNormals();
-
-
-                // console.log("selectobj2.name11="+INTERSECTED.name);
-
 
             } else if (INTERSECTED.name.charAt(0) === 'f') {
                 if (INTERSECTED.name.charAt(1) === 'p') {
@@ -15866,9 +14935,6 @@ function render() {
 
                 }
             }
-
-
-            //console.log("selectobj2.name="+INTERSECTED.name);
         }
 
 
