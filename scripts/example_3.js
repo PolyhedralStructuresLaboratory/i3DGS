@@ -9,10 +9,8 @@ var trfm_ctrl;
 var mouse = new THREE.Vector2();
 var rayCaster = new THREE.Raycaster();
 
-
 var selectObj = null;
 
-var showTrial = false;
 var trialHeight = 2;
 let subdOn = false;
 
