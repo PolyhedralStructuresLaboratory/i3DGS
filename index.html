@@ -5,16 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive 3DGS</title>
   <link rel="icon" type="image/x-icon" href="./images/logo_square.png">
+  <link rel="stylesheet" type="text/css" href="./stylesheets/tweakpane_examples.css">
+  <link rel="stylesheet" type="text/css" href="./stylesheets/home.css"
+  <script src="https://kit.fontawesome.com/403ca9559d.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
+<div id="title">
+  <a class="tooltip" href="./examples/example_1.html">
+  <div class="acronym">i<div class="full">nteractive</div>
+  </div>
+  <div class="acronym">3D<div class="full">imensional</div></div>
+  <div class="acronym">G<div class="full">raphic</div>
+  </div>
+  <div class="acronym">S<div class="full">tatics</div>
+  </div>
+  <span id="tooltip-span">
+        click to see examples
+  </span>
+  </a>
+</div>
 
-  <a href="lists.html"><img src="images/logo.png"  style="width: 75px;
-    position:absolute;
-    top:50%;
-    margin-left:47%;
-    height: 23px;
-    "></a>
+<div id="description">
+
+  <div class="item">i3DGS is an interactive platform for the methods of 3D/Polyhedral Graphic Statics. This platform is
+    designed to educate the principles of equilibrium using reciprocal polyhedral diagrams by providing a variety of
+    different examples. The methods of 3D/Polyhedral Graphic statics are developed based on the “principle of the
+    equilibrium of polyhedral frames.” the objective of this platform is to encourage students, researchers, and
+    practitioners to use the geometry-based methods of equilibrium in design and engineering problems.
+  </div>
+
+  <div class="item">
+    <b>Team</b><br>
+    <a href="https://psl.design.upenn.edu/hua-chai/">Hua Chai</a><br>
+    <a href="https://psl.design.upenn.edu/wenxi-chen/">Wenxi Chen</a><br>
+    Prof. Dr. <a href="https://psl.design.upenn.edu/masoud-akbarzadeh/">Masoud Akbarzadeh</a>
+  </div>
+
+  <div class="item">
+    <b>Funding</b><br>
+    <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1944691&HistoricalAwards=false">National Science Foundation CAREER Award (NSF CAREER-1944691)</a>
+  </div>
+</div>
 
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r124/three.js" type="text/javascript"></script>
+<script src="../libs/three/utils/SceneUtils.js" type="text/javascript"></script>
+<script src="../libs/three/controls/TransformControls.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.101.1/examples/js/controls/OrbitControls.js"
+        type="text/javascript"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
+
+<script>
+  var tooltipSpan = document.getElementById('tooltip-span');
+
+  window.onmousemove = function (e) {
+    var x = e.clientX,
+            y = e.clientY;
+    tooltipSpan.style.top = (y + 10) + 'px';
+    tooltipSpan.style.left = (x + 10) + 'px';
+  };
+</script>
+
 </html>

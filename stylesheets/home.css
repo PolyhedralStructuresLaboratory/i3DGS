@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Dekko&family=Gochi+Hand&family=Homemade+Apple&family=Itim&family=Josefin+Sans:wght@400;600&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Press+Start+2P&display=swap');
+
+body {
+    font-family: "Open Sans", sans-serif;
+}
+
+#title {
+    font-family: Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
+    font-weight: bold;
+    font-size: 7em;
+    line-height: 0.8em;
+    margin-bottom: 0;
+    position: absolute;
+    bottom: 0;
+    padding: 2%;
+    cursor: pointer;
+}
+
+#description {
+    font-size: 1em;
+    width: 50%;
+    float: right;
+    text-align: right;
+    padding: 1%;
+    line-height: 1.3em;
+}
+
+#description a {
+    color: rgba(64, 96, 124, 1);
+    text-decoration: none;
+}
+
+#description a:hover {
+    font-style: italic;
+    color: black;
+}
+
+.acronym {
+    color: black;
+}
+
+.acronym .full {
+    visibility: hidden;
+    display: inline;
+    color: rgba(15, 49, 80, 0.5);
+}
+
+.acronym:hover .full {
+    visibility: visible;
+}
+
+.item {
+    padding: 2%;
+}
+
+.tooltip {
+    text-decoration: none;
+    position: relative;
+}
+.tooltip span {
+    display: none;
+    color: black;
+    font-size: 0.25em;
+}
+.tooltip:hover span {
+    display: block;
+    position: fixed;
+    overflow: hidden;
+}
+
+.tooltip a {
+    text-decoration: none;
+}
+
+.tooltip a:hover {
+}

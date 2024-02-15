@@ -3003,14 +3003,16 @@ function animate() {
 }
 
 //call the recursive function
-initRender();
-initScene();
-initCamera();
-orbit_ctrl = new THREE.OrbitControls(camera, renderer.domElement);
-orbit_ctrl.maxDistance = 50;
-orbit_ctrl.minDistance = 1;
-initModel();
-animate();
+function draw() {
+    initRender();
+    initScene();
+    initCamera();
+    orbit_ctrl = new THREE.OrbitControls(camera, renderer.domElement);
+    orbit_ctrl.maxDistance = 50;
+    orbit_ctrl.minDistance = 1;
+    initModel();
+    animate();
+}
 
 
 // *************** support functions *******************
