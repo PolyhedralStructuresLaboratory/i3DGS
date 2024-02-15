@@ -2,6 +2,7 @@
 
 body {
     font-family: "Open Sans", sans-serif;
+    overflow: scroll;
 }
 
 #title {
@@ -9,9 +10,8 @@ body {
     font-weight: bold;
     font-size: 7em;
     line-height: 0.8em;
-    margin-bottom: 0;
-    position: absolute;
-    bottom: 0;
+    /*margin-bottom: 0;*/
+    /*bottom: 0;*/
     padding: 2%;
     cursor: pointer;
 }
@@ -23,6 +23,7 @@ body {
     text-align: right;
     padding: 1%;
     line-height: 1.3em;
+    right: 0;
 }
 
 #description a {
