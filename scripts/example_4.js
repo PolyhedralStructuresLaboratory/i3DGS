@@ -15003,20 +15003,16 @@ function animate() {
 }
 
 
-function draw() {
-    initRender();
-    initScene();
-    initCamera();
-    orbit_ctrl = new THREE.OrbitControls(camera, renderer.domElement);
-    orbit_ctrl.maxDistance = 50;
-    orbit_ctrl.minDistance = 1;
-    //initLight();
-    initModel();
+initRender();
+initScene();
+initCamera();
+orbit_ctrl = new THREE.OrbitControls(camera, renderer.domElement);
+orbit_ctrl.maxDistance = 50;
+orbit_ctrl.minDistance = 1;
+//initLight();
+initModel();
 
 
-    initStats();
-    //initGui();
-
-    animate();
-    //window.onresize = onWindowResize;
-}
+initStats();
+//initGui();
+// animate called in html file
