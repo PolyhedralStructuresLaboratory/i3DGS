@@ -3630,7 +3630,7 @@ orbit_ctrl = new THREE.OrbitControls(camera, renderer.domElement);
 orbit_ctrl.maxDistance = 50;
 orbit_ctrl.minDistance = 1;
 initModel();
-animate();
+// animate called in html file
 
 // *************** support functions *******************
 
