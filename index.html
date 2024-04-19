@@ -1,51 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive 3DGS</title>
-  <link rel="icon" type="image/x-icon" href="./images/logo_square.png">
-  <link rel="stylesheet" type="text/css" href="./stylesheets/tweakpane_examples.css">
-  <link rel="stylesheet" type="text/css" href="./stylesheets/home.css"
-  <script src="https://kit.fontawesome.com/403ca9559d.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Interactive 3DGS</title>
+    <link href="./images/logo_square.png" rel="icon" type="image/x-icon">
+    <link href="./stylesheets/tweakpane_examples.css" rel="stylesheet" type="text/css">
+    <link href="./stylesheets/home.css" rel="stylesheet" type="text/css"
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/403ca9559d.js"></script>
 </head>
 
 <body>
-<div id="title">
-  <a class="tooltip" href="./examples/example_1.html">
-  <div class="acronym">i<div class="full">nteractive</div>
-  </div>
-  <div class="acronym">3D<div class="full">imensional</div></div>
-  <div class="acronym">G<div class="full">raphic</div>
-  </div>
-  <div class="acronym">S<div class="full">tatics</div>
-  </div>
-  <span id="tooltip-span">
-        click to see examples
-  </span>
-  </a>
+<div id="section1"></div>
+<div id="navbar">
+    <a href="#section1">about</a>
+    <a href="#section2">examples</a>
+    <a href="#team">team</a>
 </div>
 
-<div id="description">
+<div id="about">
+    <div id="title">
+        <span class="acronym">Interactive</span><br>
+        <span class="acronym">3D</span><br>
+        <span class="acronym">Graphic</span><br>
+        <span class="acronym">Statics</span>
+    </div>
 
-  <div class="item">i3DGS is an interactive platform for the methods of 3D/Polyhedral Graphic Statics. This platform is
-    designed to educate the principles of equilibrium using reciprocal polyhedral diagrams by providing a variety of
-    different examples. The methods of 3D/Polyhedral Graphic statics are developed based on the “principle of the
-    equilibrium of polyhedral frames.” the objective of this platform is to encourage students, researchers, and
-    practitioners to use the geometry-based methods of equilibrium in design and engineering problems.
-  </div>
+    <div id="description">
 
-  <div class="item">
-    <b>Team</b><br>
-    <a href="https://psl.design.upenn.edu/hua-chai/">Hua Chai</a><br>
-    <a href="https://psl.design.upenn.edu/wenxi-chen/">Wenxi Chen</a><br>
-    Prof. Dr. <a href="https://psl.design.upenn.edu/masoud-akbarzadeh/">Masoud Akbarzadeh</a>
-  </div>
+        i3DGS is an interactive platform for the methods of 3D/Polyhedral Graphic Statics. This platform is
+        designed to educate the principles of equilibrium using reciprocal polyhedral diagrams by providing a variety of
+        different examples. The methods of 3D/Polyhedral Graphic statics are developed based on the “principle of the
+        equilibrium of polyhedral frames.” the objective of this platform is to encourage students, researchers, and
+        practitioners to use the geometry-based methods of equilibrium in design and engineering problems.
+      <div id="section2"></div>
+    </div>
+    <div id="examples"></div>
 
-  <div class="item">
-    <b>Funding</b><br>
-    <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1944691&HistoricalAwards=false">National Science Foundation CAREER Award (NSF CAREER-1944691)</a>
-  </div>
+    <div id="item">
+        <b>Team</b><br>
+        <a href="https://psl.design.upenn.edu/hua-chai/">Hua Chai</a><br>
+        <a href="https://psl.design.upenn.edu/wenxi-chen/">Wenxi Chen</a><br>
+        Prof. Dr. <a href="https://psl.design.upenn.edu/masoud-akbarzadeh/">Masoud Akbarzadeh</a>
+        <p></p>
+        <div id="team"><b>Funding</b><br>
+            <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1944691&HistoricalAwards=false">National Science
+                Foundation CAREER Award (NSF CAREER-1944691)</a></div>
+    </div>
 </div>
 
 </body>
@@ -63,14 +64,15 @@
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
 
 <script>
-  var tooltipSpan = document.getElementById('tooltip-span');
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
 
-  window.onmousemove = function (e) {
-    var x = e.clientX,
-            y = e.clientY;
-    tooltipSpan.style.top = (y + 10) + 'px';
-    tooltipSpan.style.left = (x + 10) + 'px';
-  };
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
 </script>
 
 </html>
